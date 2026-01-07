@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Interview - HR Recruitment Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --dark-bg: #121826;
+            --dark-card: #1a2235;
+            --dark-border: #2a3655;
+            --dark-text: #e2e8f0;
+            --dark-text-secondary: #94a3b8;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --success: #10b981;
+            --danger: #ef4444;
+            --sidebar-bg: #0f172a;
+            --sidebar-hover: #1e293b;
+            --transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: var(--dark-text);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .sidebar {
+            min-height: 100vh;
+            width: 250px;
+            background: var(--sidebar-bg);
+            position: fixed;
+            left: 0;
+            top: 0;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, .2);
+            transition: var(--transition);
+            z-index: 1000;
+        }
+
+        .sidebar-brand {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--dark-border);
+            color: white;
+            font-weight: 600;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-brand .brand-icon {
+            width: 32px;
+            height: 32px;
+            background: white;
+            color: var(--sidebar-bg);
+            border-radius: 6px;
+            display: grid;
+            place-content: center;
+        }
+
+        .nav-section {
+            padding: 1rem 1.5rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--dark-text-secondary);
+            letter-spacing: 0.05em;
+        }
+
+        .nav-link {
+            color: var(--dark-text-secondary);
+            padding: .75rem 1.5rem;
+            font-size: .875rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: var(--transition);
+            cursor: pointer;
+            border-radius: 6px;
+            margin: 0 .5rem;
+            width: calc(100% - 1rem);
+            text-decoration: none;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: var(--sidebar-hover);
+            color: white;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            min-height: 100vh;
+            transition: var(--transition);
+        }
+
+        .top-header {
+            background: var(--dark-card);
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--dark-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark-text);
+            margin: 0;
+        }
+
+        .breadcrumb {
+            background: transparent;
+            padding: 0;
+            margin: 0;
+            font-size: .875rem;
+        }
+
+        .breadcrumb-item { color: var(--dark-text-secondary); }
+        .breadcrumb-item.active { color: var(--primary); }
+        .breadcrumb-item + .breadcrumb-item::before { color: var(--dark-text-secondary); }
+
+        .back-button {
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            color: var(--dark-text-secondary);
+            padding: .5rem 1rem;
+            border-radius: 6px;
+            font-size: .875rem;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            text-decoration: none;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, .05);
+            color: var(--dark-text);
+            transform: translateX(-2px);
+        }
+
+        .content-area {
+            padding: 1.5rem;
+            width: 100%;
+            max-width: none;
+        }
+
+        .schedule-form {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+            padding: 2.5rem;
+            width: 100%;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            padding-bottom: .75rem;
+            border-bottom: 2px solid var(--primary);
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .full-width { grid-column: 1 / -1; }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--dark-text);
+            margin-bottom: .5rem;
+            display: block;
+            font-size: .9rem;
+        }
+
+        .required::after {
+            content: " *";
+            color: var(--danger);
+        }
+
+        .form-control, .form-select {
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            color: var(--dark-text);
+            border-radius: 8px;
+            padding: .75rem;
+            font-size: .9rem;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, .1);
+            outline: none;
+            background: var(--dark-bg);
+            color: var(--dark-text);
+        }
+
+        .form-control::placeholder { color: var(--dark-text-secondary); }
+
+        .interview-type-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .type-option {
+            background: var(--dark-bg);
+            border: 2px solid var(--dark-border);
+            border-radius: 8px;
+            padding: 1.25rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .type-option:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, .05);
+        }
+
+        .type-option.selected {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, .1);
+        }
+
+        .type-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .type-icon {
+            font-size: 1.75rem;
+            color: var(--primary);
+            margin-bottom: .75rem;
+        }
+
+        .type-label {
+            font-weight: 600;
+            color: var(--dark-text);
+            font-size: .95rem;
+        }
+
+        .datetime-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .time-input-wrapper {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .time-separator {
+            font-weight: 600;
+            color: var(--dark-text);
+            font-size: 1.2rem;
+        }
+
+        .duration-options {
+            display: flex;
+            gap: .75rem;
+            flex-wrap: wrap;
+        }
+
+        .duration-btn {
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            color: var(--dark-text-secondary);
+            padding: .6rem 1.25rem;
+            border-radius: 6px;
+            font-size: .875rem;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        .duration-btn:hover, .duration-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .interviewer-section {
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .interviewer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .interviewer-count {
+            font-size: 0.85rem;
+            color: var(--dark-text-secondary);
+            font-weight: 500;
+        }
+
+        .interviewer-search-wrapper {
+            position: relative;
+        }
+
+        .interviewer-search-input {
+            width: 100%;
+            padding: 0.9rem 1rem 0.9rem 3rem;
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            color: var(--dark-text);
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .interviewer-search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, .1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--dark-text-secondary);
+            font-size: 1.1rem;
+            pointer-events: none;
+        }
+
+        .interviewer-pills-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-bottom: 1rem;
+            min-height: 60px;
+        }
+
+        .interviewer-pill {
+            background: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: 25px;
+            padding: 0.6rem 1.1rem;
+            font-size: 0.875rem;
+            color: white;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-weight: 500;
+        }
+
+        .interviewer-pill:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3);
+        }
+
+        .interviewer-pill.selected {
+            background: #dc3545;
+            border-color: #dc3545;
+        }
+
+        .selected-interviewers-display {
+            background: var(--dark-bg);
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .selected-interviewers-display.show { display: block; }
+
+        .selected-interviewers-title {
+            font-size: 0.85rem;
+            color: var(--dark-text-secondary);
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .selected-interviewers-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .selected-interviewer-tag {
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 20px;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.85rem;
+            color: var(--dark-text);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .remove-interviewer-btn {
+            background: rgba(239, 68, 68, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--danger);
+            font-size: 0.7rem;
+            transition: var(--transition);
+            padding: 0;
+        }
+
+        .remove-interviewer-btn:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .conditional-field {
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .conditional-field.show { display: block; }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+            border: none;
+            padding: .85rem 2.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            color: white;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            text-decoration: none;
+            font-size: .95rem;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, .3);
+            color: white;
+        }
+
+        .btn-primary:disabled {
+            background: #6b7280;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--dark-border);
+            color: var(--dark-text-secondary);
+            padding: .85rem 2.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            text-decoration: none;
+            font-size: .95rem;
+            cursor: pointer;
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, .05);
+            color: var(--dark-text);
+            transform: translateY(-2px);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--dark-border);
+        }
+
+        .process-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .process-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--dark-border);
+            z-index: 1;
+        }
+
+        .process-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--dark-border);
+            color: var(--dark-text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            transition: var(--transition);
+            border: 2px solid var(--dark-border);
+        }
+
+        .process-step.active .step-number {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .process-step.completed .step-number {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .step-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--dark-text-secondary);
+            text-align: center;
+        }
+
+        .process-step.active .step-label { color: var(--primary); }
+        .process-step.completed .step-label { color: var(--success); }
+
+        .interview-preview {
+            background: var(--dark-card);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 2rem;
+            border: 1px solid var(--dark-border);
+            display: none;
+        }
+
+        .interview-preview.show {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--dark-border);
+        }
+
+        .preview-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark-text);
+        }
+
+        .preview-content {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .preview-item { margin-bottom: 1rem; }
+
+        .preview-label {
+            font-weight: 600;
+            color: var(--dark-text-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .preview-value {
+            color: var(--dark-text);
+            font-size: 0.95rem;
+        }
+
+        .success-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .success-popup.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .popup-content {
+            background: var(--dark-card);
+            border-radius: 12px;
+            padding: 2.5rem;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .success-popup.show .popup-content { transform: translateY(0); }
+
+        .popup-icon {
+            font-size: 4rem;
+            color: var(--success);
+            margin-bottom: 1.5rem;
+        }
+
+        .popup-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark-text);
+            margin-bottom: 1rem;
+        }
+
+        .popup-message {
+            color: var(--dark-text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 1200px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .preview-content { grid-template-columns: 1fr; }
+            .datetime-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media (max-width: 992px) {
+            .interview-type-grid { grid-template-columns: 1fr; }
+            .datetime-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .main-content { margin-left: 0; }
+            .content-area { padding: 1rem; }
+            .schedule-form { padding: 1.5rem; }
+            .form-actions { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="sidebar-brand">
+        <div class="brand-icon"><i class="fas fa-users"></i></div>
+        <span>Menti's IT Solutions</span>
+    </div>
+
+    <div class="sidebar-content">
+        <nav class="mt-3">
+            <!-- Dashboard Section -->
+            <div class="nav-section">
+                <i class="fas fa-home"></i>
+                Dashboard
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard">
+                        <i class="fas fa-th-large"></i>
+                        <span>Overview</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Recruitment Management Section -->
+            <div class="nav-section">
+                <i class="fas fa-user-tie"></i>
+                Recruitment Management
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/job-form">
+                        <i class="fas fa-briefcase"></i>
+                        <span>Job Postings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/applications">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Applications</span>
+                        <span class="nav-badge">12</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/dashboard/interview-schedule">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Interview Schedule</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/offer-candidates">
+                        <i class="fas fa-file-contract"></i>
+                        <span>Offer Letters</span>
+                        <span class="nav-badge warning">0</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/hired-candidates">
+                        <i class="fas fa-user-check"></i>
+                        <span>Hired Candidates</span>
+                        <span class="nav-badge success">0</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Employee Management Section -->
+            <div class="nav-section">
+                <i class="fas fa-users-cog"></i>
+                Employee Management
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/add-employee">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Add Employee</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/employees">
+                        <i class="fas fa-id-card"></i>
+                        <span>All Employees</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/onboarding">
+                        <i class="fas fa-clipboard-check"></i>
+                        <span>Onboarding</span>
+                        <span class="nav-badge warning">0</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/attendance">
+                        <i class="fas fa-user-clock"></i>
+                        <span>Attendance</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/leave-management">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Leave Management</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/performance">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Performance Review</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Organization Structure Section -->
+            <div class="nav-section">
+                <i class="fas fa-building"></i>
+                Organization
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/company-info">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Company Information</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/company-structure">
+                        <i class="fas fa-sitemap"></i>
+                        <span>Organization Chart</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/add-department">
+                        <i class="fas fa-plus-square"></i>
+                        <span>Departments</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/locations">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Locations</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Administration Section -->
+            <div class="nav-section">
+                <i class="fas fa-user-shield"></i>
+                Administration
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/user-management">
+                        <i class="fas fa-users-cog"></i>
+                        <span>User Management</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/role-permissions">
+                        <i class="fas fa-user-tag"></i>
+                        <span>Roles & Permissions</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/access-control">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Access Control</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Finance Section -->
+            <div class="nav-section">
+                <i class="fas fa-money-bill-wave"></i>
+                Finance
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/payroll">
+                        <i class="fas fa-wallet"></i>
+                        <span>Payroll Management</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- System Section -->
+            <div class="nav-section">
+                <i class="fas fa-cogs"></i>
+                System
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/system-settings">
+                        <i class="fas fa-cog"></i>
+                        <span>System Settings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/notifications">
+                        <i class="fas fa-bell"></i>
+                        <span>Notifications</span>
+                        <span class="nav-badge">3</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/audit-log">
+                        <i class="fas fa-history"></i>
+                        <span>Audit Log</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <header class="top-header">
+        <div class="header-content">
+            <div>
+                <h1 class="page-title">Schedule Interview</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="/dashboard/applications">Applications</a></li>
+                        <li class="breadcrumb-item active">Schedule Interview</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="/dashboard/applications" class="back-button">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Applications
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="content-area">
+        <!-- Process Steps -->
+        <div class="process-steps">
+            <div class="process-step active" id="step1">
+                <div class="step-number">1</div>
+                <div class="step-label">Interview Details</div>
+            </div>
+            <div class="process-step" id="step2">
+                <div class="step-number">2</div>
+                <div class="step-label">Review & Confirm</div>
+            </div>
+            <div class="process-step" id="step3">
+                <div class="step-number">3</div>
+                <div class="step-label">Send Invitations</div>
+            </div>
+        </div>
+
+        <div class="schedule-container">
+            <!-- Step 1: Interview Details Form -->
+            <div class="schedule-form" id="step1Form">
+                <h2 class="section-title">
+                    <i class="fas fa-calendar-plus"></i>
+                    Interview Details
+                </h2>
+
+                <form id="scheduleForm">
+                    <input type="hidden" name="applicationId" value="123">
+                    <input type="hidden" name="interviewTime" id="interviewTimeHidden">
+                    <input type="hidden" id="interviewerEmails" name="interviewerEmails">
+
+                    <div class="form-grid">
+                        <!-- Interview Type -->
+                        <div class="form-group full-width">
+                            <label class="form-label required">Interview Type</label>
+                            <div class="interview-type-grid">
+                                <div class="type-option" data-type="phone">
+                                    <input type="radio" name="interviewType" value="phone" required>
+                                    <div class="type-icon"><i class="fas fa-phone"></i></div>
+                                    <div class="type-label">Phone Call</div>
+                                </div>
+                                <div class="type-option" data-type="video">
+                                    <input type="radio" name="interviewType" value="video" required>
+                                    <div class="type-icon"><i class="fas fa-video"></i></div>
+                                    <div class="type-label">Video Call</div>
+                                </div>
+                                <div class="type-option" data-type="in-person">
+                                    <input type="radio" name="interviewType" value="in-person" required>
+                                    <div class="type-icon"><i class="fas fa-users"></i></div>
+                                    <div class="type-label">In-Person</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Date, Time and Timezone -->
+                        <div class="form-group full-width">
+                            <label class="form-label required">Date, Time & Timezone</label>
+                            <div class="datetime-grid">
+                                <div class="form-group">
+                                    <input type="date" class="form-control" name="interviewDate" id="interviewDate" required>
+                                </div>
+                                <div class="form-group">
+                                    <div class="time-input-wrapper">
+                                        <select class="form-select" id="timeHour" required>
+                                            <option value="">HH</option>
+                                            <option value="01">01</option>
+                                            <option value="02">02</option>
+                                            <option value="03">03</option>
+                                            <option value="04">04</option>
+                                            <option value="05">05</option>
+                                            <option value="06">06</option>
+                                            <option value="07">07</option>
+                                            <option value="08">08</option>
+                                            <option value="09">09</option>
+                                            <option value="10" selected>10</option>
+                                            <option value="11">11</option>
+                                            <option value="12">12</option>
+                                        </select>
+                                        <span class="time-separator">:</span>
+                                        <select class="form-select" id="timeMinute" required>
+                                            <option value="">MM</option>
+                                            <option value="00" selected>00</option>
+                                            <option value="15">15</option>
+                                            <option value="30">30</option>
+                                            <option value="45">45</option>
+                                        </select>
+                                        <select class="form-select" id="timePeriod" required>
+                                            <option value="">--</option>
+                                            <option value="AM">AM</option>
+                                            <option value="PM" selected>PM</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <select class="form-select" id="timezone" name="timezone" required>
+                                        <option value="">Select timezone...</option>
+                                        <option value="Asia/Kolkata" selected>India (IST)</option>
+                                        <option value="America/New_York">Eastern Time (ET)</option>
+                                        <option value="America/Los_Angeles">Pacific Time (PT)</option>
+                                        <option value="Europe/London">London (GMT/BST)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Duration -->
+                        <div class="form-group">
+                            <label class="form-label required">Duration</label>
+                            <div class="duration-options">
+                                <button type="button" class="duration-btn" data-duration="30">30 min</button>
+                                <button type="button" class="duration-btn active" data-duration="45">45 min</button>
+                                <button type="button" class="duration-btn" data-duration="60">1 hour</button>
+                                <button type="button" class="duration-btn" data-duration="90">1.5 hours</button>
+                            </div>
+                            <input type="hidden" name="duration" value="45" id="selectedDuration">
+                        </div>
+
+                        <!-- Interview Round -->
+                        <div class="form-group">
+                            <label for="interviewRound" class="form-label required">Interview Round</label>
+                            <select class="form-select" id="interviewRound" name="interviewRound" required>
+                                <option value="">Select round...</option>
+                                <option value="initial">Initial Screening</option>
+                                <option value="technical">Technical Interview</option>
+                                <option value="manager">Manager Interview</option>
+                                <option value="hr">HR Interview</option>
+                                <option value="final">Final Round</option>
+                            </select>
+                        </div>
+
+                        <!-- Priority Level -->
+                        <div class="form-group">
+                            <label for="priority" class="form-label">Priority Level</label>
+                            <select class="form-select" id="priority" name="priority">
+                                <option value="low">Low Priority</option>
+                                <option value="medium" selected>Medium Priority</option>
+                                <option value="high">High Priority</option>
+                                <option value="urgent">Urgent</option>
+                            </select>
+                        </div>
+
+                        <!-- Interviewer Selection -->
+                        <div class="form-group full-width">
+                            <div class="interviewer-section">
+                                <div class="interviewer-header">
+                                    <label class="form-label required">Select Interviewers</label>
+                                    <span class="interviewer-count" id="interviewerCount">0 selected</span>
+                                </div>
+
+                                <div class="interviewer-search-container">
+                                    <div class="interviewer-search-wrapper">
+                                        <i class="fas fa-search search-icon"></i>
+                                        <input type="text" class="interviewer-search-input" id="interviewerSearchInput"
+                                               placeholder="Search interviewers by name, role, or department..." autocomplete="off">
+                                    </div>
+                                </div>
+
+                                <div class="interviewer-pills-container" id="interviewerPillsContainer"></div>
+
+                                <div class="selected-interviewers-display" id="selectedInterviewersDisplay">
+                                    <div class="selected-interviewers-title">Selected Interviewers:</div>
+                                    <div class="selected-interviewers-list" id="selectedInterviewersList"></div>
+                                </div>
+
+                                <input type="hidden" name="selectedInterviewers" id="selectedInterviewersInput">
+                            </div>
+                        </div>
+
+                        <!-- Meeting Link/Location -->
+                        <div class="form-group conditional-field full-width" id="videoLinkField">
+                            <label for="meetingLink" class="form-label required">Meeting Link</label>
+                            <input type="url" class="form-control" id="meetingLink" name="meetingLink"
+                                   placeholder="https://meet.google.com/xxx-xxxx-xxx">
+                        </div>
+
+                        <div class="form-group conditional-field full-width" id="locationField">
+                            <label for="location" class="form-label required">Interview Location</label>
+                            <textarea class="form-control" id="location" name="location" rows="2"
+                                      placeholder="Conference Room A, 2nd Floor, Main Building"></textarea>
+                        </div>
+
+                        <!-- Interview Notes -->
+                        <div class="form-group full-width">
+                            <label for="notes" class="form-label">Interview Notes</label>
+                            <textarea class="form-control" id="notes" name="notes" rows="4"
+                                      placeholder="Add any special instructions, topics to cover, or notes for the interviewers..."></textarea>
+                            <div class="form-text">Characters remaining: <span id="notesCounter">500</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        <a href="/dashboard/applications" class="btn-outline">
+                            <i class="fas fa-times"></i>
+                            Cancel
+                        </a>
+                        <button type="button" class="btn-primary" id="nextButton" disabled>
+                            <i class="fas fa-arrow-right"></i>
+                            Next: Review & Confirm
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Step 2: Review & Confirm -->
+            <div class="interview-preview" id="step2Form">
+                <div class="preview-header">
+                    <h3 class="preview-title">Review Interview Details</h3>
+                    <button type="button" class="btn-outline" id="backToFormButton">
+                        <i class="fas fa-edit"></i>
+                        Edit Details
+                    </button>
+                </div>
+
+                <div class="preview-content">
+                    <div class="preview-item">
+                        <div class="preview-label">Interview Type</div>
+                        <div class="preview-value" id="previewType"></div>
+                    </div>
+                    <div class="preview-item">
+                        <div class="preview-label">Date & Time</div>
+                        <div class="preview-value" id="previewDateTime"></div>
+                    </div>
+                    <div class="preview-item">
+                        <div class="preview-label">Timezone</div>
+                        <div class="preview-value" id="previewTimezone"></div>
+                    </div>
+                    <div class="preview-item">
+                        <div class="preview-label">Duration</div>
+                        <div class="preview-value" id="previewDuration"></div>
+                    </div>
+                    <div class="preview-item">
+                        <div class="preview-label">Interview Round</div>
+                        <div class="preview-value" id="previewRound"></div>
+                    </div>
+                    <div class="preview-item">
+                        <div class="preview-label">Priority</div>
+                        <div class="preview-value" id="previewPriority"></div>
+                    </div>
+                    <div class="preview-item">
+                        <div class="preview-label">Interviewers</div>
+                        <div class="preview-value" id="previewInterviewers"></div>
+                    </div>
+                    <div class="preview-item full-width" id="previewLocationContainer">
+                        <div class="preview-label" id="previewLocationLabel"></div>
+                        <div class="preview-value" id="previewLocation"></div>
+                    </div>
+                    <div class="preview-item full-width">
+                        <div class="preview-label">Notes</div>
+                        <div class="preview-value" id="previewNotes"></div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-outline" id="backButton">
+                        <i class="fas fa-arrow-left"></i>
+                        Back
+                    </button>
+                    <button type="button" class="btn-primary" id="confirmButton">
+                        <i class="fas fa-calendar-check"></i>
+                        Confirm & Schedule
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Success Popup -->
+<div class="success-popup" id="successPopup">
+    <div class="popup-content">
+        <div class="popup-icon"><i class="fas fa-check-circle"></i></div>
+        <h3 class="popup-title">Interview Scheduled Successfully</h3>
+        <p class="popup-message">
+            The interview has been scheduled successfully. All participants will receive calendar invitations shortly.
+        </p>
+        <a href="/dashboard/applications" class="btn-primary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Applications
+        </a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Mock interviewer data
+        const interviewersData = [
+            { id: 1, name: "Vijay", role: "Operations Head", department: "Operations", email: "vijay.sekuru@thewmad.com" },
+            { id: 2, name: "Rohini", role: "Technical Recruiter", department: "Human Resources", email: "rohiniancha@gmail.com" },
+            { id: 3, name: "Sireesha", role: "Java Specialist", department: "Developer", email: "akkishiri717@gmail.com" }
+        ];
+
+        // State
+        let selectedInterviewers = [];
+        let allInterviewers = [...interviewersData];
+        let filteredInterviewers = [...interviewersData];
+
+        // DOM Elements
+        const form = document.getElementById('scheduleForm');
+        const typeOptions = document.querySelectorAll('.type-option');
+        const videoLinkField = document.getElementById('videoLinkField');
+        const locationField = document.getElementById('locationField');
+        const meetingLinkInput = document.getElementById('meetingLink');
+        const locationInput = document.getElementById('location');
+        const durationButtons = document.querySelectorAll('.duration-btn');
+        const selectedDurationInput = document.getElementById('selectedDuration');
+        const dateInput = document.getElementById('interviewDate');
+        const timeHourInput = document.getElementById('timeHour');
+        const timeMinuteInput = document.getElementById('timeMinute');
+        const timePeriodSelect = document.getElementById('timePeriod');
+        const timezoneSelect = document.getElementById('timezone');
+        const interviewTimeHidden = document.getElementById('interviewTimeHidden');
+        const notesTextarea = document.getElementById('notes');
+        const notesCounter = document.getElementById('notesCounter');
+        const interviewRound = document.getElementById('interviewRound');
+
+        const searchInput = document.getElementById('interviewerSearchInput');
+        const pillsContainer = document.getElementById('interviewerPillsContainer');
+        const interviewerCountDisplay = document.getElementById('interviewerCount');
+        const selectedInterviewersInput = document.getElementById('selectedInterviewersInput');
+        const selectedInterviewersDisplay = document.getElementById('selectedInterviewersDisplay');
+        const selectedInterviewersList = document.getElementById('selectedInterviewersList');
+
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+        const step1Form = document.getElementById('step1Form');
+        const step2Form = document.getElementById('step2Form');
+        const nextButton = document.getElementById('nextButton');
+        const backButton = document.getElementById('backButton');
+        const backToFormButton = document.getElementById('backToFormButton');
+        const confirmButton = document.getElementById('confirmButton');
+
+        const successPopup = document.getElementById('successPopup');
+
+        // Initialize
+        function init() {
+            setDefaultDate();
+            setupEventListeners();
+            renderInterviewerPills(allInterviewers);
+            updateFormProgress();
+        }
+
+        function setDefaultDate() {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            dateInput.value = tomorrow.toISOString().split('T')[0];
+        }
+
+        function setupEventListeners() {
+            // Interview type selection
+            typeOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    typeOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    const radio = this.querySelector('input[type="radio"]');
+                    radio.checked = true;
+
+                    const type = this.dataset.type;
+                    videoLinkField.classList.remove('show');
+                    locationField.classList.remove('show');
+                    meetingLinkInput.removeAttribute('required');
+                    locationInput.removeAttribute('required');
+
+                    if (type === 'video') {
+                        videoLinkField.classList.add('show');
+                        meetingLinkInput.setAttribute('required', 'required');
+                    } else if (type === 'in-person') {
+                        locationField.classList.add('show');
+                        locationInput.setAttribute('required', 'required');
+                    }
+
+                    updateFormProgress();
+                });
+            });
+
+            // Duration selection
+            durationButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    durationButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedDurationInput.value = this.dataset.duration;
+                    updateFormProgress();
+                });
+            });
+
+            // Time fields
+            timeHourInput.addEventListener('change', updateTimeHidden);
+            timeMinuteInput.addEventListener('change', updateTimeHidden);
+            timePeriodSelect.addEventListener('change', updateTimeHidden);
+            timeHourInput.addEventListener('input', updateFormProgress);
+            timeMinuteInput.addEventListener('input', updateFormProgress);
+            timePeriodSelect.addEventListener('input', updateFormProgress);
+
+            // Date and timezone
+            dateInput.addEventListener('change', updateFormProgress);
+            timezoneSelect.addEventListener('change', updateFormProgress);
+
+            // Interview round
+            interviewRound.addEventListener('change', updateFormProgress);
+
+            // Interviewer search
+            searchInput.addEventListener('input', filterInterviewers);
+
+            // Form fields
+            meetingLinkInput.addEventListener('input', updateFormProgress);
+            locationInput.addEventListener('input', updateFormProgress);
+
+            // Notes counter
+            notesTextarea.addEventListener('input', function() {
+                const maxLength = 500;
+                const currentLength = this.value.length;
+
+                if (currentLength > maxLength) {
+                    this.value = this.value.substring(0, maxLength);
+                    notesCounter.textContent = 0;
+                } else {
+                    notesCounter.textContent = maxLength - currentLength;
+                }
+                updateFormProgress();
+            });
+
+            // Navigation
+            nextButton.addEventListener('click', handleNextButton);
+            backButton.addEventListener('click', handleBackButton);
+            backToFormButton.addEventListener('click', handleBackToFormButton);
+            confirmButton.addEventListener('click', handleConfirmButton);
+
+            // Success popup
+            successPopup.addEventListener('click', function(e) {
+                if (e.target === successPopup) {
+                    successPopup.classList.remove('show');
+                }
+            });
+        }
+
+        function updateTimeHidden() {
+            const hour = timeHourInput.value;
+            const minute = timeMinuteInput.value;
+            const period = timePeriodSelect.value;
+
+            if (hour && minute && period) {
+                interviewTimeHidden.value = convertTo24Hour(hour, minute, period);
+            }
+        }
+
+        function convertTo24Hour(hour, minute, period) {
+            let hour24 = parseInt(hour);
+            if (period === 'PM' && hour24 !== 12) {
+                hour24 += 12;
+            } else if (period === 'AM' && hour24 === 12) {
+                hour24 = 0;
+            }
+            return `${String(hour24).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+        }
+
+        function formatTime12Hour(hour, minute, period) {
+            return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')} ${period}`;
+        }
+
+        function updateFormProgress() {
+            const hasValidTime = timeHourInput.value && timeMinuteInput.value && timePeriodSelect.value &&
+                                timeHourInput.value !== '' && timeMinuteInput.value !== '' && timePeriodSelect.value !== '';
+
+            const requiredFields = [
+                document.querySelector('input[name="interviewType"]:checked'),
+                dateInput.value,
+                hasValidTime,
+                timezoneSelect.value && timezoneSelect.value !== '',
+                interviewRound.value && interviewRound.value !== '',
+                selectedInterviewers.length > 0
+            ];
+
+            const selectedType = document.querySelector('input[name="interviewType"]:checked');
+            if (selectedType) {
+                if (selectedType.value === 'video') {
+                    requiredFields.push(meetingLinkInput.value && meetingLinkInput.value.trim() !== '');
+                } else if (selectedType.value === 'in-person') {
+                    requiredFields.push(locationInput.value && locationInput.value.trim() !== '');
+                }
+            }
+
+            const allFilled = requiredFields.every(field => field);
+            nextButton.disabled = !allFilled;
+
+            // Update interviewer emails
+            const interviewerEmails = selectedInterviewers.map(i => i.email).join(',');
+            document.getElementById('interviewerEmails').value = interviewerEmails;
+        }
+
+        function filterInterviewers() {
+            const searchQuery = searchInput.value.trim().toLowerCase();
+
+            filteredInterviewers = allInterviewers.filter(interviewer => {
+                return !searchQuery ||
+                    interviewer.name.toLowerCase().includes(searchQuery) ||
+                    interviewer.role.toLowerCase().includes(searchQuery) ||
+                    interviewer.department.toLowerCase().includes(searchQuery);
+            });
+
+            renderInterviewerPills(filteredInterviewers);
+        }
+
+        function renderInterviewerPills(interviewers) {
+            pillsContainer.innerHTML = '';
+
+            if (interviewers.length === 0) {
+                pillsContainer.innerHTML = '<div class="no-results-message">No interviewers found</div>';
+                return;
+            }
+
+            interviewers.forEach(interviewer => {
+                const isSelected = selectedInterviewers.some(sel => sel.id === interviewer.id);
+                const pill = document.createElement('div');
+                pill.className = `interviewer-pill ${isSelected ? 'selected' : ''}`;
+                pill.dataset.id = interviewer.id;
+
+                pill.innerHTML = isSelected ?
+                    `<span class="pill-name">${interviewer.name}</span><span class="pill-icon"><i class="fas fa-check"></i></span>` :
+                    `<span class="pill-name">${interviewer.name}</span><span class="pill-icon"><i class="fas fa-plus"></i></span>`;
+
+                pill.addEventListener('click', () => toggleInterviewer(interviewer));
+                pillsContainer.appendChild(pill);
+            });
+        }
+
+        function toggleInterviewer(interviewer) {
+            const index = selectedInterviewers.findIndex(sel => sel.id === interviewer.id);
+
+            if (index > -1) {
+                selectedInterviewers.splice(index, 1);
+            } else {
+                selectedInterviewers.push(interviewer);
+            }
+
+            updateInterviewerDisplay();
+            updateFormProgress();
+        }
+
+        function updateInterviewerDisplay() {
+            interviewerCountDisplay.textContent = `${selectedInterviewers.length} selected`;
+            selectedInterviewersInput.value = selectedInterviewers.map(i => i.id).join(',');
+            renderInterviewerPills(filteredInterviewers);
+
+            if (selectedInterviewers.length > 0) {
+                selectedInterviewersDisplay.classList.add('show');
+                selectedInterviewersList.innerHTML = '';
+
+                selectedInterviewers.forEach(interviewer => {
+                    const tag = document.createElement('div');
+                    tag.className = 'selected-interviewer-tag';
+                    tag.innerHTML = `
+                        <span class="selected-interviewer-name">${interviewer.name}</span>
+                        <span class="selected-interviewer-role">- ${interviewer.role}</span>
+                        <button type="button" class="remove-interviewer-btn" data-id="${interviewer.id}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+
+                    const removeBtn = tag.querySelector('.remove-interviewer-btn');
+                    removeBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const int = selectedInterviewers.find(i => i.id === parseInt(this.dataset.id));
+                        if (int) toggleInterviewer(int);
+                    });
+
+                    selectedInterviewersList.appendChild(tag);
+                });
+            } else {
+                selectedInterviewersDisplay.classList.remove('show');
+            }
+        }
+
+        function handleNextButton() {
+            updatePreview();
+            step1Form.style.display = 'none';
+            step2Form.classList.add('show');
+            step1.classList.remove('active');
+            step1.classList.add('completed');
+            step2.classList.add('active');
+            step2Form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function handleBackButton() {
+            step2Form.classList.remove('show');
+            step1Form.style.display = 'block';
+            step2.classList.remove('active');
+            step1.classList.add('active');
+            step1.classList.remove('completed');
+            step1Form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function handleBackToFormButton() {
+            handleBackButton();
+        }
+
+        function updatePreview() {
+            const interviewType = document.querySelector('input[name="interviewType"]:checked');
+            const interviewDate = dateInput.value;
+            const hour = timeHourInput.value;
+            const minute = timeMinuteInput.value;
+            const period = timePeriodSelect.value;
+            const timezone = timezoneSelect.options[timezoneSelect.selectedIndex].text;
+            const duration = selectedDurationInput.value;
+            const round = interviewRound.options[interviewRound.selectedIndex].text;
+            const priority = document.getElementById('priority').options[document.getElementById('priority').selectedIndex].text;
+            const notes = notesTextarea.value;
+
+            document.getElementById('previewType').textContent = interviewType ?
+                interviewType.value.charAt(0).toUpperCase() + interviewType.value.slice(1) : '';
+
+            if (interviewDate && hour && minute) {
+                const formattedDate = new Date(interviewDate).toLocaleDateString('en-US', {
+                    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+                });
+                const formattedTime = formatTime12Hour(hour, minute, period);
+                document.getElementById('previewDateTime').textContent = `${formattedDate} at ${formattedTime}`;
+            }
+
+            document.getElementById('previewTimezone').textContent = timezone;
+            document.getElementById('previewDuration').textContent = duration + ' minutes';
+            document.getElementById('previewRound').textContent = round;
+            document.getElementById('previewPriority').textContent = priority;
+            document.getElementById('previewInterviewers').textContent =
+                selectedInterviewers.map(i => `${i.name} (${i.department})`).join(', ');
+            document.getElementById('previewNotes').textContent = notes || 'No notes provided';
+
+            if (interviewType && interviewType.value === 'video') {
+                document.getElementById('previewLocationLabel').textContent = 'Meeting Link';
+                document.getElementById('previewLocation').textContent = meetingLinkInput.value;
+                document.getElementById('previewLocationContainer').style.display = 'block';
+            } else if (interviewType && interviewType.value === 'in-person') {
+                document.getElementById('previewLocationLabel').textContent = 'Location';
+                document.getElementById('previewLocation').textContent = locationInput.value;
+                document.getElementById('previewLocationContainer').style.display = 'block';
+            } else {
+                document.getElementById('previewLocationContainer').style.display = 'none';
+            }
+        }
+
+        function handleConfirmButton() {
+            // Show success popup
+            successPopup.classList.add('show');
+            step2.classList.remove('active');
+            step2.classList.add('completed');
+            step3.classList.add('active');
+
+            showToast('Interview scheduled successfully!', 'success');
+        }
+
+        function showToast(msg, type = 'success') {
+            const old = document.getElementById('toast');
+            if (old) old.remove();
+
+            const bg = type === 'success' ? '#10b981' : '#ef4444';
+            const toast = document.createElement('div');
+            toast.id = 'toast';
+            toast.style.cssText = `
+                position:fixed; top:20px; right:20px; z-index:3000;
+                background:${bg}; color:#fff; padding:12px 18px;
+                border-radius:6px; font-size:14px; box-shadow:0 4px 12px rgba(0,0,0,.3);
+            `;
+            toast.innerHTML = `<i class="fas fa-check-circle me-2"></i>${msg}`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 5000);
+        }
+
+        init();
+    });
+
+            // Mobile sidebar toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.querySelector('.sidebar');
+
+        if (mobileMenuToggle) {
+            mobileMenuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+            });
+        }
+
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 768 &&
+                !sidebar.contains(event.target) &&
+                !mobileMenuToggle.contains(event.target) &&
+                sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
+        });
+</script>
+</body>
+</html>

@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offer Letter Candidates - HRMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Global Black Scrollbar - SINGLE SCROLLBAR FOR ENTIRE PAGE */
+                html {
+                    scrollbar-color: #1a1a1a #000000; /* Firefox - thumb and track */
+                    scrollbar-width: thin;
+                }
+                ::-webkit-scrollbar {
+                    width: 8px;
+                    height: 8px;
+                }
+                ::-webkit-scrollbar-track {
+                    background: #000000; /* Black track */
+                }
+                ::-webkit-scrollbar-thumb {
+                    background: #1a1a1a; /* Very dark grey thumb */
+                    border-radius: 4px;
+                }
+                ::-webkit-scrollbar-thumb:hover {
+                    background: #333333; /* Dark grey on hover */
+                }
+                :root {
+                    --dark-bg: #0f172a;
+                    --dark-card: #1e293b;
+                    --dark-border: #334155;
+                    --dark-text: #f8fafc;
+                    --dark-text-secondary: #cbd5e1;
+                    --primary: #6366f1;
+                    --primary-hover: #4f46e5;
+                    --success: #10b981;
+                    --danger: #ef4444;
+                    --warning: #f59e0b;
+                    --info: #0ea5e9;
+                    --sidebar-bg: #0f172a;
+                    --sidebar-hover: #1e293b;
+                    --transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+                }
+
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                body {
+                    font-family: 'Inter', sans-serif;
+                    background: var(--dark-bg);
+                    color: var(--dark-text);
+                    font-size: 14px;
+                    line-height: 1.6;
+                    overflow-x: hidden;
+                }
+
+                /* === SIDEBAR STYLES === */
+                      .sidebar {
+                    position: fixed;
+                    top: 0; left: 0; width: 280px; height: 100vh;
+                    background: var(--sidebar-bg);
+                    box-shadow: 2px 0 10px rgba(0,0,0,.2);
+                    transition: var(--transition);
+                    z-index: 1000;
+                    /* REMOVED: overflow-y to prevent duplicate scrollbar */
+                }
+
+                .sidebar-brand {
+                    display: flex; align-items: center; gap: 10px;
+                    padding: 1.5rem; border-bottom: 1px solid var(--dark-border);
+                    color: #fff; font-weight: 600; font-size: 1.25rem;
+                    position: sticky; top: 0; background: var(--sidebar-bg); z-index: 10;
+                }
+
+                .brand-icon {
+                    width: 32px; height: 32px; background: #fff; color: var(--sidebar-bg);
+                    border-radius: 6px; display: grid; place-content: center;
+                }
+
+                .nav-section {
+                    padding: 1rem 1.5rem 0.5rem; color: #94a3b8; font-size: .75rem;
+                    text-transform: uppercase; font-weight: 600; letter-spacing: .5px;
+                    display: flex; align-items: center; gap: 8px; margin-top: 1rem;
+                }
+
+                .nav-section:first-of-type { margin-top: 0.5rem; }
+                .nav-section i { font-size: 0.9rem; }
+
+                .nav-link {
+                    display: flex; align-items: center; gap: 12px; padding: .75rem 1.5rem;
+                    margin: 0 .5rem; width: calc(100% - 1rem); color: #94a3b8;
+                    text-decoration: none; border-radius: 6px; transition: var(--transition);
+                    border: none; background: none; text-align: left; font-size: 0.875rem;
+                    cursor: pointer;
+                }
+
+                .nav-link:hover, .nav-link.active {
+                    background: var(--sidebar-hover); color: #fff;
+                }
+
+                .nav-link i { width: 20px; text-align: center; font-size: 1rem; }
+
+                .nav-badge {
+                    margin-left: auto; background: var(--primary); color: white;
+                    padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.7rem;
+                    font-weight: 600; min-width: 24px; text-align: center;
+                }
+
+                .nav-badge.success { background: var(--success); }
+                .nav-badge.warning { background: var(--warning); }
+
+                .sidebar-content {
+                    height: calc(100vh - 80px); overflow-y: auto; padding-bottom: 20px;
+                }
+
+                .sidebar-content::-webkit-scrollbar { width: 6px; }
+                .sidebar-content::-webkit-scrollbar-track {
+                    background: rgba(255, 255, 255, 0.05); border-radius: 10px;
+                }
+                .sidebar-content::-webkit-scrollbar-thumb {
+                    background: rgba(255, 255, 255, 0.1); border-radius: 10px;
+                }
+                .sidebar-content::-webkit-scrollbar-thumb:hover {
+                    background: rgba(255, 255, 255, 0.2);
+                }
+
+                /* === MAIN CONTENT === */
+                .main-content { margin-left: 280px; min-height: 100vh; transition: var(--transition); }
+
+                .top-header {
+                    display: flex; justify-content: space-between; align-items: center;
+                    background: var(--dark-card); border-bottom: 1px solid var(--dark-border);
+                    padding: .75rem 1.5rem; position: sticky; top: 0; z-index: 100;
+                }
+
+                .page-title { font-size: 1.5rem; font-weight: 600; margin: 0; }
+
+                .content-area { padding: 1.5rem; }
+
+                /* === CONTROLS BAR WITH RIGHT-SIDE FILTER === */
+                .controls-bar {
+                    display: grid;
+                    grid-template-columns: 1fr auto auto;
+                    gap: 1.5rem;
+                    align-items: center;
+                    margin-bottom: 1.5rem;
+                    background: var(--dark-card);
+                    border: 1px solid var(--dark-border);
+                    border-radius: 10px;
+                    padding: 1rem;
+                }
+
+                .search-box {
+                    position: relative;
+                    min-width: 300px;
+                }
+
+                .search-box input {
+                    width: 100%;
+                    padding: .6rem .75rem .6rem 2.5rem;
+                    border-radius: 8px;
+                    border: 1px solid var(--dark-border);
+                    background: var(--dark-bg);
+                    color: var(--dark-text);
+                    font-size: .875rem;
+                    transition: var(--transition);
+                }
+
+                .search-box input:focus {
+                    border-color: var(--primary);
+                    box-shadow: 0 0 0 3px rgba(99,102,241,.1);
+                    outline: none;
+                }
+
+                .search-box i {
+                    position: absolute;
+                    left: .75rem;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    color: var(--dark-text-secondary);
+                }
+
+                /* === EMPLOYEE COUNT BUBBLE === */
+                .employee-count-bubble {
+                    display: flex;
+                    align-items: center;
+                    gap: .5rem;
+                    padding: .6rem 1rem;
+                    background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+                    border-radius: 50px;
+                    color: white;
+                    font-weight: 600;
+                    font-size: .875rem;
+                    white-space: nowrap;
+                    box-shadow: 0 4px 10px rgba(99, 102, 241, 0.2);
+                }
+
+                .employee-count-bubble i {
+                    font-size: 1rem;
+                }
+
+                .employee-count-bubble .count-number {
+                    background: rgba(255, 255, 255, 0.2);
+                    padding: .2rem .5rem;
+                    border-radius: 12px;
+                    font-size: .8rem;
+                    font-weight: 700;
+                }
+
+                /* === FILTER DROPDOWN === */
+                .filter-dropdown {
+                    position: relative;
+                }
+
+                .filter-dropdown-btn {
+                    display: flex;
+                    align-items: center;
+                    gap: .5rem;
+                    padding: .6rem 1rem;
+                    border-radius: 8px;
+                    border: 1px solid var(--dark-border);
+                    background: var(--dark-bg);
+                    color: var(--dark-text);
+                    font-size: .875rem;
+                    cursor: pointer;
+                    transition: var(--transition);
+                    white-space: nowrap;
+                }
+
+                .filter-dropdown-btn:hover {
+                    border-color: var(--primary);
+                    background: rgba(99, 102, 241, 0.05);
+                }
+
+                .filter-dropdown-btn i {
+                    transition: var(--transition);
+                }
+
+                .filter-dropdown-btn.active i {
+                    transform: rotate(180deg);
+                }
+
+                .filter-dropdown-menu {
+                    position: absolute;
+                    top: 100%;
+                    right: 0;
+                    margin-top: .5rem;
+                    background: var(--dark-card);
+                    border: 1px solid var(--dark-border);
+                    border-radius: 8px;
+                    box-shadow: 0 10px 25px rgba(0,0,0,.2);
+                    min-width: 180px;
+                    z-index: 1000;
+                    opacity: 0;
+                    visibility: hidden;
+                    transform: translateY(-10px);
+                    transition: var(--transition);
+                }
+
+                .filter-dropdown-menu.show {
+                    opacity: 1;
+                    visibility: visible;
+                    transform: translateY(0);
+                }
+
+                .filter-option {
+                    padding: .75rem 1rem;
+                    cursor: pointer;
+                    transition: var(--transition);
+                    color: var(--dark-text);
+                    font-size: .875rem;
+                    border-bottom: 1px solid var(--dark-border);
+                }
+
+                .filter-option:last-child {
+                    border-bottom: none;
+                }
+
+                .filter-option:hover {
+                    background: var(--sidebar-hover);
+                }
+
+                .filter-option.active {
+                    background: rgba(99, 102, 241, 0.1);
+                    color: var(--primary);
+                }
+
+                .filter-option.active::before {
+                    content: '✓';
+                    margin-right: .5rem;
+                }
+
+               /* === TABLE STYLES === */
+              .table-container {
+            background: var(--dark-card);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--dark-border);
+            overflow-x: auto; /* Horizontal scrolling only when needed */
+            -webkit-overflow-scrolling: touch;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            /* REMOVED: max-width to allow proper alignment */
+        }
+
+              .table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: .875rem;
+            margin: 0;
+            color: var(--dark-text);
+            /* CHANGED: Removed min-width to prevent forced scrolling when not needed */
+        }
+                .table thead {
+                    background: rgba(0, 0, 0, 0.3); position: sticky; top: 0; z-index: 10;
+                }
+
+                .table th {
+                    text-transform: uppercase; font-size: .75rem; font-weight: 600;
+                    color: var(--dark-text-secondary) !important; padding: 1rem .75rem;
+                    border-bottom: 1px solid var(--dark-border); background: rgba(0, 0, 0, 0.3);
+                    white-space: nowrap;
+                }
+
+                .table td {
+                    padding: .875rem .75rem; border-top: 1px solid var(--dark-border);
+                    vertical-align: middle; color: var(--dark-text) !important;
+                    background: var(--dark-card); white-space: nowrap;
+                }
+
+                .table tbody tr {
+                    transition: var(--transition);
+                }
+
+                .table tbody tr:hover {
+                    background: rgba(255, 255, 255, .05) !important; transform: translateX(2px);
+                }
+
+                .table tbody tr:nth-child(even) {
+                    background: rgba(255, 255, 255, 0.02);
+                }
+
+                .table tbody tr.hidden {
+                    display: none;
+                }
+
+                /* === ACTION BUTTONS === */
+                .action-buttons {
+                    display: flex; gap: .375rem; justify-content: flex-end;
+                }
+
+                .btn-action {
+                    width: 32px; height: 32px; border-radius: 6px;
+                    display: inline-flex; align-items: center; justify-content: center;
+                    border: none; cursor: pointer; transition: var(--transition);
+                    text-decoration: none; font-size: .8rem;
+                }
+
+                .btn-view {
+                    background: rgba(14, 165, 233, 0.1); color: #0ea5e9;
+                    border: 1px solid rgba(14, 165, 233, 0.2);
+                }
+                .btn-start {
+                    background: rgba(99, 102, 241, 0.1); color: #6366f1;
+                    border: 1px solid rgba(99, 102, 241, 0.2);
+                }
+
+                .btn-view:hover { background: #0ea5e9; color: white; }
+                .btn-start:hover { background: #6366f1; color: white; }
+
+                /* === EMPTY STATE === */
+                .empty-state {
+                    text-align: center; padding: 3rem 2rem; color: var(--dark-text-secondary);
+                }
+
+                .empty-state i {
+                    font-size: 3rem; margin-bottom: 1rem; opacity: .4;
+                }
+
+                .empty-state h4 {
+                    color: var(--dark-text-secondary); margin-bottom: .5rem; font-weight: 600;
+                }
+
+                .empty-state p {
+                    margin-bottom: 1.5rem; color: var(--dark-text-secondary);
+                }
+
+                /* === ALERTS === */
+                .alert {
+                    padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1rem;
+                    border: 1px solid transparent; display: flex; align-items: center;
+                }
+
+                .alert-danger {
+                    background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.2);
+                    color: #ef4444;
+                }
+
+                /* === MOBILE MENU === */
+                .mobile-menu-toggle {
+                    display: none; background: none; border: none; color: var(--dark-text);
+                    font-size: 1.5rem; cursor: pointer; padding: 0.5rem;
+                    position: fixed; top: 1rem; left: 1rem; z-index: 1001;
+                }
+
+                /* === RESPONSIVE === */
+                @media(max-width: 992px) {
+                    .controls-bar {
+                        grid-template-columns: 1fr;
+                        gap: .75rem;
+                    }
+
+                    .employee-count-bubble {
+                        justify-self: center;
+                    }
+
+                    .filter-dropdown {
+                        justify-self: end;
+                    }
+                }
+
+                @media(max-width: 768px) {
+                    .mobile-menu-toggle { display: block; }
+                    .sidebar { transform: translateX(-100%); }
+                    .sidebar.active { transform: translateX(0); }
+                    .main-content { margin-left: 0; }
+                    .top-header { flex-direction: column; gap: 1rem; padding: 1rem; }
+                    .content-area { padding: 1rem; }
+
+                    .filter-dropdown {
+                        justify-self: stretch;
+                    }
+
+                    .filter-dropdown-btn {
+                        width: 100%;
+                        justify-content: space-between;
+                    }
+                }
+
+                @media(max-width: 576px) {
+                    .search-box {
+                        min-width: 100%;
+                    }
+
+                    .filter-dropdown-menu {
+                        left: 0;
+                        right: 0;
+                    }
+
+                    .table-container { overflow-x: auto; }
+                    .table { min-width: 600px; }
+                    .action-buttons { gap: .25rem; }
+                    .btn-action { width: 28px; height: 28px; }
+                }
+    </style>
+</head>
+<body>
+
+<!-- === MOBILE MENU TOGGLE === -->
+<button class="mobile-menu-toggle" id="mobileMenuToggle">
+    <i class="fas fa-bars"></i>
+</button>
+
+<!-- === SIDEBAR === -->
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+        <div class="brand-icon"><i class="fas fa-users"></i></div>
+        <span>Menti's IT Solutions</span>
+    </div>
+
+    <div class="sidebar-content">
+        <nav class="mt-3">
+            <!-- Dashboard Section -->
+            <div class="nav-section">
+                <i class="fas fa-home"></i>
+                Dashboard
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard">
+                        <i class="fas fa-th-large"></i>
+                        <span>Overview</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Recruitment Management Section -->
+            <div class="nav-section">
+                <i class="fas fa-user-tie"></i>
+                Recruitment Management
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/job-form">
+                        <i class="fas fa-briefcase"></i>
+                        <span>Job Postings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/applications">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Applications</span>
+                        <span class="nav-badge">12</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/interview-management">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Interview Schedule</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/dashboard/offer-candidates">
+                        <i class="fas fa-file-contract"></i>
+                        <span>Offer Letters</span>
+                        <span class="nav-badge warning" th:text="${offerCount}">0</span>
+                    </a>
+                </li>
+
+            </ul>
+
+            <!-- Employee Management Section -->
+            <div class="nav-section">
+                <i class="fas fa-users-cog"></i>
+                Employee Management
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/add-employee">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Add Employee</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/employees">
+                        <i class="fas fa-id-card"></i>
+                        <span>All Employees</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/onboarding}">
+                        <i class="fas fa-clipboard-check"></i>
+                        <span>Onboarding</span>
+                        <span class="nav-badge warning" th:text="${totalPending != null ? totalPending : 0}">0</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/attendance">
+                        <i class="fas fa-user-clock"></i>
+                        <span>Attendance</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/leave-management">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Leave Management</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/performance">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Performance Review</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Organization Structure Section -->
+            <div class="nav-section">
+                <i class="fas fa-building"></i>
+                Organization
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/company-info">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Company Information</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/company-structure">
+                        <i class="fas fa-sitemap"></i>
+                        <span>Organization Chart</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/add-department">
+                        <i class="fas fa-plus-square"></i>
+                        <span>Departments</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/locations">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Locations</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Administration Section -->
+            <div class="nav-section">
+                <i class="fas fa-user-shield"></i>
+                Administration
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/user-management">
+                        <i class="fas fa-users-cog"></i>
+                        <span>User Management</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/role-permissions">
+                        <i class="fas fa-user-tag"></i>
+                        <span>Roles & Permissions</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/access-control">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Access Control</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Finance Section -->
+            <div class="nav-section">
+                <i class="fas fa-money-bill-wave"></i>
+                Finance
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/payroll">
+                        <i class="fas fa-wallet"></i>
+                        <span>Payroll Management</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- System Section -->
+            <div class="nav-section">
+                <i class="fas fa-cogs"></i>
+                System
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/system-settings">
+                        <i class="fas fa-cog"></i>
+                        <span>System Settings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/notifications">
+                        <i class="fas fa-bell"></i>
+                        <span>Notifications</span>
+                        <span class="nav-badge">3</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/audit-log">
+                        <i class="fas fa-history"></i>
+                        <span>Audit Log</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<!-- === MAIN CONTENT === -->
+<div class="main-content">
+    <header class="top-header">
+        <h1 class="page-title">Offer Letter Candidates</h1>
+    </header>
+
+    <div class="content-area">
+        <!-- Error Alert -->
+        <div th:if="${param.error}" id="errorAlert" class="alert alert-danger" role="alert" style="display: none;">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <span th:text="${param.error}"></span>
+            <button type="button" class="btn-close" onclick="this.parentElement.remove()" style="margin-left: auto; background: none; border: none; color: inherit; cursor: pointer;">&times;</button>
+        </div>
+
+        <!-- Search, Count & Filter -->
+        <div class="controls-bar">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search by candidate name or position...">
+            </div>
+
+            <div class="employee-count-bubble">
+                <i class="fas fa-file-contract"></i>
+                <span class="count-text">Offers:</span>
+                <span class="count-number" id="recordCount">0</span>
+            </div>
+
+            <div class="filter-dropdown">
+                <button class="filter-dropdown-btn" id="filterDropdownBtn">
+                    <i class="fas fa-filter"></i>
+                    <span id="selectedFilterText">All Time</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="filter-dropdown-menu" id="filterDropdownMenu">
+                    <div class="filter-option active" data-value="all" data-text="All Time">All Time</div>
+                    <div class="filter-option" data-value="today" data-text="Today">Today</div>
+                    <div class="filter-option" data-value="week" data-text="Last 7 Days">Last 7 Days</div>
+                    <div class="filter-option" data-value="month" data-text="Last 30 Days">Last 30 Days</div>
+                    <div class="filter-option" data-value="3months" data-text="Last 3 Months">Last 3 Months</div>
+                    <div class="filter-option" data-value="6months" data-text="Last 6 Months">Last 6 Months</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table Container -->
+        <div class="table-container">
+            <table class="table table-dark table-striped" id="offersTable">
+                <thead>
+                <tr>
+                    <th>Employee</th>
+                    <th>Email</th>
+                    <th>Position</th>
+                    <th>Generated Date</th>
+                    <th style="text-align: center; width: 120px;">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="offer : ${offerCandidates}"
+                    th:attr="data-name=${offer.candidateName},data-email=${offer.candidateEmail},data-position=${offer.designation},data-status=${offer.status},data-date=${#temporals.format(offer.createdDate, 'yyyy-MM-dd')}">
+                    <td th:text="${offer.candidateName}">John Doe</td>
+                    <td th:text="${offer.candidateEmail}">john@example.com</td>
+                    <td th:text="${offer.designation}">Software Engineer</td>
+                    <td th:text="${#temporals.format(offer.createdDate, 'dd/MM/yyyy HH:mm')}">25/11/2025 20:05</td>
+                    <td style="text-align: center;">
+                        <div class="action-buttons">
+                            <a th:href="@{/dashboard/view-offer/{id}(id=${offer.id})}" target="_blank" class="btn-action btn-view" title="View Offer">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <button th:if="${offer.status != 'SENT'}" th:onclick="|startOnboarding(${offer.id})|" class="btn-action btn-start" title="Start Onboarding">
+                                <i class="fas fa-play"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${offerCandidates == null or offerCandidates.empty}">
+                    <td colspan="4">
+                        <div class="empty-state">
+                            <i class="fas fa-file-contract"></i>
+                            <h4>No Offer Candidates Found</h4>
+                            <p>There are no pending offer letters at the moment.</p>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/offer-auto-view.js}"></script>
+<script>
+    // === SIDEBAR TOGGLE ===
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.getElementById('sidebar');
+
+        if (mobileMenuToggle) {
+            mobileMenuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+            });
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 768 &&
+                !sidebar.contains(event.target) &&
+                !mobileMenuToggle.contains(event.target) &&
+                sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
+        });
+
+        // Show error alert if present
+        const errorAlert = document.getElementById('errorAlert');
+        if (errorAlert && errorAlert.style.display !== 'none') {
+            setTimeout(() => errorAlert.remove(), 8000);
+        }
+
+        // Initialize search and filters
+        initializeSearchAndFilters();
+    });
+
+    // === SEARCH & FILTER FUNCTIONALITY ===
+    function initializeSearchAndFilters() {
+        const searchInput = document.getElementById('searchInput');
+        const filterDropdownBtn = document.getElementById('filterDropdownBtn');
+        const filterDropdownMenu = document.getElementById('filterDropdownMenu');
+        const selectedFilterText = document.getElementById('selectedFilterText');
+        const filterOptions = document.querySelectorAll('.filter-option');
+        const tableRows = document.querySelectorAll('#offersTable tbody tr[data-name]');
+
+        // Update record count
+        updateRecordCount(tableRows.length);
+
+        // Filter dropdown toggle
+        filterDropdownBtn.addEventListener('click', function() {
+            filterDropdownMenu.classList.toggle('show');
+            this.classList.toggle('active');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!filterDropdownBtn.contains(event.target) && !filterDropdownMenu.contains(event.target)) {
+                filterDropdownMenu.classList.remove('show');
+                filterDropdownBtn.classList.remove('active');
+            }
+        });
+
+        // Filter option selection
+        filterOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                // Update active state
+                filterOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+
+                // Update button text
+                const text = this.getAttribute('data-text');
+                const value = this.getAttribute('data-value');
+                selectedFilterText.textContent = text;
+
+                // Close dropdown
+                filterDropdownMenu.classList.remove('show');
+                filterDropdownBtn.classList.remove('active');
+
+                // Apply filter
+                applyFilters(value);
+            });
+        });
+
+        // Search input
+        searchInput.addEventListener('input', function() {
+            const currentFilter = document.querySelector('.filter-option.active').getAttribute('data-value');
+            applyFilters(currentFilter);
+        });
+
+        function applyFilters(dateFilter) {
+            const searchTerm = searchInput.value.toLowerCase();
+            let visibleCount = 0;
+
+            const today = new Date();
+            const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            const startOfWeek = new Date(today);
+            startOfWeek.setDate(today.getDate() - 7);
+            const startOfMonth = new Date(today);
+            startOfMonth.setDate(today.getDate() - 30);
+            const startOf3Months = new Date(today);
+            startOf3Months.setMonth(today.getMonth() - 3);
+            const startOf6Months = new Date(today);
+            startOf6Months.setMonth(today.getMonth() - 6);
+
+            tableRows.forEach(row => {
+                const name = row.getAttribute('data-name').toLowerCase();
+                const position = row.getAttribute('data-position').toLowerCase();
+                const dateStr = row.getAttribute('data-date');
+                const rowDate = new Date(dateStr);
+
+                let visible = true;
+
+                // Search filter
+                if (searchTerm && !name.includes(searchTerm) && !position.includes(searchTerm)) {
+                    visible = false;
+                }
+
+                // Date filter
+                if (dateFilter !== 'all') {
+                    if (dateFilter === 'today' && rowDate < startOfToday) {
+                        visible = false;
+                    } else if (dateFilter === 'week' && rowDate < startOfWeek) {
+                        visible = false;
+                    } else if (dateFilter === 'month' && rowDate < startOfMonth) {
+                        visible = false;
+                    } else if (dateFilter === '3months' && rowDate < startOf3Months) {
+                        visible = false;
+                    } else if (dateFilter === '6months' && rowDate < startOf6Months) {
+                        visible = false;
+                    }
+                }
+
+                row.classList.toggle('hidden', !visible);
+                if (visible) visibleCount++;
+            });
+
+            updateRecordCount(visibleCount);
+        }
+
+        function updateRecordCount(count) {
+            const totalRecords = document.querySelectorAll('#offersTable tbody tr[data-name]').length;
+            const countElement = document.getElementById('recordCount');
+            if (countElement) {
+                countElement.textContent = count;
+            }
+        }
+    }
+
+    // === START ONBOARDING FUNCTION ===
+    function startOnboarding(offerId) {
+        if (!confirm('Start onboarding for this candidate? This will create an employee record.')) {
+            return;
+        }
+
+        const btn = event.target.closest('.btn-action');
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        btn.disabled = true;
+
+        fetch(`/dashboard/start-onboarding/${offerId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(r => {
+            if (r.redirected) {
+                window.location.href = r.url;
+            } else {
+                return r.json();
+            }
+        })
+        .then(data => {
+            if (data && data.error) {
+                alert('Failed to start onboarding: ' + data.error);
+                btn.innerHTML = originalHtml;
+                btn.disabled = false;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error starting onboarding');
+            btn.innerHTML = originalHtml;
+            btn.disabled = false;
+        });
+    }
+</script>
+</body>
+</html>

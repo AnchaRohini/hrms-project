@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Applications - HR Recruitment Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --dark-bg: #121826;
+            --dark-card: #1a2235;
+            --dark-border: #2a3655;
+            --dark-text: #e2e8f0;
+            --dark-text-secondary: #94a3b8;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #0ea5e9;
+            --sidebar-bg: #0f172a;
+            --sidebar-hover: #1e293b;
+            --transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: var(--dark-text);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .sidebar {
+            min-height: 100vh;
+            width: 250px;
+            background: var(--sidebar-bg);
+            position: fixed;
+            left: 0;
+            top: 0;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, .2);
+            transition: var(--transition);
+            z-index: 1000;
+        }
+
+        .sidebar-brand {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--dark-border);
+            color: white;
+            font-weight: 600;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-brand .brand-icon {
+            width: 32px;
+            height: 32px;
+            background: white;
+            color: var(--sidebar-bg);
+            border-radius: 6px;
+            display: grid;
+            place-content: center;
+        }
+
+        .nav-link {
+            color: var(--dark-text-secondary);
+            padding: .75rem 1.5rem;
+            font-size: .875rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: var(--transition);
+            cursor: pointer;
+            border-radius: 6px;
+            margin: 0 .5rem;
+            width: calc(100% - 1rem);
+            text-decoration: none;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--sidebar-hover);
+            color: white;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            min-height: 100vh;
+            transition: var(--transition);
+        }
+
+        .top-header {
+            background: var(--dark-card);
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--dark-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark-text);
+            margin: 0 0 0.25rem 0;
+        }
+
+        .breadcrumb {
+            background: transparent;
+            padding: 0;
+            margin: 0;
+            font-size: .875rem;
+        }
+
+        .breadcrumb-item {
+            color: var(--dark-text-secondary);
+        }
+
+        .breadcrumb-item.active {
+            color: var(--primary);
+        }
+
+        .content-area {
+            padding: 1.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+        }
+
+        .stat-card.active {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-text);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: .875rem;
+            color: var(--dark-text-secondary);
+            margin-top: .5rem;
+        }
+
+        .status-filter {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .status-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: .875rem;
+            font-weight: 500;
+            border: 1px solid var(--dark-border);
+            background: var(--dark-card);
+            color: var(--dark-text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .status-btn:hover {
+            background: var(--dark-border);
+            color: var(--dark-text);
+        }
+
+        .status-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .table-container {
+            background: var(--dark-card);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--dark-border);
+        }
+
+        /* Dark Table Styling */
+        .table-dark {
+            --bs-table-bg: transparent;
+            --bs-table-striped-bg: rgba(255, 255, 255, 0.05);
+            --bs-table-striped-color: var(--dark-text);
+            --bs-table-active-bg: rgba(255, 255, 255, 0.1);
+            --bs-table-active-color: var(--dark-text);
+            --bs-table-hover-bg: rgba(255, 255, 255, 0.075);
+            --bs-table-hover-color: var(--dark-text);
+            color: var(--dark-text);
+            border-color: var(--dark-border);
+            margin-bottom: 0;
+        }
+
+        .table-dark th {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-bottom: 2px solid var(--dark-border);
+            color: var(--dark-text-secondary);
+            font-weight: 600;
+            padding: 1rem .75rem;
+            font-size: .75rem;
+            text-transform: uppercase;
+            vertical-align: middle;
+        }
+
+        .table-dark td {
+            border-top: 1px solid var(--dark-border);
+            padding: 1rem .75rem;
+            vertical-align: middle;
+            background-color: transparent;
+            color: var(--dark-text);
+        }
+
+        .table-dark.table-striped > tbody > tr:nth-of-type(odd) > * {
+            --bs-table-accent-bg: rgba(255, 255, 255, 0.03);
+            color: var(--dark-text);
+        }
+
+        .table-dark tbody tr:hover {
+            background-color: var(--bs-table-hover-bg) !important;
+            color: var(--bs-table-hover-color) !important;
+        }
+
+        .btn-schedule {
+            background: rgba(16, 185, 129, .2);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, .3);
+        }
+
+        .btn-schedule:hover {
+            background: #10b981;
+            color: white;
+        }
+
+        .status-badge {
+            padding: .25rem .75rem;
+            border-radius: 12px;
+            font-size: .75rem;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+
+        .status-applied {
+            background: rgba(148, 163, 184, .2);
+            color: #94a3b8;
+        }
+
+        .status-in-review {
+            background: rgba(14, 165, 233, .2);
+            color: #0ea5e9;
+        }
+
+        .status-interview {
+            background: rgba(245, 158, 11, .2);
+            color: #f59e0b;
+        }
+
+        .status-interviewed {
+            background: rgba(139, 92, 246, .2);
+            color: #8b5cf6;
+        }
+
+        .status-onhold {
+            background: rgba(139, 92, 246, .2);
+            color: #8b5cf6;
+        }
+
+        .status-hired {
+            background: rgba(16, 185, 129, .2);
+            color: #10b981;
+        }
+
+        .status-rejected {
+            background: rgba(239, 68, 68, .2);
+            color: #ef4444;
+        }
+
+        .btn-action {
+            padding: .375rem .75rem;
+            border-radius: 6px;
+            font-size: .75rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: .25rem;
+            text-decoration: none;
+        }
+
+        .btn-view {
+            background: rgba(14, 165, 233, .2);
+            color: #0ea5e9;
+            border: 1px solid rgba(14, 165, 233, .3);
+        }
+
+        .btn-view:hover {
+            background: #0ea5e9;
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--dark-text-secondary);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: .5;
+        }
+
+        .nav-section {
+            color: var(--dark-text-secondary);
+            font-size: .75rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            padding: 1rem 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .nav-badge {
+            background: var(--primary);
+            color: white;
+            border-radius: 10px;
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            margin-left: auto;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .status-filter {
+                flex-direction: column;
+            }
+            .status-btn {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="sidebar-brand">
+        <div class="brand-icon"><i class="fas fa-users"></i></div>
+        <span>Menti's IT Solutions</span>
+    </div>
+
+    <div class="sidebar-content">
+        <nav class="mt-3">
+            <!-- Dashboard Section -->
+            <div class="nav-section">
+                <i class="fas fa-home"></i>
+                Dashboard
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <!-- UPDATED: Use /dashboard/hr for HR dashboard -->
+                    <a class="nav-link active" href="/dashboard/hr">
+                        <i class="fas fa-th-large"></i>
+                        <span>Overview</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Recruitment Management Section -->
+            <div class="nav-section">
+                <i class="fas fa-user-tie"></i>
+                Recruitment Management
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/job-form">
+                        <i class="fas fa-briefcase"></i>
+                        <span>Job Postings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/dashboard/applications">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Applications</span>
+                        <span class="nav-badge">12</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/interview-management">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Interview Schedule</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/offer-candidates">
+                        <i class="fas fa-file-contract"></i>
+                        <span>Offer Letters</span>
+                        <span class="nav-badge warning">0</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/hired-candidates">
+                        <i class="fas fa-user-check"></i>
+                        <span>Hired Candidates</span>
+                        <span class="nav-badge success">0</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Employee Management Section -->
+            <div class="nav-section">
+                <i class="fas fa-users-cog"></i>
+                Employee Management
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/add-employee">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Add Employee</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/employees">
+                        <i class="fas fa-id-card"></i>
+                        <span>All Employees</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/onboarding">
+                        <i class="fas fa-clipboard-check"></i>
+                        <span>Onboarding</span>
+                        <span class="nav-badge warning">0</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/attendance">
+                        <i class="fas fa-user-clock"></i>
+                        <span>Attendance</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/leave-management">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Leave Management</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/performance">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Performance Review</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Organization Structure Section -->
+            <div class="nav-section">
+                <i class="fas fa-building"></i>
+                Organization
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/company-info">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Company Information</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/company-structure">
+                        <i class="fas fa-sitemap"></i>
+                        <span>Organization Chart</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/add-department">
+                        <i class="fas fa-plus-square"></i>
+                        <span>Departments</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/locations">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Locations</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Administration Section -->
+            <div class="nav-section">
+                <i class="fas fa-user-shield"></i>
+                Administration
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/user-management">
+                        <i class="fas fa-users-cog"></i>
+                        <span>User Management</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/role-permissions">
+                        <i class="fas fa-user-tag"></i>
+                        <span>Roles & Permissions</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/access-control">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Access Control</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Finance Section -->
+            <div class="nav-section">
+                <i class="fas fa-money-bill-wave"></i>
+                Finance
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/payroll">
+                        <i class="fas fa-wallet"></i>
+                        <span>Payroll Management</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- System Section -->
+            <div class="nav-section">
+                <i class="fas fa-cogs"></i>
+                System
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/system-settings">
+                        <i class="fas fa-cog"></i>
+                        <span>System Settings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/notifications">
+                        <i class="fas fa-bell"></i>
+                        <span>Notifications</span>
+                        <span class="nav-badge">3</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/audit-log">
+                        <i class="fas fa-history"></i>
+                        <span>Audit Log</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Header -->
+    <header class="top-header">
+        <div>
+            <h1 class="page-title">Applications</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/dashboard" style="color: var(--dark-text-secondary); text-decoration: none;">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Applications</li>
+                    <li class="nav-item" style="display: inline;">
+                        <a class="nav-link" href="/dashboard/hired-candidates" style="display: inline-flex; align-items: center; gap: 5px; padding: 0 10px;">
+                            <i class="fas fa-user-check"></i>
+                            <span>Hired Candidates</span>
+                            <span class="nav-badge" th:text="${hiredCount}">0</span>
+                        </a>
+                    </li>
+                </ol>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Content Area -->
+    <div class="content-area">
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card" onclick="filterByStatus('all')" th:classappend="${selectedStatus == 'all'} ? 'active' : ''">
+                <div class="stat-value" th:text="${totalApplications}">0</div>
+                <div class="stat-label">Total Applications</div>
+            </div>
+            <div class="stat-card" onclick="filterByStatus('Applied')" th:classappend="${selectedStatus == 'Applied'} ? 'active' : ''">
+                <div class="stat-value" th:text="${newApplications}">0</div>
+                <div class="stat-label">New Applications</div>
+            </div>
+            <div class="stat-card" onclick="filterByStatus('In Review')" th:classappend="${selectedStatus == 'In Review'} ? 'active' : ''">
+                <div class="stat-value" th:text="${inReviewCount}">0</div>
+                <div class="stat-label">In Review</div>
+            </div>
+            <div class="stat-card" onclick="filterByStatus('Interview')" th:classappend="${selectedStatus == 'Interview'} ? 'active' : ''">
+                <div class="stat-value" th:text="${interviewCount}">0</div>
+                <div class="stat-label">Interview Scheduled</div>
+            </div>
+            <div class="stat-card" onclick="window.location.href='/dashboard/hired-candidates'"
+                 th:classappend="${selectedStatus == 'Hired'} ? 'active' : ''"
+                 style="cursor: pointer;">
+                <div class="stat-value" th:text="${hiredCount}">0</div>
+                <div class="stat-label">Hired</div>
+            </div>
+        </div>
+
+        <!-- Status Filter Buttons -->
+        <div class="status-filter">
+            <a th:href="@{/dashboard/applications}" class="status-btn" th:classappend="${selectedStatus == 'all'} ? 'active' : ''">All Applications</a>
+            <a th:href="@{/dashboard/applications(status='Applied')}" class="status-btn" th:classappend="${selectedStatus == 'Applied'} ? 'active' : ''">Applied</a>
+            <a th:href="@{/dashboard/applications(status='In Review')}" class="status-btn" th:classappend="${selectedStatus == 'In Review'} ? 'active' : ''">In Review</a>
+            <a th:href="@{/dashboard/applications(status='Interview')}" class="status-btn" th:classappend="${selectedStatus == 'Interview'} ? 'active' : ''">Interview</a>
+            <a th:href="@{/dashboard/applications(status='Interviewed')}" class="status-btn" th:classappend="${selectedStatus == 'Interviewed'} ? 'active' : ''">Interviewed</a>
+            <a th:href="@{/dashboard/applications(status='On Hold')}" class="status-btn" th:classappend="${selectedStatus == 'On Hold'} ? 'active' : ''">On Hold</a>
+            <a th:href="@{/dashboard/applications(status='Hired')}" class="status-btn" th:classappend="${selectedStatus == 'Hired'} ? 'active' : ''">Hired</a>
+            <a th:href="@{/dashboard/applications(status='Rejected')}" class="status-btn" th:classappend="${selectedStatus == 'Rejected'} ? 'active' : ''">Rejected</a>
+        </div>
+
+        <!-- Applications Table -->
+        <div class="table-container">
+            <div class="table-responsive">
+                <table class="table table-dark table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th>Candidate</th>
+                        <th>Position</th>
+                        <th>Applied Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="app : ${applications}" th:if="${applications != null and !applications.empty}">
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-sm bg-primary rounded-circle text-white d-flex align-items-center justify-content-center me-2"
+                                     style="width: 32px; height: 32px; font-size: 0.8rem; background: linear-gradient(135deg, var(--primary), #4f46e5);"
+                                     th:text="${#strings.substring(app.firstName, 0, 1) + #strings.substring(app.lastName, 0, 1)}">
+                                    JD
+                                </div>
+                                <div>
+                                    <div th:text="${app.firstName + ' ' + app.lastName}" class="fw-semibold" style="color: var(--dark-text);">John Doe</div>
+                                    <div th:text="${app.email}" class="text-muted small" style="color: var(--dark-text-secondary);">email@example.com</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="color: var(--dark-text);" th:text="${app.jobTitle}">Senior Developer</td>
+                        <td style="color: var(--dark-text);" th:text="${app.displayApplicationDate}">Nov 15, 2023</td>
+                        <td>
+                            <span class="status-badge"
+                                  th:classappend="${app.status == 'Applied'} ? 'status-applied' :
+                                    (${app.status == 'In Review'} ? 'status-in-review' :
+                                    (${app.status == 'Interview'} ? 'status-interview' :
+                                    (${app.status == 'Interviewed'} ? 'status-interviewed' :
+                                    (${app.status == 'On Hold'} ? 'status-onhold' :
+                                    (${app.status == 'Hired'} ? 'status-hired' : 'status-rejected')))))"
+                                  th:text="${app.status}">Applied</span>
+                        </td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <a th:href="@{/dashboard/viewApplication/{id}(id=${app.id})}"
+                                   class="btn-action btn-view"
+                                   title="View Application">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+
+                                <a th:href="@{/dashboard/interview-schedule/{id}(id=${app.id})}"
+                                   class="btn-action btn-schedule"
+                                   title="Schedule Interview">
+                                    <i class="fas fa-calendar-plus"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${applications == null or applications.empty}">
+                        <td colspan="5" class="text-center text-muted py-4">
+                            <i class="fas fa-inbox fa-2x mb-2" style="color: var(--dark-text-secondary);"></i><br>
+                            <span style="color: var(--dark-text-secondary);" th:if="${selectedStatus == 'all'}">No applications found</span>
+                            <span style="color: var(--dark-text-secondary);" th:if="${selectedStatus != 'all'}">No <span th:text="${selectedStatus}"></span> applications found</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function filterByStatus(status) {
+        if (status === 'all') {
+            window.location.href = '/dashboard/applications';
+        } else {
+            window.location.href = '/dashboard/applications?status=' + status;
+        }
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Mobile sidebar toggle script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const sidebar = document.querySelector('.sidebar');
+
+        if (mobileMenuToggle) {
+            mobileMenuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+            });
+        }
+
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 768 &&
+                !sidebar.contains(event.target) &&
+                !mobileMenuToggle.contains(event.target) &&
+                sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
+        });
+    });
+</script>
+</body>
+</html>

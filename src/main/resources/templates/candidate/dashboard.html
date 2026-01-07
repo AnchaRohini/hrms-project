@@ -1,0 +1,2241 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org       ">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard – Menti's IT</title>
+
+    <!-- =====  EXTERNAL LIBS  ===== -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css       " rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css       ">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300       ;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- =====  CORE STYLES  ===== -->
+    <style>
+        :root {
+            --dark-bg: #121826;
+            --dark-card: #1a2235;
+            --dark-border: #2a3655;
+            --dark-text: #e2e8f0;
+            --dark-text-secondary: #94a3b8;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #0ea5e9;
+            --sidebar-bg: #0f172a;
+            --sidebar-hover: #1e293b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: var(--dark-text);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* ----------  TOP NAV  ---------- */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: var(--dark-card);
+            border-bottom: 1px solid var(--dark-border);
+            display: flex;
+            align-items: center;
+            padding: 0 32px;
+            z-index: 1000;
+        }
+        .nav-brand { font-size: 22px; font-weight: 700; color: white; text-decoration: none; }
+        .ms-auto {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* ----------  NOTIFICATION DROPDOWN  ---------- */
+        .notification-dropdown {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+        .notification-trigger {
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: background 0.2s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: transparent;
+            color: var(--dark-text);
+        }
+        .notification-trigger:hover { background: var(--sidebar-hover); }
+        .notification-trigger:focus { outline: none; box-shadow: 0 0 0 2px var(--primary); }
+        .notification-trigger i { font-size: 18px; }
+        .notification-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: var(--danger);
+            color: white;
+            font-size: 10px;
+            font-weight: 600;
+            min-width: 18px;
+            height: 18px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: translate(25%, -25%);
+            padding: 0 4px;
+            animation: pulse 2s infinite;
+        }
+        .notification-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            width: 320px;
+            max-height: 400px;
+            display: none;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            z-index: 1001;
+            overflow: hidden;
+        }
+        .notification-dropdown-menu.show { display: block; }
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--dark-border);
+        }
+        .notification-header h6 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark-text);
+        }
+        .notification-header a {
+            font-size: 11px;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        .notification-header a:hover { text-decoration: underline; }
+        .notification-list { max-height: 300px; overflow-y: auto; }
+        .notification-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--dark-border);
+            transition: background 0.2s ease;
+            cursor: pointer;
+        }
+        .notification-item:hover { background: var(--sidebar-hover); }
+        .notification-item.unread {
+            background: rgba(99, 102, 241, 0.05);
+            border-left: 3px solid var(--primary);
+        }
+        .notification-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .notification-icon.success { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        .notification-icon.error { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+        .notification-icon.info { background: rgba(14, 165, 233, 0.1); color: var(--info); }
+        .notification-content { flex: 1; min-width: 0; }
+        .notification-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--dark-text);
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .notification-message {
+            font-size: 11px;
+            color: var(--dark-text-secondary);
+            line-height: 1.3;
+            margin-bottom: 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .notification-time {
+            font-size: 10px;
+            color: var(--dark-text-secondary);
+            opacity: 0.8;
+        }
+        .notification-footer {
+            padding: 10px 16px;
+            border-top: 1px solid var(--dark-border);
+            text-align: center;
+        }
+        .notification-footer a {
+            font-size: 11px;
+            color: var(--primary);
+            text-decoration: none;
+            display: block;
+        }
+        .notification-footer a:hover { text-decoration: underline; }
+        .empty-notifications {
+            padding: 24px;
+            text-align: center;
+            color: var(--dark-text-secondary);
+            font-size: 13px;
+        }
+        .empty-notifications i {
+            font-size: 24px;
+            margin-bottom: 8px;
+            opacity: 0.5;
+        }
+
+        /* ----------  WORKING HOURS WIDGET  ---------- */
+        .working-hours-topnav {
+            position: relative;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+        .working-hours-topnav:hover { background: var(--sidebar-hover); }
+        .wh-topnav-content {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .wh-icon { font-size: 18px; color: var(--primary); }
+        .wh-details {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 2px;
+        }
+        .wh-time {
+            font-size: 13px;
+            font-weight: 600;
+            color: white;
+            line-height: 1;
+        }
+        .wh-label-mini {
+            font-size: 10px;
+            color: var(--dark-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .wh-tooltip {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            padding: 12px;
+            min-width: 150px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            z-index: 1001;
+        }
+        .working-hours-topnav:hover .wh-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+        .wh-tooltip-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 8px;
+        }
+        .wh-tooltip-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--dark-text-secondary);
+            margin-top: 8px;
+        }
+
+        /* ----------  MAIN LAYOUT  ---------- */
+        .main-container {
+            margin-top: 64px;
+            display: flex;
+            max-width: 100%;
+            padding: 24px 32px;
+            gap: 24px;
+            min-height: calc(100vh - 64px);
+        }
+        .left-sidebar {
+            width: 280px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 88px;
+            height: fit-content;
+        }
+        .main-content { flex: 1; min-width: 0; }
+        .right-sidebar {
+            width: 320px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 88px;
+            height: fit-content;
+        }
+        .main-container:has(#profile.tab-pane.active) .right-sidebar { display: none; }
+        .main-container:has(#profile.tab-pane.active) .main-content {
+            max-width: 100% !important;
+            flex: 1 1 100% !important;
+        }
+        .content-card {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            width: 100%;
+        }
+
+        /* ----------  SIDEBAR PROFILE CARD  ---------- */
+        .profile-card-wrapper {
+            text-align: center;
+            margin-bottom: 24px;
+            position: relative;
+        }
+        .profile-pic-sidebar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 0 auto 15px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .profile-img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+        .profile-fallback {
+            font-size: 40px;
+            color: white;
+            background: var(--primary);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        .profile-hover-icons {
+            position: absolute;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+            gap: 8px;
+        }
+        .profile-card-wrapper:hover .profile-hover-icons { display: flex; }
+        .btn-icon-round {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-icon-round:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* ----------  STATUS INDICATOR  ---------- */
+        .status-indicator-card {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--dark-card);
+            box-shadow: 0 0 0 2px var(--dark-border), 0 2px 8px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+        .status-indicator-card.active {
+            background: var(--success);
+            box-shadow: 0 0 0 2px var(--success), 0 2px 8px rgba(16, 185, 129, 0.4);
+            animation: pulse 2s infinite;
+        }
+        .status-indicator-card.inactive {
+            background: var(--danger);
+            box-shadow: 0 0 0 2px var(--danger), 0 2px 8px rgba(239, 68, 68, 0.4);
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7), 0 2px 8px rgba(16, 185, 129, 0.4); }
+            70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0), 0 2px 8px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0), 0 2px 8px rgba(16, 185, 129, 0.4); }
+        }
+        .status-indicator-card:hover { transform: scale(1.2); }
+
+        /* ----------  NAVIGATION  ---------- */
+        .nav-menu {
+            background: var(--sidebar-bg);
+            border: 1px solid var(--dark-border);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 16px 24px;
+            color: var(--dark-text-secondary);
+            text-decoration: none;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .menu-item.active, .menu-item:hover {
+            background: var(--sidebar-hover);
+            color: white;
+            border-left-color: var(--primary);
+        }
+        .menu-item i { width: 24px; margin-right: 12px; }
+
+        /* ----------  TABS  ---------- */
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; }
+        .sub-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: var(--dark-card);
+            padding: 5px;
+            border-radius: 12px;
+            border: 1px solid var(--dark-border);
+        }
+        .sub-nav-item {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            border: none;
+            background: none;
+            color: var(--dark-text-secondary);
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        .sub-nav-item.active { background: var(--primary); color: white; }
+        .sub-tab-content { display: none; width: 100%; }
+        .sub-tab-content.active { display: block; }
+
+        /* ----------  PROFILE CARDS  ---------- */
+        #profile.tab-pane .profile-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+        @media (max-width: 768px) {
+            #profile.tab-pane .profile-cards-grid { grid-template-columns: 1fr; }
+        }
+        .profile-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--dark-border);
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .profile-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+        }
+        .profile-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--card-accent, var(--primary));
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .card-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--card-accent, var(--primary));
+            color: #fff;
+            font-size: 18px;
+        }
+        .card-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #fff;
+            margin: 0;
+        }
+        .info-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .info-label {
+            font-size: 13px;
+            color: var(--dark-text-secondary);
+            flex: 0 0 42%;
+        }
+        .info-value {
+            font-size: 13px;
+            color: var(--dark-text);
+            text-align: right;
+            word-break: break-word;
+        }
+
+        /* ----------  DOCUMENTS TABLE  ---------- */
+        .documents-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 13px;
+            background: transparent;
+        }
+        .documents-table thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .documents-table th {
+            background: rgba(0, 0, 0, 0.3);
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 14px 12px;
+            border-bottom: 2px solid var(--primary);
+            color: var(--dark-text) !important;
+            text-align: left;
+            white-space: nowrap;
+        }
+        .documents-table th:nth-child(1) { width: 6%; text-align: center; }
+        .documents-table th:nth-child(2) { width: 28%; }
+        .documents-table th:nth-child(3) { width: 10%; text-align: center; }
+        .documents-table th:nth-child(4) { width: 18%; }
+        .documents-table th:nth-child(5) { width: 22%; }
+        .documents-table th:nth-child(6) { width: 16%; text-align: center; }
+        .documents-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--dark-border);
+            vertical-align: middle;
+            transition: background 0.2s ease;
+        }
+        .documents-table tbody tr:hover { background: rgba(99, 102, 241, 0.05); }
+        .documents-table td:nth-child(1) { text-align: center; font-weight: 600; color: var(--primary); }
+        .documents-table td:nth-child(2) { text-align: left; }
+        .documents-table td:nth-child(3) { text-align: center; }
+        .documents-table td:nth-child(4) { text-align: left; font-size: 12px; color: var(--dark-text-secondary); }
+        .documents-table td:nth-child(5) { text-align: left; vertical-align: top; padding: 10px; }
+        .documents-table td:nth-child(6) { text-align: center; }
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            display: inline-block;
+            min-width: 75px;
+            text-align: center;
+        }
+        .status-submitted { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+        .status-verified { background: rgba(16, 185, 129, 0.15); color: #86efac; }
+        .status-rejected { background: rgba(239, 68, 68, 0.15); color: #fca5a5; }
+        .status-pending { background: rgba(148, 163, 184, 0.15); color: #94a3b8; }
+        .action-buttons {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            align-items: center;
+        }
+        .btn-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid;
+            cursor: pointer;
+            font-size: 12px;
+            background: transparent;
+            transition: all 0.2s ease;
+        }
+        .btn-icon:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); }
+        .btn-icon-upload {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .btn-icon-download {
+            color: var(--success);
+            border-color: rgba(16, 185, 129, 0.3);
+            background: rgba(16, 185, 129, 0.1);
+        }
+        .btn-icon-view {
+            color: var(--info);
+            border-color: rgba(14, 165, 233, 0.3);
+            background: rgba(14, 165, 233, 0.1);
+        }
+        .btn-icon-view:hover { background: var(--info); color: white; }
+        .doc-name-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .doc-name {
+            font-weight: 600;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        .doc-type {
+            color: var(--dark-text-secondary);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .doc-mandatory {
+            font-size: 10px;
+            margin-left: 4px;
+            vertical-align: middle;
+            color: var(--danger) !important;
+            font-weight: bold;
+        }
+        .datetime-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .date-row, .time-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+        }
+        .date-row i, .time-row i { width: 12px; text-align: center; }
+
+        /* ----------  PROFILE DROPDOWN  ---------- */
+        .profile-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 8px;
+            transition: background 0.2s ease;
+            user-select: none;
+            border: none;
+            background: transparent;
+            color: var(--dark-text);
+        }
+        .profile-trigger:hover { background: var(--sidebar-hover); }
+        .profile-trigger:focus { outline: none; box-shadow: 0 0 0 2px var(--primary); }
+        .nav-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            flex-shrink: 0;
+        }
+        .nav-avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .nav-avatar-fallback {
+            font-size: 12px;
+            color: white;
+            background: var(--primary);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: 600;
+        }
+        .nav-user-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--dark-text);
+            white-space: nowrap;
+        }
+        .profile-dropdown .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            min-width: 150px;
+            display: none;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            z-index: 1001;
+        }
+
+        /* Compact Deadline Badge for Documents Tab */
+.deadline-control-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.deadline-countdown-badge {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 12px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    min-width: fit-content;
+    white-space: nowrap;
+}
+
+.deadline-label {
+    color: var(--dark-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.deadline-value {
+    font-weight: 700;
+    color: var(--danger);
+    font-size: 13px;
+}
+
+.deadline-date {
+    color: var(--dark-text-secondary);
+    font-size: 10px;
+}
+
+/* Color coding based on urgency */
+.deadline-countdown-badge.urgent {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.5);
+}
+
+.deadline-countdown-badge.warning {
+    background: rgba(245, 158, 11, 0.2);
+    border-color: rgba(245, 158, 11, 0.5);
+}
+
+.deadline-countdown-badge.safe {
+    background: rgba(16, 185, 129, 0.2);
+    border-color: rgba(16, 185, 129, 0.5);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;  /* Increased from 20px */
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+        .profile-dropdown .dropdown-menu.show { display: block; }
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            color: var(--dark-text);
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.2s ease;
+            border-radius: 6px;
+            margin: 4px;
+        }
+        .dropdown-item:hover {
+            background: var(--sidebar-hover);
+            color: white;
+        }
+        .dropdown-item i { width: 16px; text-align: center; }
+
+        /* ----------  POSTS  ---------- */
+        .post-item {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+        .post-header { display: flex; gap: 10px; margin-bottom: 10px; }
+        .post-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .post-author { font-weight: 600; color: white; }
+        .post-time { font-size: 12px; color: #777; }
+        .post-content { color: #ddd; margin: 0; }
+
+        /* ----------  VALIDATION MESSAGE  ---------- */
+        .validation-message {
+            font-size: 12px;
+            color: var(--dark-text);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px 10px;
+            border-radius: 6px;
+            border-left: 3px solid var(--primary);
+            max-width: 250px;
+            word-wrap: break-word;
+            line-height: 1.4;
+        }
+        .status-verified .validation-message { border-left-color: var(--success); }
+        .status-rejected .validation-message {
+            border-left-color: var(--danger);
+            background: rgba(239, 68, 68, 0.05);
+        }
+@media (max-width: 768px) {
+    .deadline-control-wrapper {
+        margin-left: 0;
+        margin-top: 10px;
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Stack horizontally on mobile */
+    .deadline-countdown-badge {
+        padding: 6px 10px;
+        gap: 6px;
+    }
+
+    .deadline-label {
+        font-size: 9px;
+    }
+
+    .deadline-value {
+        font-size: 11px;
+    }
+
+    .deadline-date {
+        font-size: 9px;
+    }
+}
+        /* ----------  RESPONSIVE  ---------- */
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+                padding: 16px;
+            }
+            .left-sidebar, .right-sidebar {
+                width: 100%;
+                position: static;
+            }
+            .profile-cards-grid { grid-template-columns: 1fr; }
+            .working-hours-topnav { display: none; }
+        }
+
+        /* ----------  SCROLLBAR  ---------- */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--sidebar-bg); }
+        ::-webkit-scrollbar-thumb { background: var(--dark-border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* ----------  ANIMATIONS  ---------- */
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+    </style>
+</head>
+<body>
+<!-- =================  TOP NAV  ================= -->
+<nav class="top-nav">
+    <a href="#" class="nav-brand">Menti's IT Solutions</a>
+    <div class="ms-auto">
+        <div class="working-hours-topnav" id="clockToggleTop" title="Click to toggle Clock In/Out">
+            <div class="wh-topnav-content">
+                <i class="fas fa-clock wh-icon"></i>
+                <div class="wh-details">
+                    <div class="wh-time" id="hoursDisplayTop">0h 0m</div>
+                    <div class="wh-label-mini">Today</div>
+                </div>
+            </div>
+            <div class="wh-tooltip">
+                <div class="wh-tooltip-title">Working Hours Today</div>
+                <div class="wh-tooltip-stats">
+                    <span>Target: 8h 0m</span>
+                    <span id="percentageTextTooltip">0%</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="notification-dropdown">
+            <button class="notification-trigger" onclick="toggleNotificationDropdown(event)" title="Notifications" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge" id="notificationBadge" th:text="${unreadCount}" style="display: none;">0</span>
+            </button>
+            <div class="notification-dropdown-menu" id="notificationDropdownMenu">
+                <div class="notification-header">
+                    <h6>Notifications</h6>
+                    <div style="display: flex; gap: 10px;">
+                        <a href="#" onclick="markAllNotificationsRead(); return false;" style="font-size: 11px;">
+                            <i class="fas fa-check-double"></i> Mark all
+                        </a>
+                        <a th:href="@{/notifications/employee}" style="font-size: 11px;">
+                            <i class="fas fa-external-link-alt"></i> View All
+                        </a>
+                    </div>
+                </div>
+                <div class="notification-list" id="notificationList">
+                    <div class="empty-notifications" id="emptyNotification">
+                        <i class="fas fa-bell-slash"></i>
+                        <div>No new notifications</div>
+                    </div>
+                </div>
+                <div class="notification-footer">
+                    <a th:href="@{/notifications/employee}">View all notifications</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-dropdown">
+            <button class="profile-trigger" onclick="toggleProfileDropdown(event)" aria-haspopup="true" aria-expanded="false">
+                <div class="nav-avatar">
+                    <img th:if="${employee.profilePicture != null}"
+                         th:src="@{/candidate/profile-picture/{employeeId}(employeeId=${employee.employeeId})}"
+                         alt="Profile" class="nav-avatar-img">
+                    <span th:unless="${employee.profilePicture != null}"
+                          th:text="${employee.initials}" class="nav-avatar-fallback">U</span>
+                </div>
+                <span class="nav-user-name" th:text="${employee.firstName} + ' ' + ${employee.lastName}">Name</span>
+                <i class="fas fa-chevron-down" style="font-size: 10px; margin-left: 4px; color: var(--dark-text-secondary);"></i>
+            </button>
+            <div class="dropdown-menu" id="profileDropdownMenu">
+                <a href="#" class="dropdown-item" onclick="activateProfileTab(); return false;">
+                    <i class="fas fa-user-circle"></i> My Profile
+                </a>
+                <a th:href="@{/candidate/logout}" class="dropdown-item">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- =================  MAIN LAYOUT  ================= -->
+<div class="main-container">
+    <aside class="left-sidebar">
+        <div id="profileCardContainer" style="display: none;">
+            <div class="content-card profile-card-wrapper">
+                <div class="status-indicator-card active" id="statusIndicatorCard" title="Status: Active (Click to toggle)"></div>
+                <div class="profile-pic-sidebar" id="profilePicBox">
+                    <img th:if="${employee.profilePicture != null}"
+                         th:src="@{/candidate/profile-picture/{employeeId}(employeeId=${employee.employeeId})}"
+                         alt="Profile" class="profile-img">
+                    <span th:unless="${employee.profilePicture != null}"
+                          th:text="${employee.initials}" class="profile-fallback">U</span>
+                </div>
+                <div class="profile-hover-icons">
+                    <label for="profilePicInput" class="btn-icon-round" title="Change picture" style="cursor: pointer;">
+                        <i class="fas fa-camera"></i>
+                    </label>
+                    <input type="file" id="profilePicInput" accept="image/*" style="display: none;" onchange="uploadProfilePic(this)">
+                    <button class="btn-icon-round" title="Remove picture" onclick="deleteProfilePic()">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                <div style="text-align: left; margin: 15px auto 0; width: fit-block;">
+                    <div style="font-size: 20px; font-weight: 700;" th:text="${employee.firstName} + ' ' + ${employee.lastName}">Name</div>
+                    <div style="color: #b3b3b3;" th:text="${employee.designation}">Role</div>
+                    <div style="margin-top: 8px;">
+                        <span class="badge" th:classappend="${employee.status == 'Active'} ? 'bg-success' : 'bg-secondary'" th:text="${employee.status}">Active</span>
+                    </div>
+                    <div style="font-size: 12px; color: #777; margin-top: 5px;">ID: <span th:text="${employee.employeeId}"></span></div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <a class="menu-item active" data-tab="dashboard"><i class="fas fa-th-large"></i> Dashboard</a>
+            <a class="menu-item" data-tab="profile" style="display: none;"><i class="fas fa-user-circle"></i> My Profile</a>
+            <a class="menu-item" data-tab="organization"><i class="fas fa-building"></i> Organization</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="tab-pane active" id="dashboard">
+
+
+
+
+            <div class="content-card">
+                <h5 style="margin-bottom: 16px;">Organization Posts</h5>
+                <div class="post-item">
+                    <div class="post-header">
+                        <div class="post-avatar">HR</div>
+                        <div>
+                            <div class="post-author">HR Department</div>
+                            <div class="post-time">2 hours ago</div>
+                        </div>
+                    </div>
+                    <p class="post-content">Welcome to the team! Please upload your documents.</p>
+                </div>
+                <div class="post-item">
+                    <div class="post-header">
+                        <div class="post-avatar">IT</div>
+                        <div>
+                            <div class="post-author">IT Team</div>
+                            <div class="post-time">1 day ago</div>
+                        </div>
+                    </div>
+                    <p class="post-content">Your laptop will be ready for pickup tomorrow.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane" id="profile">
+            <div class="sub-nav">
+                <button class="sub-nav-item active" data-subtab="personal-info">Personal Info</button>
+                <button class="sub-nav-item" data-subtab="profile-documents">Documents</button>
+            </div>
+
+            <div class="sub-tab-content active" id="personal-info">
+                <div class="profile-cards-grid">
+                    <div class="profile-card">
+                        <div class="card-header">
+                            <div class="card-icon"><i class="fas fa-user"></i></div>
+                            <h3 class="card-title">Personal Details</h3>
+                        </div>
+                        <div class="info-grid">
+                            <div class="info-row">
+                                <span class="info-label">First Name</span>
+                                <span class="info-value" th:text="${employee.firstName != null ? employee.firstName : '-'}">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Last Name</span>
+                                <span class="info-value" th:text="${employee.lastName != null ? employee.lastName : '-'}">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Date of Birth</span>
+                                <span class="info-value" th:text="${employee.dateOfBirth != null ? #temporals.format(employee.dateOfBirth, 'dd MMM yyyy') : 'Not provided'}">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Gender</span>
+                                <span class="info-value" th:text="${employee.gender != null ? employee.gender : 'Not specified'}">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Personal Email</span>
+                                <span class="info-value" th:text="${employee.personalEmail != null ? employee.personalEmail : '-'}">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-card">
+                        <div class="card-header">
+                            <div class="card-icon"><i class="fas fa-briefcase"></i></div>
+                            <h3 class="card-title">Job Details</h3>
+                        </div>
+                        <div class="info-grid">
+                            <div class="info-row">
+                                <span class="info-label">Employee ID</span>
+                                <span class="info-value" th:text="${employee.employeeId != null ? employee.employeeId : '-'}">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Department</span>
+                                <span class="info-value" th:text="${employee.department != null ? employee.department : '-'}">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Designation</span>
+                                <span class="info-value" th:text="${employee.designation != null ? employee.designation : '-'}">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Employment Type</span>
+                                <span class="info-value" th:text="${employee.employmentType != null ? employee.employmentType : '-'}">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Start Date</span>
+                                <span class="info-value" th:text="${employee.startDate != null ? #temporals.format(employee.startDate, 'dd MMM yyyy') : 'Not set'}">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-card">
+                        <div class="card-header">
+                            <div class="card-icon"><i class="fas fa-clock"></i></div>
+                            <h3 class="card-title">Work Details</h3>
+                        </div>
+                        <div class="info-grid">
+                            <div class="info-row">
+                                <span class="info-label">Salary</span>
+                                <span class="info-value" th:text="${employee.salary != null ? employee.salary + ' ' + (employee.currency != null ? employee.currency : 'USD') : '-'}">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Pay Frequency</span>
+                                <span class="info-value" th:text="${employee.payFrequency != null ? employee.payFrequency : '-'}">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Work Location</span>
+                                <span class="info-value" th:text="${employee.workLocation != null ? employee.workLocation : '-'}">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Work Type</span>
+                                <span class="info-value" th:text="${employee.workType != null ? employee.workType : '-'}">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-card">
+                        <div class="card-header">
+                            <div class="card-icon"><i class="fas fa-address-card"></i></div>
+                            <h3 class="card-title">Contact Details</h3>
+                        </div>
+                        <div class="info-grid">
+                            <div class="info-row">
+                                <span class="info-label">Permanent Address</span>
+                                <span class="info-value" th:text="${employee.permanentAddress != null ? employee.permanentAddress : 'Not provided'}">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Phone</span>
+                                <span class="info-value" th:text="${employee.phone != null ? employee.phone : 'Not provided'}">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">Emergency Contact</span>
+                                <span class="info-value" th:text="${employee.emergencyContact != null ? employee.emergencyContact : 'Not provided'}">-</span>
+                            </div>
+                            <div class="info-row" th:if="${employee.residentialAddress != null and !employee.residentialAddress.equals(employee.permanentAddress)}">
+                                <span class="info-label">Residential</span>
+                                <span class="info-value" th:text="${employee.residentialAddress + ', ' + employee.residentialCity + ', ' + employee.residentialState + ' ' + employee.residentialZipCode + ', ' + employee.residentialCountry}">-</span>
+                            </div>
+                            <div class="info-row" th:unless="${employee.residentialAddress != null and !employee.residentialAddress.equals(employee.permanentAddress)}">
+                                <span class="info-label">Residential</span>
+                                <span class="info-value">Same as permanent</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sub-tab-content" id="profile-documents">
+                <div class="content-card">
+                    <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 24px;">
+                        <h5 style="margin: 0;">My Documents</h5>
+
+                        <!-- ✅ ENHANCED: Compact Deadline Badge - Right Aligned -->
+                        <!-- ✅ FIXED: Compact Deadline Badge - Right Aligned -->
+
+                        <!-- ✅ Compact Deadline Badge - Right Aligned -->
+                        <!-- ✅ ENHANCED: Compact Deadline Badge - Right Aligned -->
+                        <div class="deadline-control-wrapper">
+                            <!-- ✅ FIXED: Add data-deadline attribute -->
+                            <div th:if="${employee.documentDeadline != null}"
+                                 class="deadline-countdown-badge"
+                                 id="documentsTabDeadline"
+                                 th:attr="data-deadline=${employee.documentDeadline}">
+                                <div class="deadline-label">
+                                    <i class="fas fa-clock" style="font-size: 10px;"></i>
+                                    Time Left
+                                </div>
+                                <div id="documentsTabCountdown" class="deadline-value">
+                                    Calculating...
+                                </div>
+                                <div class="deadline-date"
+                                     th:text="${#temporals.format(employee.documentDeadline, 'dd MMM HH:mm')}">
+                                </div>
+                            </div>
+                            <div th:if="${employee.documentDeadline == null}"
+                                 style="color: var(--warning); font-size: 12px; font-weight: 500;">
+                                <i class="fas fa-exclamation-triangle"></i> No deadline set
+                            </div>
+                            </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="documents-table">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Document Name</th>
+                                <th>Status</th>
+                                <th>Uploaded Date & Time</th>
+                                <th>HR Validation Message</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="doc, stat : ${documents}">
+                                <td th:text="${stat.count}"></td>
+                                <td>
+                                    <div class="doc-name-wrapper">
+                                        <div class="doc-name" th:text="${doc.documentName}">Document Name</div>
+                                        <div>
+                                            <span class="doc-type" th:text="${doc.documentType}">TYPE</span>
+                                            <span th:if="${doc.mandatory}" class="doc-mandatory">*</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td><span th:class="'status-badge status-' + ${doc.status.toLowerCase()}" th:text="${doc.status}"></span></td>
+                                <td>
+                                    <div class="datetime-wrapper" th:if="${doc.submittedDate}">
+                                        <div class="date-row"><i class="fas fa-calendar"></i><span th:text="${#temporals.format(doc.submittedDate, 'dd MMM yyyy')}">Date</span></div>
+                                        <div class="time-row"><i class="fas fa-clock"></i><span th:text="${#temporals.format(doc.submittedDate, 'HH:mm:ss')}">Time</span></div>
+                                    </div>
+                                    <div th:unless="${doc.submittedDate}" style="color: #666;"><i class="fas fa-minus"></i></div>
+                                </td>
+                                <td>
+                                    <div th:if="${doc.verificationNotes != null and !doc.verificationNotes.isEmpty()}" class="validation-message">
+                                        <th:block th:text="${doc.verificationNotes.replace('candidate', 'employee')}"></th:block>
+                                    </div>
+                                    <div th:unless="${doc.verificationNotes != null and !doc.verificationNotes.isEmpty()}" style="color: var(--dark-text-secondary); font-style: italic;">
+                                        <i class="fas fa-minus"></i>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a th:if="${doc.status == 'PENDING' or doc.status == 'REJECTED'}"
+                                           th:href="@{/candidate/onboarding/{empId}/upload/{docType}(empId=${employee.employeeId}, docType=${doc.documentType})}"
+                                           class="btn-icon btn-icon-upload" title="Upload"><i class="fas fa-upload"></i></a>
+                                        <a th:if="${doc.filePath != null}"
+                                           th:href="@{/candidate/download/{docId}(docId=${doc.id})}"
+                                           class="btn-icon btn-icon-download" download title="Download"><i class="fas fa-download"></i></a>
+                                        <button th:if="${doc.filePath != null}"
+                                                class="btn-icon btn-icon-view"
+                                                th:data-doc-id="${doc.id}"
+                                                th:data-doc-type="${doc.documentType}"
+                                                onclick="viewDocument(this.getAttribute('data-doc-id'), this.getAttribute('data-doc-type'))"
+                                                title="View Document">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane" id="organization">
+            <div class="content-card">
+                <h5>Organization Updates</h5>
+                <div class="post-item">
+                    <div class="post-header">
+                        <div class="post-avatar">HR</div>
+                        <div>
+                            <div class="post-author">HR Department</div>
+                            <div class="post-time">3 days ago</div>
+                        </div>
+                    </div>
+                    <p class="post-content">Annual health check-up scheduled for next week.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <aside class="right-sidebar">
+        <div id="recentActivityCard" class="content-card">
+            <h6>Recent Activity</h6>
+            <div style="font-size: 12px; color: var(--dark-text-secondary);">
+                <div style="margin-bottom: 8px;">📄 Uploaded: PAN Card</div>
+                <div style="margin-bottom: 8px;">✅ Verified: Aadhaar</div>
+                <div>⏳ Pending: Offer Letter</div>
+            </div>
+        </div>
+    </aside>
+</div>
+
+<!-- =================  PREVIEW MODAL  ================= -->
+<div id="previewModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 99999; justify-content: center; align-items: center;">
+    <div style="background: var(--dark-card); border-radius: 12px; width: 90%; height: 90%; max-width: 1200px; max-height: 800px; display: flex; flex-direction: column; border: 1px solid var(--dark-border);">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid var(--dark-border);">
+            <h3 id="previewTitle" style="margin: 0; color: white; font-size: 16px;">Document Preview</h3>
+            <button onclick="closePreview()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 0; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div id="previewContent" style="flex: 1; overflow: auto; padding: 20px; display: flex; align-items: center; justify-content: center;">
+        </div>
+        <div style="padding: 10px 20px; border-top: 1px solid var(--dark-border); text-align: center;">
+            <a id="previewDownloadBtn" href="#" class="btn-icon btn-icon-download" style="width: auto; padding: 5px 15px; text-decoration: none;" download>
+                <i class="fas fa-download"></i> Download
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- =================  JAVASCRIPT  ================= -->
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.2/dist/sockjs.min.js       "></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js       "></script>
+<script>
+    /* ----------  WORKING HOURS TRACKER  ---------- */
+    class WorkingHoursTracker {
+        constructor() {
+            this.totalMinutes = 0;
+            this.targetMinutes = 480;
+            this.isClockedIn = false;
+            this.startTime = null;
+            this.load();
+            this.startTicker();
+            this.updateDisplay();
+        }
+
+        load() {
+            const today = new Date().toDateString();
+            const raw = localStorage.getItem('workingHoursToday');
+            if (raw) {
+                const data = JSON.parse(raw);
+                if (data.date === today) this.totalMinutes = data.minutes || 0;
+            }
+
+            const savedStatus = localStorage.getItem('presenceUpdate');
+            if (savedStatus) {
+                const statusData = JSON.parse(savedStatus);
+                this.isClockedIn = statusData.status === 'ACTIVE';
+            }
+        }
+
+        save() {
+            localStorage.setItem('workingHoursToday', JSON.stringify({
+                date: new Date().toDateString(),
+                minutes: this.totalMinutes
+            }));
+        }
+
+        startTicker() {
+            setInterval(() => {
+                if (this.isClockedIn) {
+                    this.totalMinutes++;
+                    this.save();
+                    this.updateDisplay();
+                }
+            }, 60000);
+        }
+
+        format(min) {
+            const h = Math.floor(min / 60);
+            const m = min % 60;
+            return `${h}h ${m}m`;
+        }
+
+        updateDisplay() {
+            const perc = Math.min((this.totalMinutes / this.targetMinutes) * 100, 100);
+            const timeStr = this.format(this.totalMinutes);
+            const hoursDisplay = document.getElementById('hoursDisplayTop');
+            const percentageText = document.getElementById('percentageTextTooltip');
+
+            if (hoursDisplay) hoursDisplay.textContent = timeStr;
+            if (percentageText) percentageText.textContent = Math.round(perc) + '%';
+        }
+
+        setClockedIn(isActive) {
+            this.isClockedIn = isActive;
+            if (isActive && !this.startTime) this.startTime = new Date();
+            else if (!isActive) this.startTime = null;
+            this.updateDisplay();
+            console.log(`Working hours ${isActive ? 'started/resumed' : 'paused'}`);
+        }
+    }
+    const whTracker = new WorkingHoursTracker();
+
+    /* ----------  MAIN NAVIGATION  ---------- */
+    let currentTab = 'dashboard';
+    document.querySelectorAll('.menu-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const target = item.getAttribute('data-tab');
+            if (!target) return;
+
+            currentTab = target;
+            document.getElementById('profileCardContainer').style.display = target === 'profile' ? 'block' : 'none';
+
+            document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+            item.classList.add('active');
+            document.getElementById(target).classList.add('active');
+            document.getElementById('recentActivityCard').style.display = target === 'dashboard' ? 'block' : 'none';
+        });
+    });
+
+    document.querySelectorAll('.sub-nav-item').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const sub = btn.getAttribute('data-subtab');
+            if (!sub) return;
+            const container = btn.closest('.tab-pane');
+            container.querySelectorAll('.sub-nav-item').forEach(el => el.classList.remove('active'));
+            container.querySelectorAll('.sub-tab-content').forEach(el => el.classList.remove('active'));
+            btn.classList.add('active');
+            container.querySelector('#' + sub).classList.add('active');
+        });
+    });
+
+    /* ----------  PROFILE PICTURE  ---------- */
+    function uploadProfilePic(input) {
+        if (!input.files || !input.files[0]) return;
+        const file = input.files[0];
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const box = document.getElementById('profilePicBox');
+            box.querySelector('img')?.remove();
+            box.querySelector('span')?.remove();
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.className = 'profile-img';
+            box.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function deleteProfilePic() {
+        const box = document.getElementById('profilePicBox');
+        box.querySelector('img')?.remove();
+        const span = document.createElement('span');
+        span.className = 'profile-fallback';
+        span.textContent = 'U';
+        box.appendChild(span);
+    }
+
+    /* ----------  DROPDOWN TOGGLES  ---------- */
+    function toggleNotificationDropdown(event) {
+        event.stopPropagation();
+        const dropdown = document.getElementById('notificationDropdownMenu');
+        const profileDropdown = document.getElementById('profileDropdownMenu');
+        profileDropdown.classList.remove('show');
+        dropdown.classList.toggle('show');
+        event.currentTarget.setAttribute('aria-expanded', dropdown.classList.contains('show'));
+    }
+
+    function toggleProfileDropdown(event) {
+        event.stopPropagation();
+        const dropdown = document.getElementById('profileDropdownMenu');
+        const notificationDropdown = document.getElementById('notificationDropdownMenu');
+        notificationDropdown.classList.remove('show');
+        dropdown.classList.toggle('show');
+        event.currentTarget.setAttribute('aria-expanded', dropdown.classList.contains('show'));
+    }
+
+    function markAllNotificationsRead() {
+        if (notificationManager) {
+            notificationManager.notifications.forEach(notification => { notification.read = true; });
+            notificationManager.unreadCount = 0;
+            notificationManager.updateNotificationBadge();
+            notificationManager.saveNotifications();
+            document.querySelectorAll('.notification-item').forEach(item => item.classList.remove('unread'));
+            loadNotifications();
+        }
+        return false;
+    }
+
+    /* ----------  CLOSE DROPDOWNS ON OUTSIDE CLICK  ---------- */
+    document.addEventListener('click', function(e) {
+        const notificationDropdown = document.getElementById('notificationDropdownMenu');
+        const profileDropdown = document.getElementById('profileDropdownMenu');
+        const notificationTrigger = document.querySelector('.notification-trigger');
+        const profileTrigger = document.querySelector('.profile-trigger');
+
+        if (!notificationTrigger.contains(e.target) && !notificationDropdown.contains(e.target)) {
+            notificationDropdown.classList.remove('show');
+            notificationTrigger.setAttribute('aria-expanded', 'false');
+        }
+
+        if (!profileTrigger.contains(e.target) && !profileDropdown.contains(e.target)) {
+            profileDropdown.classList.remove('show');
+            profileTrigger.setAttribute('aria-expanded', 'false');
+        }
+    });
+
+    /* ----------  ESCAPE KEY TO CLOSE DROPDOWNS  ---------- */
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const notificationDropdown = document.getElementById('notificationDropdownMenu');
+            const profileDropdown = document.getElementById('profileDropdownMenu');
+            const notificationTrigger = document.querySelector('.notification-trigger');
+            const profileTrigger = document.querySelector('.profile-trigger');
+
+            notificationDropdown.classList.remove('show');
+            profileDropdown.classList.remove('show');
+            notificationTrigger.setAttribute('aria-expanded', 'false');
+            profileTrigger.setAttribute('aria-expanded', 'false');
+        }
+    });
+
+    /* ----------  ACTIVATE PROFILE TAB  ---------- */
+    function activateProfileTab() {
+        document.getElementById('profileDropdownMenu').classList.remove('show');
+        document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+
+        const profileMenuItem = document.querySelector('[data-tab="profile"]');
+        if (profileMenuItem) profileMenuItem.classList.add('active');
+        document.getElementById('profile').classList.add('active');
+        document.getElementById('recentActivityCard').style.display = 'block';
+        document.getElementById('profileCardContainer').style.display = 'block';
+
+        document.querySelectorAll('.sub-nav-item').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.sub-tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelector('[data-subtab="personal-info"]').classList.add('active');
+        document.getElementById('personal-info').classList.add('active');
+
+        currentTab = 'profile';
+    }
+
+    /* ----------  DOCUMENT PREVIEW  ---------- */
+    function viewDocument(documentId, documentType) {
+        const isCandidatePage = window.location.pathname.includes('/candidate/');
+        const previewUrl = isCandidatePage ? `/candidate/download/${documentId}` : `/onboarding/download/${documentId}`;
+
+        document.getElementById('previewTitle').textContent = documentType.replace(/_/g, ' ') + ' - Preview';
+        document.getElementById('previewDownloadBtn').href = previewUrl;
+
+        const modal = document.getElementById('previewModal');
+        modal.style.display = 'flex';
+
+        fetch(previewUrl)
+            .then(r => {
+                if (!r.ok) throw new Error('Document not found');
+                return r.blob();
+            })
+            .then(blob => {
+                const contentType = blob.type;
+                const contentDiv = document.getElementById('previewContent');
+                contentDiv.innerHTML = '';
+
+                if (contentType === 'application/pdf') {
+                    const objectUrl = URL.createObjectURL(blob);
+                    contentDiv.innerHTML = `<embed src="${objectUrl}" type="application/pdf" width="100%" height="100%" style="border: none; border-radius: 8px;" />`;
+                } else if (contentType.startsWith('image/')) {
+                    const objectUrl = URL.createObjectURL(blob);
+                    const img = document.createElement('img');
+                    img.src = objectUrl;
+                    img.style.maxWidth = '100%';
+                    img.style.maxHeight = '100%';
+                    img.style.borderRadius = '8px';
+                    img.style.boxShadow = '0 4px 20px rgba(0,0,0,0.5)';
+                    contentDiv.appendChild(img);
+                } else {
+                    contentDiv.innerHTML = `
+                        <div style="text-align: center; color: var(--dark-text-secondary);">
+                            <i class="fas fa-file-alt" style="font-size: 48px; margin-bottom: 15px;"></i>
+                            <p>This document type cannot be previewed.</p>
+                            <p>Please download to view.</p>
+                            <a href="${previewUrl}" class="btn-icon btn-icon-download" style="width: auto; padding: 5px 15px; margin-top: 15px; text-decoration: none;">
+                                <i class="fas fa-download"></i> Download File
+                            </a>
+                        </div>`;
+                }
+            })
+            .catch(err => {
+                document.getElementById('previewContent').innerHTML = `
+                    <div style="text-align: center; color: var(--danger);">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 15px;"></i>
+                        <p>Failed to load document preview.</p>
+                        <p>${err.message}</p>
+                    </div>`;
+            });
+    }
+
+    function closePreview() {
+        const modal = document.getElementById('previewModal');
+        modal.style.display = 'none';
+        const embed = document.querySelector('#previewContent embed');
+        const img = document.querySelector('#previewContent img');
+        if (embed) URL.revokeObjectURL(embed.src);
+        if (img) URL.revokeObjectURL(img.src);
+    }
+
+    /* ----------  URL PARAM HANDLER  ---------- */
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const activeTab = urlParams.get('activeTab');
+        const activeSubTab = urlParams.get('activeSubTab');
+
+        if (activeTab === 'profile' && activeSubTab === 'documents') {
+            window.history.replaceState({}, '', window.location.pathname);
+            activateProfileTab();
+            document.querySelector('[data-subtab="profile-documents"]').click();
+        }
+    });
+
+    /* ----------  STATUS INDICATOR  ---------- */
+    const statusIndicator = document.getElementById('statusIndicatorCard');
+    const employeeId = '[[${employee.employeeId}]]';
+    let currentPresenceStatus = '[[${employee.presenceStatus}]]' || 'OFFLINE';
+
+    function updateStatusIndicator(status) {
+        if (status === 'ACTIVE') {
+            statusIndicator.classList.remove('inactive');
+            statusIndicator.classList.add('active');
+            statusIndicator.title = 'Status: Active (Click to go Offline)';
+            whTracker.setClockedIn(true);
+        } else {
+            statusIndicator.classList.remove('active');
+            statusIndicator.classList.add('inactive');
+            statusIndicator.title = 'Status: Offline (Click to go Active)';
+            whTracker.setClockedIn(false);
+        }
+    }
+
+    updateStatusIndicator(currentPresenceStatus);
+
+    statusIndicator.addEventListener('click', () => {
+        const newStatus = statusIndicator.classList.contains('active') ? 'OFFLINE' : 'ACTIVE';
+
+        fetch(`/api/presence/set/${employeeId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `status=${newStatus}`
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                currentPresenceStatus = newStatus;
+                updateStatusIndicator(newStatus);
+
+                localStorage.setItem('presenceUpdate', JSON.stringify({
+                    employeeId,
+                    status: newStatus
+                }));
+
+                const toast = document.createElement('div');
+                toast.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: ${newStatus === 'ACTIVE' ? 'rgba(16, 185, 129, 0.9)' : 'rgba(239, 68, 68, 0.9)'};
+                    color: white;
+                    padding: 12px 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                    z-index: 10000;
+                    animation: slideIn 0.3s ease;
+                `;
+                toast.innerHTML = `<i class="fas fa-user-clock" style="margin-right: 8px;"></i> Status changed to: ${newStatus}`;
+                document.body.appendChild(toast);
+
+                setTimeout(() => {
+                    toast.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+        })
+        .catch(err => {
+            console.error('Status update failed:', err);
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: rgba(239, 68, 68, 0.9);
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                z-index: 10000;
+            `;
+            toast.innerHTML = `<i class="fas fa-exclamation-triangle" style="margin-right: 8px;"></i> Failed to update status`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        });
+    });
+
+    /* ----------  NOTIFICATION MANAGER  ---------- */
+    class NotificationManager {
+        constructor() {
+            this.notifications = [];
+            this.unreadCount = 0;
+            this.employeeId = '[[${employee.employeeId}]]';
+            this.initializeWebSocket();
+            this.loadExistingNotifications();
+        }
+
+    initializeWebSocket() {
+    try {
+        const socket = new SockJS('/ws');
+        this.stompClient = Stomp.over(socket);
+        this.stompClient.debug = () => {};
+
+        this.stompClient.connect({}, (frame) => {
+            console.log('✅ Connected to WebSocket for notifications');
+
+            // Subscribe to employee notifications
+            this.stompClient.subscribe(
+                `/topic/employee/${this.employeeId}/notifications`,
+                (message) => {
+                    const notification = JSON.parse(message.body);
+                    console.log("📨 Received real-time notification:", notification);
+
+                    // Always handle deadline notifications with special care
+                    if (notification.type === 'DEADLINE_WARNING' ||
+                        notification.type === 'DEADLINE_REACHED') {
+                        console.log("🎯 Processing deadline notification:", notification.type);
+                        this.addNotification(notification);
+                        this.showDeadlineToast(notification);
+                        this.updateNotificationBadge(); // Force badge update
+                    } else {
+                        this.addNotification(notification);
+                        this.showNotificationToast(notification);
+                    }
+                }
+            );
+        });
+    } catch (error) {
+        console.error('❌ Failed to initialize WebSocket:', error);
+    }
+}
+
+// ✅ NEW: Add notification to dropdown immediately
+addNotification(notification) {
+    if (!notification.timestamp) {
+        notification.timestamp = new Date(notification.createdAt || Date.now()).toLocaleString('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+    notification.read = false;
+    this.notifications.unshift(notification);
+    this.unreadCount++;
+    this.renderNotification(notification);
+    this.updateNotificationBadge();
+    this.saveNotifications();
+}
+
+// ✅ NEW: Render notification in dropdown
+renderNotification(notification) {
+    const notificationList = document.getElementById('notificationList');
+    const emptyNotification = document.getElementById('emptyNotification');
+    if (emptyNotification) emptyNotification.style.display = 'none';
+
+    const notificationItem = document.createElement('div');
+    notificationItem.className = 'notification-item unread';
+    notificationItem.setAttribute('data-notification-id', notification.id);
+
+    // Get icon and color based on type
+    let iconClass = 'fa-bell';
+    let iconColor = 'var(--primary)';
+
+    if (notification.type === 'DEADLINE_REACHED') {
+        iconClass = 'fa-exclamation-triangle';
+        iconColor = 'var(--danger)';
+    } else if (notification.type === 'DEADLINE_WARNING') {
+        iconClass = 'fa-clock';
+        iconColor = 'var(--warning)';
+    }
+
+    notificationItem.innerHTML = `
+        <div class="notification-icon" style="background: ${iconColor}20; color: ${iconColor};">
+            <i class="fas ${iconClass}"></i>
+        </div>
+        <div class="notification-content">
+            <p class="notification-title">${notification.title}</p>
+            <p class="notification-message">${notification.message}</p>
+            <p class="notification-time">${notification.timestamp}</p>
+        </div>
+    `;
+
+    notificationItem.addEventListener('click', () => {
+        this.markAsRead(notification);
+        this.showFullNotification(notification);
+    });
+
+    notificationList.insertBefore(notificationItem, notificationList.firstChild);
+}
+// ✅ NEW: Special toast for deadline notifications
+showDeadlineToast(notification) {
+    const isUrgent = notification.type === 'DEADLINE_REACHED';
+
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${isUrgent ? 'rgba(239, 68, 68, 0.95)' : 'rgba(245, 158, 11, 0.95)'};
+        color: white;
+        padding: 18px 24px;
+        border-radius: 8px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        z-index: 10000;
+        max-width: 380px;
+        animation: slideIn 0.3s ease;
+        border-left: 5px solid ${isUrgent ? '#ef4444' : '#f59e0b'};
+        font-weight: 500;
+    `;
+
+    toast.innerHTML = `
+        <div style="display: flex; align-items: flex-start; gap: 12px;">
+            <i class="fas ${isUrgent ? 'fa-exclamation-triangle' : 'fa-clock'}"
+               style="margin-top: 3px; font-size: 18px; flex-shrink: 0;"></i>
+            <div>
+                <div style="font-weight: 700; margin-bottom: 6px; font-size: 15px;">
+                    ${notification.title}
+                </div>
+                <div style="opacity: 0.95; font-size: 13px; line-height: 1.4;">
+                    ${notification.message}
+                </div>
+                <div style="font-size: 11px; opacity: 0.8; margin-top: 4px;">
+                    ${new Date(notification.createdAt).toLocaleString()}
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(toast);
+
+    // Auto-remove after 8 seconds for deadline notifications
+    setTimeout(() => {
+        if (toast.parentElement) {
+            toast.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => toast.remove(), 300);
+        }
+    }, 8000);
+}
+
+        addNotification(notification) {
+            if (!notification.timestamp) {
+                notification.timestamp = new Date().toLocaleString('en-IN', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+            notification.read = false;
+            this.notifications.unshift(notification);
+            this.unreadCount++;
+            this.updateNotificationBadge();
+            this.renderNotification(notification);
+            this.showNotificationToast(notification);
+            this.saveNotifications();
+        }
+
+       renderNotification(notification) {
+    const notificationList = document.getElementById('notificationList');
+    const emptyNotification = document.getElementById('emptyNotification');
+    if (emptyNotification) emptyNotification.style.display = 'none';
+
+    const notificationItem = document.createElement('div');
+    notificationItem.className = 'notification-item' + (notification.read ? '' : ' unread');
+    notificationItem.setAttribute('data-notification-id', notification.documentId || Date.now());
+
+    // ✅ FIX: Use type for both icon and color determination
+    let iconClass = 'fa-info-circle';
+    let iconColor = 'var(--primary)';
+    if (notification.type === 'DOCUMENT_VERIFIED') {
+        iconClass = 'fa-check-circle';
+        iconColor = 'var(--success)';
+    } else if (notification.type === 'DOCUMENT_REJECTED') {
+        iconClass = 'fa-times-circle';
+        iconColor = 'var(--danger)';
+    } else if (notification.type === 'DOCUMENT_UPLOADED') {
+        iconClass = 'fa-file-upload';
+        iconColor = 'var(--info)';
+    }
+
+    notificationItem.innerHTML = `
+        <div class="notification-icon" style="background: ${iconColor}20; color: ${iconColor};">
+            <i class="fas ${iconClass}"></i>
+        </div>
+        <div class="notification-content">
+            <p class="notification-text">${this.formatNotificationText(notification)}</p>
+            <p class="notification-time">${notification.timestamp}</p>
+           ${notification.sender ? `<div style="margin-top: 4px;"><small style="color: var(--dark-text-secondary);"><strong>HR:</strong> ${notification.sender}</small></div>` : ''}
+        </div>
+    `;
+
+    notificationItem.addEventListener('click', () => {
+        this.showFullNotification(notification);
+        this.markAsRead(notification);
+    });
+
+    notificationList.insertBefore(notificationItem, notificationList.firstChild);
+}
+
+        // AFTER (New Code - Copy/Paste Exactly)
+formatNotificationText(notification) {
+    // ✅ FIX: Better formatting for document notifications
+    if (notification.type === 'DOCUMENT_VERIFIED') {
+        return `✅ ${notification.documentName || 'Document'} verified successfully`;
+    } else if (notification.type === 'DOCUMENT_REJECTED') {
+        return `❌ ${notification.documentName || 'Document'} was rejected`;
+    }
+
+    let text = notification.message || notification.text || 'New notification';
+    if (text.length > 120) text = text.substring(0, 120) + '...';
+    return text;
+}
+
+        showFullNotification(notification) {
+            const modal = document.createElement('div');
+            modal.className = 'notification-detail-modal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                z-index: 10000;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            `;
+
+            const statusColor = notification.status === 'VERIFIED' ? '#10b981' : '#ef4444';
+            const statusBg = notification.status === 'VERIFIED' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)';
+
+            modal.innerHTML = `
+                <div style="background: var(--dark-card); padding: 24px; border-radius: 12px; width: 500px; border: 1px solid var(--dark-border); max-height: 80vh; overflow-y: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3 style="margin: 0; color: white;">Notification Details</h3>
+                        <button onclick="this.closest('.notification-detail-modal').remove()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <span class="status-badge status-${notification.status.toLowerCase()}" style="font-size: 12px;">${notification.status}</span>
+                            <span style="color: var(--dark-text-secondary); font-size: 12px;">${notification.timestamp}</span>
+                        </div>
+                    </div>
+                    ${notification.documentName ? `
+                    <div style="margin-bottom: 15px; padding: 10px; background: rgba(255, 255, 255, 0.05); border-radius: 6px;">
+                        <div style="margin-bottom: 8px;"><strong style="color: var(--dark-text-secondary);">Document:</strong><span style="color: white;">${notification.documentName}</span></div>
+                        <div style="margin-bottom: 8px;"><strong style="color: var(--dark-text-secondary);">Type:</strong><span style="color: white;">${notification.documentType}</span></div>
+                        ${notification.verifiedBy ? `<div><strong style="color: var(--dark-text-secondary);">Verified By:</strong><span style="color: white;">${notification.verifiedBy}</span></div>` : ''}
+                    </div>` : ''}
+                    <div style="margin-bottom: 15px;">
+                        <strong style="color: var(--dark-text-secondary); display: block; margin-bottom: 8px;">Message:</strong>
+                        <div style="background: ${statusBg}; padding: 12px; border-radius: 6px; border-left: 3px solid ${statusColor};">
+                            <p style="color: white; margin: 0; white-space: pre-wrap; line-height: 1.5;">${notification.message}</p>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <button onclick="this.closest('.notification-detail-modal').remove()" style="background: var(--primary); border: none; color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Close</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+        }
+
+        markAsRead(notification) {
+            if (!notification.read) {
+                notification.read = true;
+                this.unreadCount = Math.max(0, this.unreadCount - 1);
+                this.updateNotificationBadge();
+                this.saveNotifications();
+            }
+        }
+
+        updateNotificationBadge() {
+            const badge = document.getElementById('notificationBadge');
+            if (badge) {
+                badge.textContent = this.unreadCount;
+                badge.style.display = this.unreadCount > 0 ? 'flex' : 'none';
+            }
+        }
+
+   showNotificationToast(notification) {
+    const isDeadline = notification.type === 'DEADLINE_WARNING' ||
+                       notification.type === 'DEADLINE_REACHED';
+
+    const isUrgent = notification.type === 'DEADLINE_REACHED';
+
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${isUrgent ? 'rgba(239, 68, 68, 0.95)' : 'rgba(245, 158, 11, 0.95)'};
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        z-index: 10000;
+        max-width: 350px;
+        animation: slideIn 0.3s ease;
+        font-size: 13px;
+        border-left: 4px solid ${isUrgent ? '#ef4444' : '#f59e0b'};
+    `;
+
+    const iconClass = isUrgent ? 'fa-exclamation-triangle' : 'fa-clock';
+
+    toast.innerHTML = `
+        <div style="display: flex; align-items: flex-start; gap: 10px;">
+            <i class="fas ${iconClass}" style="margin-top: 2px; font-size: 16px;"></i>
+            <div>
+                <div style="font-weight: 600; margin-bottom: 4px; font-size: 14px;">
+                    ${notification.title}
+                </div>
+                <div style="opacity: 0.9; font-size: 12px; line-height: 1.4;">
+                    ${notification.message}
+                </div>
+                <div style="font-size: 10px; opacity: 0.7; margin-top: 6px;">
+                    ${notification.createdAt}
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(toast);
+
+    // Auto-remove after 8 seconds for deadline notifications
+    const timeout = isDeadline ? 8000 : 5000;
+    setTimeout(() => {
+        if (toast.parentElement) {
+            toast.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => toast.remove(), 300);
+        }
+    }, timeout);
+}
+        loadExistingNotifications() {
+            const saved = localStorage.getItem(`notifications_${this.employeeId}`);
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    this.notifications = data.notifications || [];
+                    this.unreadCount = data.unreadCount || 0;
+                    this.notifications.forEach(notification => this.renderNotification(notification));
+                } catch (e) {
+                    console.error('Failed to load notifications:', e);
+                }
+            }
+        }
+
+        saveNotifications() {
+            try {
+                const data = { notifications: this.notifications, unreadCount: this.unreadCount };
+                localStorage.setItem(`notifications_${this.employeeId}`, JSON.stringify(data));
+            } catch (e) {
+                console.error('Failed to save notifications:', e);
+            }
+        }
+    }
+
+    let notificationManager;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        notificationManager = new NotificationManager();
+    });
+</script>
+
+<script th:inline="javascript">
+    // ✅ Ensure this is INSIDE the main <script> tag, after WorkingHoursTracker
+
+    console.log('🔍 Deadline Countdown Script Loading...');
+
+   // ✅ CORRECT - Match the actual element ID in your HTML
+function updateDeadlineCountdown() {
+    const deadlineElement = document.getElementById('documentsTabCountdown'); // Fixed ID
+    if (!deadlineElement) {
+        console.log('❌ Countdown element NOT found!');
+        return;
+    }
+
+    const deadlineStr = '[[${employee.documentDeadline}]]';
+    console.log('📅 Raw deadline from server:', deadlineStr);
+
+    if (!deadlineStr || deadlineStr === 'null') {
+        console.log('⚠️ Deadline is NULL - Countdown hidden');
+        deadlineElement.style.display = 'none'; // Hide if no deadline
+        return;
+    }
+
+    const deadline = new Date(deadlineStr);
+    const now = new Date();
+    const diff = deadline - now;
+
+    if (diff <= 0) {
+        deadlineElement.textContent = "⚠️ DEADLINE REACHED";
+        deadlineElement.style.color = 'var(--danger)';
+        document.getElementById('documentsTabDeadline').classList.add('urgent');
+        return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+    let text = '';
+    if (days > 0) text += `${days}d `;
+    if (hours > 0 || days > 0) text += `${hours}h `;
+    text += `${minutes}m`;
+
+    deadlineElement.textContent = text;
+
+    // Apply color coding
+    const badge = document.getElementById('documentsTabDeadline');
+    badge.classList.remove('urgent', 'warning', 'safe');
+
+    if (diff < 86400000) { // < 24 hours
+        badge.classList.add('urgent');
+        deadlineElement.style.color = 'var(--danger)';
+    } else if (diff < 259200000) { // < 3 days
+        badge.classList.add('warning');
+        deadlineElement.style.color = 'var(--warning)';
+    } else {
+        badge.classList.add('safe');
+        deadlineElement.style.color = 'var(--success)';
+    }
+}
+
+// Update every minute (not second - be more efficient)
+setInterval(updateDeadlineCountdown, 60000);
+updateDeadlineCountdown(); // Initial call
+
+    console.log('✅ Deadline Countdown Script Loaded');
+
+   // ✅ FIXED: Documents Tab Countdown - Uses data attribute for reliability
+function updateDocumentsTabCountdown() {
+    const deadlineElement = document.getElementById('documentsTabCountdown');
+    const deadlineContainer = document.getElementById('documentsTabDeadline');
+
+    if (!deadlineElement || !deadlineContainer) {
+        console.log("❌ Countdown elements not found in DOM");
+        return;
+    }
+
+    // Get deadline from data attribute (more reliable than Thymeleaf inline)
+    const deadlineStr = deadlineContainer.getAttribute('data-deadline');
+    console.log("📅 Deadline string from data attribute:", deadlineStr);
+
+    if (!deadlineStr || deadlineStr === 'null' || deadlineStr.trim() === '') {
+        console.log("⚠️ No deadline set, hiding countdown");
+        deadlineContainer.style.display = 'none';
+        return;
+    }
+
+    // Parse date with error checking
+    const deadline = new Date(deadlineStr.trim());
+    if (isNaN(deadline.getTime())) {
+        console.error("❌ Invalid date format:", deadlineStr);
+        deadlineElement.textContent = "Invalid deadline";
+        return;
+    }
+
+    const now = new Date();
+    const diff = deadline - now;
+
+    if (diff <= 0) {
+        console.log("⏰ Deadline has passed");
+        deadlineElement.textContent = "⚠️ OVERDUE";
+        deadlineElement.style.color = 'var(--danger)';
+        deadlineContainer.classList.add('urgent');
+        return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+    console.log(`⏱️ Calculated: ${days}d ${hours}h ${minutes}m`);
+
+    let text = '';
+    if (days > 0) text += `${days}d `;
+    if (hours > 0 || days > 0) text += `${hours}h `;
+    text += `${minutes}m`;
+
+    deadlineElement.textContent = text;
+
+    // Color coding
+    const badge = document.getElementById('documentsTabDeadline');
+    if (badge) {
+        badge.classList.remove('urgent', 'warning', 'safe');
+        if (diff < 86400000) { // < 24 hours
+            badge.classList.add('urgent');
+            deadlineElement.style.color = 'var(--danger)';
+        } else if (diff < 259200000) { // < 3 days
+            badge.classList.add('warning');
+            deadlineElement.style.color = 'var(--warning)';
+        } else {
+            badge.classList.add('safe');
+            deadlineElement.style.color = 'var(--success)';
+        }
+    }
+}
+
+// Start countdown with delay to ensure DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("🚀 Initializing countdown after DOM ready");
+    setTimeout(updateDocumentsTabCountdown, 500); // Small delay
+});
+setInterval(updateDocumentsTabCountdown, 60000); // Update every minute
+</script>
+
+</body>
+</html>
