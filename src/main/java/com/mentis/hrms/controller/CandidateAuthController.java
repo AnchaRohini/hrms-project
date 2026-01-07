@@ -241,14 +241,7 @@ public class CandidateAuthController {
             return "redirect:/candidate/auth/reset-password?token=" + token;
         }
     }
-    @GetMapping("/login")
-    public String showLoginPage(@RequestParam(value = "error", required = false) String error,
-                                Model model) {
-        if (error != null) {
-            model.addAttribute("error", error);
-        }
-        return "candidate/login-single";
-    }
+
 
 
 

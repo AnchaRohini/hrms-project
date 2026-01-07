@@ -432,8 +432,6 @@ public class CandidateOnboardingController {
         String employeeId = (String) session.getAttribute("candidateEmployeeId");
         if (employeeId != null) {
             logger.info("Candidate logging out: {}", employeeId);
-
-            /* ==========  NEW: REAL-TIME PRESENCE - OFFLINE  ========== */
             Optional<Employee> empOpt = employeeService.getEmployeeByEmployeeId(employeeId);
             empOpt.ifPresent(emp -> {
                 emp.setPresenceStatus("OFFLINE");
@@ -443,7 +441,7 @@ public class CandidateOnboardingController {
         }
         session.invalidate();
         ra.addFlashAttribute("success", "You have been logged out successfully.");
-        return "redirect:/candidate/login";
+        return "redirect:/candidate/login"; // REMOVE query param, let FlashAttribute handle it
     }
 
     /*  ==================== 10. HELPER METHODS ====================  */
