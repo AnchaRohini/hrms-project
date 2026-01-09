@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org       ">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Recruitment Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css       " rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css       ">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300       ;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js       "></script>
+    <style>
+        /* Global Black Scrollbar - SINGLE SCROLLBAR FOR ENTIRE PAGE */
+        html {
+            scrollbar-color: #1a1a1a #000000; /* Firefox - thumb and track */
+            scrollbar-width: thin;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000000; /* Black track */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1a1a1a; /* Very dark grey thumb */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #333333; /* Dark grey on hover */
+        }
+
+        :root {
+            --dark-bg: #0f172a;
+            --dark-card: #1e293b;
+            --dark-border: #334155;
+            --dark-text: #f8fafc;
+            --dark-text-secondary: #cbd5e1;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #0ea5e9;
+            --sidebar-bg: #0f172a;
+            --sidebar-hover: #1e293b;
+            --transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family:'Inter', sans-serif;
+            background:var(--dark-bg);
+            color:var(--dark-text);
+            font-size:14px;
+            line-height:1.6;
+            overflow-x:hidden;
+        }
+
+        /* === SIDEBAR STYLES === */
+        .sidebar {
+            position: fixed;
+            top: 0; left: 0; width: 280px; height: 100vh;
+            background: var(--sidebar-bg);
+            box-shadow: 2px 0 10px rgba(0,0,0,.2);
+            transition: var(--transition);
+            z-index: 1000;
+        }
+
+        .sidebar-brand {
+            display: flex; align-items: center; gap: 10px;
+            padding: 1.5rem; border-bottom: 1px solid var(--dark-border);
+            color: #fff; font-weight: 600; font-size: 1.25rem;
+            position: sticky; top: 0; background: var(--sidebar-bg); z-index: 10;
+        }
+
+        .brand-icon {
+            width: 32px; height: 32px; background: #fff; color: var(--sidebar-bg);
+            border-radius: 6px; display: grid; place-content: center;
+        }
+
+        .nav-section {
+            padding: 1rem 1.5rem 0.5rem; color: #94a3b8; font-size: .75rem;
+            text-transform: uppercase; font-weight: 600; letter-spacing: .5px;
+            display: flex; align-items: center; gap: 8px; margin-top: 1rem;
+        }
+
+        .nav-section:first-of-type { margin-top: 0.5rem; }
+        .nav-section i { font-size: 0.9rem; }
+
+        .nav-link {
+            display: flex; align-items: center; gap: 12px; padding: .75rem 1.5rem;
+            margin: 0 .5rem; width: calc(100% - 1rem); color: #94a3b8;
+            text-decoration: none; border-radius: 6px; transition: var(--transition);
+            border: none; background: none; text-align: left; font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: var(--sidebar-hover); color: #fff;
+        }
+
+        .nav-link i { width: 20px; text-align: center; font-size: 1rem; }
+
+        .nav-badge {
+            margin-left: auto; background: var(--primary); color: white;
+            padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.7rem;
+            font-weight: 600; min-width: 24px; text-align: center;
+        }
+
+        .nav-badge.success { background: var(--success); }
+        .nav-badge.warning { background: var(--warning); }
+
+        .sidebar-content {
+            height: calc(100vh - 80px); overflow-y: auto; padding-bottom: 20px;
+        }
+
+        .sidebar-content::-webkit-scrollbar { width: 6px; }
+        .sidebar-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05); border-radius: 10px;
+        }
+        .sidebar-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1); border-radius: 10px;
+        }
+        .sidebar-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .mobile-menu-toggle {
+            display: none; background: none; border: none; color: var(--dark-text);
+            font-size: 1.5rem; cursor: pointer; padding: 0.5rem;
+            position: fixed; top: 1rem; left: 1rem; z-index: 1001;
+        }
+
+        .main-content { margin-left:280px; min-height:100vh; transition:var(--transition); }
+
+        .top-header {
+            display:flex; justify-content:space-between; align-items:center;
+            background:var(--dark-card); border-bottom:1px solid var(--dark-border);
+            padding:.75rem 1.5rem; position:sticky; top:0; z-index:100;
+        }
+
+        .search-box { position:relative; width:300px; }
+        .search-box input {
+            width:100%; padding:.6rem .75rem .6rem 2.5rem; border-radius:8px;
+            border:1px solid var(--dark-border); background:var(--dark-bg);
+            color:var(--dark-text); font-size:.875rem; transition:var(--transition);
+        }
+        .search-box input:focus {
+            border-color:var(--primary); box-shadow:0 0 0 3px rgba(99,102,241,.1); outline:none;
+        }
+        .search-box i {
+            position:absolute; left:.75rem; top:50%; transform:translateY(-50%);
+            color:var(--dark-text-secondary);
+        }
+
+        .top-header-actions {
+            display: flex; align-items: center; gap: 1rem;
+        }
+
+        .icon-btn {
+            width: 40px; height: 40px; border-radius: 8px; background: var(--dark-bg);
+            border: 1px solid var(--dark-border); color: var(--dark-text-secondary);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: var(--transition); position: relative;
+        }
+
+        .icon-btn:hover {
+            background: var(--primary); color: #fff; border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .notification-badge {
+            position: absolute; top: -5px; right: -5px; background: var(--danger);
+            color: #fff; border-radius: 50%; width: 18px; height: 18px;
+            font-size: 0.65rem; display: flex; align-items: center; justify-content: center;
+            font-weight: 600;
+        }
+
+        .buttons-section {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 1.5rem; padding: 0 1.5rem; flex-wrap: wrap; gap: 1rem;
+        }
+
+        .greeting-msg {
+            font-size: 1.25rem; font-weight: 600; color: var(--dark-text);
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+
+        .greeting-msg i {
+            color: var(--primary); font-size: 1.5rem;
+        }
+
+        .post-job-btn {
+            background:linear-gradient(135deg,var(--primary) 0%,var(--primary-hover) 100%);
+            color:#fff; border:none; padding:.65rem 1.25rem; border-radius:8px;
+            font-weight:600; display:flex; align-items:center; gap:.5rem;
+            cursor:pointer; transition:var(--transition); text-decoration:none;
+        }
+        .post-job-btn:hover { transform:translateY(-2px); box-shadow:0 4px 15px rgba(99,102,241,.3); }
+
+        .create-employee-btn {
+            background:linear-gradient(135deg,var(--success) 0%,#0d9668 100%);
+            color:#fff; border:none; padding:.65rem 1.25rem; border-radius:8px;
+            font-weight:600; display:flex; align-items:center; gap:.5rem;
+            cursor:pointer; transition:var(--transition);
+        }
+        .create-employee-btn:hover { transform:translateY(-2px); box-shadow:0 4px 15px rgba(16,185,129,.3); }
+
+        .content-area { padding:1.5rem; }
+
+        .stats-grid {
+            display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+            gap:1.5rem; margin-bottom:2rem;
+        }
+
+        .stat-card {
+            background:var(--dark-card); border:1px solid var(--dark-border);
+            border-radius:10px; overflow:hidden; transition:var(--transition); cursor:pointer;
+        }
+        .stat-card:hover { transform:translateY(-4px); box-shadow:0 8px 25px rgba(0,0,0,.1); border-color: var(--primary); }
+
+        .stat-card-body { padding:1.5rem; display:flex; justify-content:space-between; align-items:center; }
+        .stat-value { font-size:2rem; font-weight:700; line-height:1; color:var(--dark-text); }
+        .stat-title { font-size:.875rem; color:var(--dark-text-secondary); line-height:1.2; margin-top: 0.25rem; }
+        .stat-icon { font-size:2.5rem; opacity:.7; color:var(--primary); }
+        .stat-card-footer {
+            padding:.75rem 1.5rem; display:flex; align-items:center; justify-content:space-between;
+            color:#fff; font-weight:500; font-size:.875rem;
+        }
+        .stat-card.total-candidates .stat-card-footer { background:#818cf8; }
+        .stat-card.interviews .stat-card-footer { background:#0ea5e9; }
+        .stat-card.hired .stat-card-footer { background:#10b981; }
+        .stat-card.onboarding .stat-card-footer { background:#f59e0b; }
+
+        .content-grid, .chart-grid {
+            display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.5rem;
+        }
+
+        @media(max-width:1200px){ .content-grid, .chart-grid { grid-template-columns:1fr; } }
+
+        .content-card, .chart-card {
+            background:var(--dark-card); border:1px solid var(--dark-border);
+            border-radius:12px; overflow:hidden; transition:var(--transition);
+        }
+        .content-card:hover, .chart-card:hover { box-shadow:0 4px 20px rgba(0,0,0,.1); border-color: var(--primary); }
+
+        .card-header {
+            padding:1.25rem 1.5rem; border-bottom:1px solid var(--dark-border);
+            display:flex; justify-content:space-between; align-items:center;
+        }
+        .card-title {
+            font-size:1.1rem; font-weight:600; margin:0; display:flex; align-items:center; gap:.5rem; color:var(--dark-text);
+        }
+        .view-link {
+            color:var(--primary); text-decoration:none; font-size:.875rem; font-weight:500;
+            display:flex; align-items:center; gap:.25rem; transition:var(--transition);
+        }
+        .view-link:hover { color:var(--primary-hover); transform:translateX(2px); }
+
+        .card-body { padding:1.5rem; }
+
+        .table-container { overflow-x: auto; border-radius: 8px; background: var(--dark-card); }
+        .table {
+            width:100%; border-collapse:separate; border-spacing:0;
+            font-size:.875rem; margin:0; color: var(--dark-text);
+        }
+        .table thead {
+            background: rgba(0, 0, 0, 0.3); position: sticky; top: 0; z-index: 10;
+        }
+        .table th {
+            text-transform:uppercase; font-size:.75rem; font-weight:600;
+            color: var(--dark-text-secondary) !important; padding:1rem .75rem;
+            border-bottom:1px solid var(--dark-border); background: rgba(0, 0, 0, 0.3);
+            white-space: nowrap;
+        }
+        .table td {
+            padding:.875rem .75rem; border-top:1px solid var(--dark-border);
+            vertical-align:middle; color:var(--dark-text)!important; background: var(--dark-card);
+            white-space: nowrap;
+        }
+        .table tbody tr {
+            transition: var(--transition);
+        }
+        .table tbody tr:hover {
+            background:rgba(255,255,255,.05) !important; transform: translateX(2px);
+        }
+        .table tbody tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .candidate-info { display:flex; flex-direction:column; gap:.25rem; }
+        .candidate-details { min-width:0; }
+        .candidate-name {
+            font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+            color:var(--dark-text);
+        }
+        .candidate-email {
+            font-size:.75rem; color:var(--dark-text-secondary);
+            white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+        }
+
+        .status-badge, .job-type-badge {
+            padding:.35rem .75rem; border-radius:20px; font-size:.7rem; font-weight:600;
+            text-transform:capitalize; color:#fff!important; display: inline-block;
+            min-width: 80px; text-align: center;
+        }
+        .status-applied   { background:#9ca3af; }
+        .status-in-review { background:#0ea5e9; }
+        .status-interview { background:#f59e0b; }
+        .status-hired     { background:#10b981; }
+        .status-offered   { background:#8b5cf6; }
+        .status-rejected  { background:#ef4444; }
+        .job-type-badge   {
+            background:rgba(99,102,241,.1); color:var(--primary)!important;
+            border:1px solid rgba(99,102,241,.2);
+        }
+
+        .action-buttons { display:flex; gap:.375rem; justify-content:flex-end; }
+        .btn-action {
+            width:32px; height:32px; border-radius:6px; display:inline-flex;
+            align-items:center; justify-content:center; border:none; cursor:pointer;
+            transition:var(--transition); text-decoration:none; font-size:.8rem;
+        }
+        .btn-view  { background:rgba(14,165,233,.1); color:#0ea5e9; border:1px solid rgba(14,165,233,.2); }
+        .btn-edit  { background:rgba(99,102,241,.1); color:var(--primary); border:1px solid rgba(99,102,241,.2); }
+        .btn-delete{ background:rgba(239,68,68,.1); color:var(--danger); border:1px solid rgba(239,68,68,.2); }
+        .btn-schedule { background:rgba(245,158,11,.1); color:var(--warning); border:1px solid rgba(245,158,11,.2); }
+
+        .btn-action:hover { transform:translateY(-1px); color:#fff; }
+        .btn-view:hover { background:#0ea5e9; }
+        .btn-edit:hover { background:var(--primary); }
+        .btn-delete:hover { background:var(--danger); }
+        .btn-schedule:hover { background:var(--warning); }
+
+        .update-item {
+            display:flex; align-items:flex-start; padding:1rem 0;
+            border-bottom:1px solid var(--dark-border); transition:var(--transition);
+        }
+        .update-item:last-child { border-bottom:none; }
+        .update-item:hover {
+            background:rgba(255,255,255,.05); border-radius:6px;
+            padding:1rem; margin:0 -.5rem;
+        }
+        .update-icon {
+            width:40px; height:40px; border-radius:10px; display:flex;
+            align-items:center; justify-content:center; margin-right:1rem;
+            flex-shrink:0; color:#fff; font-size:1rem;
+        }
+        .update-icon.twitter { background:#0ea5e9; }
+        .update-icon.product { background:#10b981; }
+        .update-icon.backup { background:#818cf8; }
+        .update-icon.friend { background:#f59e0b; }
+        .update-time { font-size:.75rem; color:var(--dark-text-secondary); margin-bottom:.25rem; }
+        .update-text { font-size:.875rem; line-height:1.4; color:var(--dark-text); }
+        .update-subtext { font-size:.8rem; color:var(--dark-text-secondary); line-height:1.4; }
+
+        .chart-container { height:280px; position:relative; padding:1rem; }
+        .chart-type-selector { display:flex; gap:.5rem; margin-bottom:1rem; }
+        .chart-type-btn {
+            padding:.5rem .75rem; background:var(--dark-bg); border:1px solid var(--dark-border);
+            border-radius:6px; cursor:pointer; font-size:.75rem; color:var(--dark-text);
+            font-weight:500; transition:var(--transition);
+        }
+        .chart-type-btn.active { background:var(--primary); color:#fff; border-color:var(--primary); }
+
+        .funnel-container {
+            display:flex; flex-direction:column; align-items:center; justify-content:center;
+            height:280px; padding:1.5rem 0;
+        }
+        .funnel-step {
+            width:85%; display:flex; justify-content:space-between; align-items:center;
+            padding:.875rem 1rem; margin:.2rem 0; color:#fff; font-weight:600; border-radius:8px;
+            transition:var(--transition);
+        }
+        .funnel-step:hover { transform:translateX(5px); }
+        .funnel-step-1 { background:linear-gradient(135deg,#818cf8,#6366f1); width:100%; }
+        .funnel-step-2 { background:linear-gradient(135deg,#0ea5e9,#0369a1); width:90%; }
+        .funnel-step-3 { background:linear-gradient(135deg,#10b981,#047857); width:80%; }
+        .funnel-step-4 { background:linear-gradient(135deg,#f59e0b,#d97706); width:70%; }
+        .funnel-step-5 { background:linear-gradient(135deg,#ef4444,#dc2626); width:60%; }
+
+        .employee-management { margin-top: 2rem; }
+
+        .empty-state {
+            text-align:center; padding:3rem 2rem; color:var(--dark-text-secondary);
+        }
+        .empty-state i { font-size:3rem; margin-bottom:1rem; opacity:.4; }
+        .empty-state h4 {
+            color:var(--dark-text-secondary); margin-bottom:.5rem; font-weight:600;
+        }
+        .empty-state p { margin-bottom:1.5rem; color:var(--dark-text-secondary); }
+
+        .alert {
+            padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1rem;
+            border: 1px solid transparent; display: flex; align-items: center;
+        }
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        .user-profile-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .dropdown-item:hover {
+            background: var(--sidebar-hover);
+        }
+
+        .dropdown-item:active {
+            background: var(--primary);
+        }
+        .fade-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media(max-width:768px){
+            .mobile-menu-toggle { display: block; }
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .top-header { flex-direction:column; gap:1rem; padding:1rem; }
+            .content-area { padding:1rem; }
+            .stats-grid { grid-template-columns:1fr; gap:1rem; }
+            .content-grid, .chart-grid { grid-template-columns:1fr; gap:1rem; }
+            .buttons-section { justify-content: center; padding: 0 1rem; flex-direction: column; }
+            .greeting-msg { width: 100%; justify-content: center; margin-bottom: 1rem; }
+        }
+
+        @media(max-width:576px){
+            .content-area { padding:1rem; }
+            .card-body { padding:1rem; }
+            .table td, .table th { padding:.5rem .25rem; }
+            .stat-card-body { padding:1rem; }
+            .stat-value { font-size:1.5rem; }
+            .stat-icon { font-size:2rem; }
+        }
+    </style>
+</head>
+<body>
+<!-- === MOBILE MENU TOGGLE === -->
+<button class="mobile-menu-toggle" id="mobileMenuToggle">
+    <i class="fas fa-bars"></i>
+</button><!-- === SIDEBAR === -->
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+        <div class="brand-icon"><i class="fas fa-users"></i></div>
+        <span>Menti's IT Solutions</span>
+    </div>
+
+    <div class="sidebar-content">
+        <nav class="mt-3">
+            <!-- Dashboard Section -->
+            <div class="nav-section">
+                <i class="fas fa-home"></i>
+                Dashboard
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <!-- UPDATED: Use /dashboard/hr for HR dashboard -->
+                    <a class="nav-link active" href="/dashboard/hr">
+                        <i class="fas fa-th-large"></i>
+                        <span>Overview</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Recruitment Management Section -->
+            <div class="nav-section">
+                <i class="fas fa-user-tie"></i>
+                Recruitment Management
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <!-- UPDATED: Use /dashboard/hr/job-form -->
+                    <a class="nav-link" href="/dashboard/hr/job-form">
+                        <i class="fas fa-briefcase"></i>
+                        <span>Job Postings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <!-- UPDATED: Use /dashboard/hr/applications -->
+                    <a class="nav-link" href="/dashboard/hr/applications">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Applications</span>
+                        <span class="nav-badge">12</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <!-- UPDATED: Use /dashboard/hr/interview-management -->
+                    <a class="nav-link" href="/dashboard/hr/interview-management">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Interview Schedule</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <!-- UPDATED: Use /dashboard/hr/offer-candidates -->
+                    <a class="nav-link" href="/dashboard/hr/offer-candidates">
+                        <i class="fas fa-file-contract"></i>
+                        <span>Offer Letters</span>
+                        <span class="nav-badge warning" th:text="${offerCount}">0</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Employee Management Section -->
+            <div class="nav-section">
+                <i class="fas fa-users-cog"></i>
+                Employee Management
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <!-- UPDATED: Use /dashboard/hr/add-employee -->
+                    <a class="nav-link" href="/dashboard/hr/add-employee">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Add Employee</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <!-- UPDATED: Use /dashboard/hr/employees -->
+                    <a class="nav-link" href="/dashboard/hr/employees">
+                        <i class="fas fa-id-card"></i>
+                        <span>All Employees</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <!-- UPDATED: Use /dashboard/hr/onboarding -->
+                    <a class="nav-link" th:href="@{/dashboard/hr/onboarding}">
+                        <i class="fas fa-clipboard-check"></i>
+                        <span>Onboarding</span>
+                        <span class="nav-badge warning" th:text="${totalPending != null ? totalPending : 0}">0</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/hr/attendance">
+                        <i class="fas fa-user-clock"></i>
+                        <span>Attendance</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/hr/leave-management">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Leave Management</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard/hr/performance">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Performance Review</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Organization Structure Section -->
+            <div class="nav-section">
+                <i class="fas fa-building"></i>
+                Organization
+            </div>
+            <ul class="nav flex-column">
+                <li><a class="nav-link" href="/dashboard/hr/company-info"><i class="fas fa-info-circle"></i> Company Info</a></li>
+                <li><a class="nav-link" href="/dashboard/hr/company-structure"><i class="fas fa-sitemap"></i> Org Chart</a></li>
+                <li th:if="${isSuperAdmin}"><a class="nav-link" href="/dashboard/hr/add-department"><i class="fas fa-plus-square"></i> Departments</a></li>
+                <li th:if="${isSuperAdmin}"><a class="nav-link" href="/dashboard/hr/locations"><i class="fas fa-map-marker-alt"></i> Locations</a></li>
+            </ul>
+
+            <!-- SUPER ADMIN ONLY SECTIONS -->
+            <div th:if="${isSuperAdmin}" class="nav-section">
+                <i class="fas fa-user-shield"></i>
+                Administration
+            </div>
+            <ul th:if="${isSuperAdmin}" class="nav flex-column">
+                <li><a class="nav-link" href="/dashboard/hr/user-management"><i class="fas fa-users-cog"></i> User Management</a></li>
+                <li><a class="nav-link" href="/dashboard/hr/role-permissions"><i class="fas fa-user-tag"></i> Roles & Permissions</a></li>
+                <li><a class="nav-link" href="/dashboard/hr/access-control"><i class="fas fa-shield-alt"></i> Access Control</a></li>
+            </ul>
+
+            <div th:if="${isSuperAdmin}" class="nav-section">
+                <i class="fas fa-money-bill-wave"></i>
+                Finance
+            </div>
+            <ul th:if="${isSuperAdmin}" class="nav flex-column">
+                <li><a class="nav-link" href="/dashboard/hr/payroll"><i class="fas fa-wallet"></i> Payroll Management</a></li>
+            </ul>
+
+            <div th:if="${isSuperAdmin}" class="nav-section">
+                <i class="fas fa-cogs"></i>
+                System
+            </div>
+            <ul th:if="${isSuperAdmin}" class="nav flex-column">
+                <li><a class="nav-link" href="/dashboard/hr/system-settings"><i class="fas fa-cog"></i> System Settings</a></li>
+                <li><a class="nav-link" href="/dashboard/hr/notifications"><i class="fas fa-bell"></i> Notifications</a></li>
+                <li><a class="nav-link" href="/dashboard/hr/audit-log"><i class="fas fa-history"></i> Audit Log</a></li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<!-- === MAIN CONTENT === -->
+<div class="main-content">
+    <!-- === TOP HEADER WITH USER PROFILE DROPDOWN === -->
+    <header class="top-header">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="Search candidates, jobs, employees...">
+        </div>
+
+        <div class="top-header-actions">
+            <!-- Enhanced Notification Dropdown -->
+
+            <!-- Enhanced Notification Dropdown -->
+            <div class="notification-dropdown" style="position: relative;">
+                <div class="icon-btn notification-trigger" onclick="toggleHRNotificationDropdown()" title="Notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="hrNotificationBadge" style="display: none;">0</span>
+                </div>
+                <div class="notification-dropdown-menu" id="hrNotificationDropdownMenu" style="display: none;">
+                    <div class="notification-header" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--dark-border);">
+                        <h6 style="margin: 0; font-size: 14px; font-weight: 600; color: var(--dark-text);">HR Notifications</h6>
+                        <div style="display: flex; gap: 10px;">
+                            <a href="#" onclick="markAllHRNotificationsRead(); return false;" style="font-size: 11px; color: var(--primary); text-decoration: none;">
+                                <i class="fas fa-check-double"></i> Mark all
+                            </a>
+                            <a th:href="@{/notifications/hr}" style="font-size: 11px; color: var(--primary); text-decoration: none;">
+                                <i class="fas fa-external-link-alt"></i> View All
+                            </a>
+                        </div>
+                    </div>
+                    <div class="notification-list" id="hrNotificationList" style="max-height: 300px; overflow-y: auto;">
+                        <div class="empty-notifications" id="emptyHRNotification" style="padding: 24px; text-align: center; color: var(--dark-text-secondary); font-size: 13px;">
+                            <i class="fas fa-bell-slash" style="font-size: 24px; margin-bottom: 8px;"></i>
+                            <div>No new notifications</div>
+                        </div>
+                    </div>
+                    <div class="notification-footer" style="padding: 10px 16px; border-top: 1px solid var(--dark-border); text-align: center;">
+                        <a th:href="@{/notifications/hr}" style="font-size: 12px; color: var(--primary); text-decoration: none; display: block;">
+                            View all HR notifications
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Announcement Icon -->
+            <div class="icon-btn" title="Announcements">
+                <i class="fas fa-bullhorn"></i>
+            </div>
+
+            <!-- User Profile Menu -->
+            <div class="user-profile-menu">
+                <!-- User Avatar & Dropdown -->
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center gap-2"
+                            type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="avatar-sm" style="width: 32px; height: 32px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.875rem;" th:text="${#strings.toUpperCase(userName != null ? userName.substring(0, 1) : 'U')}">U</div>
+                        <span th:text="${userName}">User Name</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" style="background: var(--dark-card); border: 1px solid var(--dark-border);">
+                        <li>
+                            <a class="dropdown-item" href="/candidate/auth/change-password" style="color: var(--dark-text);">
+                                <i class="fas fa-key me-2"></i>Change Password
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider" style="border-color: var(--dark-border);"></li>
+                        <li>
+                            <a class="dropdown-item text-danger" href="/candidate/auth/logout" style="color: #ef4444;">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="content-area">
+        <!-- Buttons Section with Greeting -->
+        <div class="buttons-section">
+            <!-- Greeting Message -->
+            <div class="greeting-msg">
+                <i class="fas fa-hand-wave"></i>
+                <span th:if="${isSuperAdmin}">Welcome Super Admin! Manage your system efficiently</span>
+                <span th:unless="${isSuperAdmin}">Welcome HR! Let's build a great team today</span>
+            </div>
+
+            <!-- Action Buttons -->
+            <div style="display: flex; gap: 1rem;">
+                <a href="/dashboard/job-form" class="post-job-btn" id="postJobBtn">
+                    <i class="fas fa-plus"></i>
+                    <span>Post New Job</span>
+                </a>
+                <button class="create-employee-btn" id="createEmployeeBtn">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Create New Employee</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Alerts -->
+        <div th:if="${param.success}" class="alert alert-success">
+            <i class="fas fa-check-circle me-2"></i>
+            <span th:text="${param.success}">Success</span>
+        </div>
+        <div th:if="${param.error}" class="alert alert-danger">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <span th:text="${param.error}">Error</span>
+        </div>
+
+        <div id="dashboardContent">
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <div class="stat-card total-candidates">
+                    <div class="stat-card-body">
+                        <div>
+                            <div class="stat-value" th:text="${totalCandidates}">0</div>
+                            <div class="stat-title">Total Applied Candidates</div>
+                        </div>
+                        <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    </div>
+                    <div class="stat-card-footer">
+                        <span>+12% from last month</span>
+                        <i class="fas fa-arrow-up"></i>
+                    </div>
+                </div>
+                <div class="stat-card interviews">
+                    <div class="stat-card-body">
+                        <div>
+                            <div class="stat-value" th:text="${interviewsScheduled}">0</div>
+                            <div class="stat-title">Interviews Scheduled</div>
+                        </div>
+                        <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+                    </div>
+                    <div class="stat-card-footer">
+                        <span>+8% from last week</span>
+                        <i class="fas fa-arrow-up"></i>
+                    </div>
+                </div>
+                <div class="stat-card hired">
+                    <div class="stat-card-body">
+                        <div>
+                            <div class="stat-value" th:text="${hiredThisMonth}">0</div>
+                            <div class="stat-title">Hired This Month</div>
+                        </div>
+                        <div class="stat-icon"><i class="fas fa-user-check"></i></div>
+                    </div>
+                    <div class="stat-card-footer">
+                        <span>+5% from last month</span>
+                        <i class="fas fa-arrow-up"></i>
+                    </div>
+                </div>
+                <div class="stat-card onboarding">
+                    <div class="stat-card-body">
+                        <div>
+                            <div class="stat-value" th:text="${inOnboarding}">0</div>
+                            <div class="stat-title">In Onboarding</div>
+                        </div>
+                        <div class="stat-icon"><i class="fas fa-clipboard-list"></i></div>
+                    </div>
+                    <div class="stat-card-footer">
+                        <span>-2% from last week</span>
+                        <i class="fas fa-arrow-down"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content Grid -->
+            <div class="content-grid">
+                <!-- Recent Applications -->
+                <div class="content-card fade-in">
+                    <div class="card-header">
+                        <h5 class="card-title">
+                            <i class="fas fa-clock"></i>
+                            Recent Applications
+                        </h5>
+                        <a th:href="@{/dashboard/applications}" class="view-link">
+                            View All
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>Candidate</th>
+                                    <th>Position</th>
+                                    <th>Applied Date</th>
+                                    <th>Status</th>
+                                    <th width="120">Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="app : ${recentApplications}" th:if="${recentApplications != null and !recentApplications.empty}">
+                                    <td>
+                                        <div class="candidate-info">
+                                            <div class="candidate-details">
+                                                <div class="candidate-name" th:text="${app.firstName + ' ' + app.lastName}">John Doe</div>
+                                                <div class="candidate-email" th:text="${app.email}">email@example.com</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td th:text="${app.jobTitle}">Senior Developer</td>
+                                    <td th:text="${app.displayApplicationDate}">Nov 15, 2023</td>
+                                    <td>
+                                        <span class="status-badge status-applied" th:text="${app.status}">Applied</span>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <a th:href="@{/dashboard/viewApplication/{id}(id=${app.id})}" class="btn-action btn-view" title="View">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a th:href="@{/dashboard/interview-schedule/{id}(id=${app.id})}" class="btn-action btn-schedule" title="Schedule">
+                                                <i class="fas fa-calendar-plus"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr th:if="${recentApplications == null or recentApplications.empty}">
+                                    <td colspan="5">
+                                        <div class="empty-state">
+                                            <i class="fas fa-inbox"></i>
+                                            <h4>No Applications Found</h4>
+                                            <p>No recent applications with 'Applied' status</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Latest Updates -->
+                <div class="content-card fade-in">
+                    <div class="card-header">
+                        <h5 class="card-title">
+                            <i class="fas fa-bell"></i>
+                            Latest Updates
+                        </h5>
+                        <a href="#" class="view-link">
+                            View All
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <div class="update-item">
+                            <div class="update-icon twitter"><i class="fas fa-bullhorn"></i></div>
+                            <div class="update-content">
+                                <div class="update-time">2 hrs ago</div>
+                                <div class="update-text">+ 25 New Applications Received</div>
+                                <div class="update-subtext">Applications for Software Engineer and Designer positions are trending up!</div>
+                            </div>
+                        </div>
+                        <div class="update-item">
+                            <div class="update-icon product"><i class="fas fa-briefcase"></i></div>
+                            <div class="update-content">
+                                <div class="update-time">5 hrs ago</div>
+                                <div class="update-text">New job posting: Senior DevOps Engineer</div>
+                                <div class="update-subtext">Published on LinkedIn, Indeed, Glassdoor</div>
+                            </div>
+                        </div>
+                        <div class="update-item">
+                            <div class="update-icon backup"><i class="fas fa-user-check"></i></div>
+                            <div class="update-content">
+                                <div class="update-time">Yesterday</div>
+                                <div class="update-text">3 new hires completed onboarding</div>
+                                <div class="update-subtext">Welcome to the team Michael, Sarah, and James!</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="chart-grid">
+                <div class="chart-card fade-in">
+                    <div class="card-header">
+                        <h5 class="card-title">
+                            <i class="fas fa-chart-line"></i>
+                            Monthly Recruitment Metrics
+                        </h5>
+                        <div class="chart-type-selector">
+                            <div class="chart-type-btn active" data-chart="bar">Bar</div>
+                            <div class="chart-type-btn" data-chart="line">Line</div>
+                            <div class="chart-type-btn" data-chart="pie">Pie</div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="recruitmentChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="chart-card fade-in">
+                    <div class="card-header">
+                        <h5 class="card-title">
+                            <i class="fas fa-filter"></i>
+                            Recruitment Pipeline
+                        </h5>
+                        <a href="#" class="view-link">
+                            View Details
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <div class="funnel-container">
+                            <div class="funnel-step funnel-step-1"><span>Applications</span><span class="funnel-value">1,247</span></div>
+                            <div class="funnel-step funnel-step-2"><span>Screenings</span><span class="funnel-value">842</span></div>
+                            <div class="funnel-step funnel-step-3"><span>Interviews</span><span class="funnel-value">523</span></div>
+                            <div class="funnel-step funnel-step-4"><span>Final Round</span><span class="funnel-value">215</span></div>
+                            <div class="funnel-step funnel-step-5"><span>Offers</span><span class="funnel-value">78</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Jobs Section -->
+            <div class="content-card fade-in">
+                <div class="card-header">
+                    <h5 class="card-title">
+                        <i class="fas fa-briefcase"></i>
+                        Posted Jobs
+                    </h5>
+                    <a href="/dashboard/job-form" class="post-job-btn">
+                        <i class="fas fa-plus"></i>
+                        <span>Post New Job</span>
+                    </a>
+                </div>
+                <div class="card-body p-0">
+                    <div th:if="${jobs==null or jobs.empty}" class="empty-state">
+                        <i class="fas fa-briefcase"></i>
+                        <h4>No Jobs Posted</h4>
+                        <p>Get started by posting your first job opening</p>
+                        <a href="/dashboard/job-form" class="post-job-btn">
+                            <i class="fas fa-plus"></i>
+                            <span>Post New Job</span>
+                        </a>
+                    </div>
+                    <div th:if="${jobs !=null and !jobs.empty}">
+                        <div class="table-container">
+                            <table class="table jobs-table">
+                                <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Department</th>
+                                    <th>Type</th>
+                                    <th>Location</th>
+                                    <th>Posted Date</th>
+                                    <th width="120">Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="job:${jobs}">
+                                    <td>
+                                        <div class="candidate-info">
+                                            <div class="candidate-details">
+                                                <div class="candidate-name" th:text="${job.title}">Job Title</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td th:text="${job.department}">Department</td>
+                                    <td><span class="job-type-badge" th:text="${job.jobType}">Type</span></td>
+                                    <td th:text="${job.location}">Location</td>
+                                    <td th:text="${#temporals.format(job.postedDate,'dd MMM yyyy')}">Date</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <a th:href="@{/dashboard/viewJob/{id}(id=${job.id})}" class="btn-action btn-view" title="View">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="#" th:onclick="|openEditModal(${job.id})|" class="btn-action btn-edit" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <form th:action="@{/dashboard/deleteJob/{id}(id=${job.id})}" method="post" style="display:inline;">
+                                                <button type="submit" class="btn-action btn-delete" title="Delete" onclick="return confirm('Delete this job?')">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Employee Management Section -->
+            <div class="employee-management content-card fade-in">
+                <div class="card-header">
+                    <h5 class="card-title">
+                        <i class="fas fa-id-card"></i>
+                        Employee Management
+                    </h5>
+                    <button class="create-employee-btn" onclick="showEmployeeForm()">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Create New Employee</span>
+                    </button>
+                </div>
+                <div class="card-body p-0">
+                    <div th:if="${employees==null or employees.empty}" class="empty-state">
+                        <i class="fas fa-users"></i>
+                        <h4>No Employees Added</h4>
+                        <p>Get started by adding your first employee</p>
+                        <button class="create-employee-btn" onclick="showEmployeeForm()">
+                            <i class="fas fa-user-plus"></i>
+                            Add Employee
+                        </button>
+                    </div>
+                    <div th:if="${employees !=null and !employees.empty}">
+                        <div class="table-container">
+                            <table class="table employees-table">
+                                <thead>
+                                <tr>
+                                    <th>Employee</th>
+                                    <th>Department</th>
+                                    <th>Position</th>
+                                    <th>Status</th>
+                                    <th>Join Date</th>
+                                    <th width="120">Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="employee:${employees}">
+                                    <td>
+                                        <div class="candidate-info">
+                                            <div class="candidate-details">
+                                                <div class="candidate-name" th:text="${employee.firstName + ' ' + employee.lastName}">John Doe</div>
+                                                <div class="candidate-email" th:text="${employee.email}">email@example.com</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td th:text="${employee.department}">Department</td>
+                                    <td th:text="${employee.position}">Position</td>
+                                    <td><span class="status-badge status-hired" th:text="${employee.status}">Active</span></td>
+                                    <td th:text="${#temporals.format(employee.joinDate,'dd MMM yyyy')}">Date</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <a th:href="@{/dashboard/viewEmployee/{id}(id=${employee.id})}" class="btn-action btn-view" title="View">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="#" th:onclick="|openEditEmployeeModal(${employee.id})|" class="btn-action btn-edit" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <form th:action="@{/dashboard/deleteEmployee/{id}(id=${employee.id})}" method="post" style="display:inline;">
+                                                <button type="submit" class="btn-action btn-delete" title="Delete" onclick="return confirm('Delete this employee?')">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js       "></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Dashboard JavaScript loaded successfully');
+            initializeDashboard();
+        });
+
+        function initializeDashboard() {
+            safeInitCharts();
+
+            const cards = document.querySelectorAll('.fade-in');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+
+            setupEventListeners();
+            initializeSidebar();
+
+            console.log('Dashboard initialized with organized sidebar');
+        }
+
+        function safeInitCharts() {
+            try {
+                initRecruitmentChart();
+                setupChartTypeSelector();
+            } catch (error) {
+                console.log('Chart initialization skipped:', error.message);
+            }
+        }
+
+        function initRecruitmentChart() {
+            const chartCanvas = document.getElementById('recruitmentChart');
+            if (!chartCanvas) return;
+
+            if (window.recruitmentChart instanceof Chart) {
+                window.recruitmentChart.destroy();
+            }
+
+            const chartType = getCurrentChartType();
+
+            try {
+                const ctx = chartCanvas.getContext('2d');
+
+                const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+                gradient.addColorStop(0, 'rgba(99, 102, 241, 0.3)');
+                gradient.addColorStop(1, 'rgba(99, 102, 241, 0.1)');
+
+                const gradient2 = ctx.createLinearGradient(0, 0, 0, 400);
+                gradient2.addColorStop(0, 'rgba(14, 165, 233, 0.3)');
+                gradient2.addColorStop(1, 'rgba(14, 165, 233, 0.1)');
+
+                window.recruitmentChart = new Chart(chartCanvas, {
+                    type: chartType,
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                        datasets: [
+                            {
+                                label: 'Applications',
+                                data: [820, 932, 901, 934, 1290, 1330, 1320, 1100, 1247, 1380, 1420, 1500],
+                                backgroundColor: gradient,
+                                borderColor: '#6366f1',
+                                borderWidth: 2,
+                                tension: 0.4,
+                                fill: true
+                            },
+                            {
+                                label: 'Hires',
+                                data: [32, 38, 40, 42, 48, 50, 43, 45, 52, 42, 55, 60],
+                                backgroundColor: gradient2,
+                                borderColor: '#0ea5e9',
+                                borderWidth: 2,
+                                tension: 0.4,
+                                fill: true
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    color: '#e2e8f0',
+                                    usePointStyle: true,
+                                    padding: 20
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(26, 34, 53, 0.9)',
+                                titleColor: '#e2e8f0',
+                                bodyColor: '#e2e8f0',
+                                borderColor: '#2a3655',
+                                borderWidth: 1
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    drawBorder: false,
+                                    color: 'rgba(255,255,255,0.1)'
+                                },
+                                ticks: {
+                                    color: '#94a3b8'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                },
+                                ticks: {
+                                    color: '#94a3b8'
+                                }
+                            }
+                        },
+                        interaction: {
+                            intersect: false,
+                            mode: 'index'
+                        },
+                        animations: {
+                            tension: {
+                                duration: 1000,
+                                easing: 'linear'
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error creating chart:', error);
+            }
+        }
+
+        function getCurrentChartType() {
+            const activeBtn = document.querySelector('.chart-type-btn.active');
+            return activeBtn ? activeBtn.getAttribute('data-chart') : 'bar';
+        }
+
+        function setupChartTypeSelector() {
+            const chartButtons = document.querySelectorAll('.chart-type-btn');
+            chartButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    chartButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    initRecruitmentChart();
+                });
+            });
+        }
+
+        function initializeSidebar() {
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const sidebar = document.querySelector('.sidebar');
+
+            if (mobileMenuToggle) {
+                mobileMenuToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('active');
+                });
+            }
+
+            document.addEventListener('click', function(event) {
+                if (window.innerWidth <= 768 &&
+                    !sidebar.contains(event.target) &&
+                    !mobileMenuToggle.contains(event.target) &&
+                    sidebar.classList.contains('active')) {
+                    sidebar.classList.remove('active');
+                }
+            });
+        }
+
+        function setupEventListeners() {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.addEventListener('input', function(e) {
+                    const term = e.target.value.toLowerCase();
+                    filterTables(term);
+                });
+            }
+
+            const postJobBtn = document.getElementById('postJobBtn');
+            if (postJobBtn) {
+                postJobBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.location.href = '/dashboard/job-form';
+                });
+            }
+
+            const createEmployeeBtn = document.getElementById('createEmployeeBtn');
+            if (createEmployeeBtn) {
+                createEmployeeBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showEmployeeForm();
+                });
+            }
+
+            const statCards = document.querySelectorAll('.stat-card');
+            statCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const title = this.querySelector('.stat-title').textContent;
+                    console.log('Clicked stat card:', title);
+                });
+            });
+        }
+
+        function filterTables(searchTerm) {
+            const tables = document.querySelectorAll('.table tbody tr');
+            tables.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        window.showJobForm = function() {
+            window.location.href = '/dashboard/job-form';
+        };
+
+        window.showEmployeeForm = function() {
+            window.location.href = '/dashboard/add-employee';
+        };
+
+        window.openEditModal = function(jobId) {
+            console.log('Opening edit modal for job:', jobId);
+        };
+
+        window.openEditEmployeeModal = function(employeeId) {
+            console.log('Opening edit modal for employee:', employeeId);
+        };
+
+        window.addEventListener('resize', function() {
+            if (window.recruitmentChart) {
+                window.recruitmentChart.resize();
+            }
+        });
+
+        // In dashboard.html <script>
+    const userRole = /*[[${userRole}]]*/ null;
+    const hrSocket = new SockJS('/ws');
+    const hrStompClient = Stomp.over(hrSocket);
+
+    hrStompClient.connect({}, function(frame) {
+        hrStompClient.subscribe('/topic/hr/HR_SYSTEM/notifications', function(message) {
+            const notification = JSON.parse(message.body);
+            addHRNotificationToDropdown(notification);
+            updateHRBadge();
+        });
+    });
+
+        <!-- Add this script before closing </body> tag -->
+    <script th:inline="javascript">
+        // HR Notification System
+        (function() {
+            let hrNotificationData = [];
+            let hrUnreadCount = 0;
+            let hrSocketConnected = false;
+            const userRole = /*[[${userRole}]]*/ null;
+
+            // Initialize HR notifications
+            function initHRNotifications() {
+                if (!userRole || (userRole !== 'HR' && userRole !== 'SUPER_ADMIN')) {
+                    return; // Skip if not HR or Super Admin
+                }
+
+                loadHRNotifications();
+                connectHRWebSocket();
+                setupHREventListeners();
+            }
+
+            // Load HR notifications from server
+            async function loadHRNotifications() {
+                try {
+                    const response = await fetch('/notifications/api/recent?limit=5');
+                    if (response.ok) {
+                        hrNotificationData = await response.json();
+                        updateHRNotificationUI();
+                    }
+                } catch (error) {
+                    console.error('Error loading HR notifications:', error);
+                }
+            }
+
+            // Connect to WebSocket for HR
+            function connectHRWebSocket() {
+                if (typeof Stomp === 'undefined') {
+                    console.warn('STOMP not available, HR notifications will be polled only');
+                    return;
+                }
+
+                try {
+                    const socket = new SockJS('/ws');
+                    const stompClient = Stomp.over(socket);
+                    stompClient.debug = () => {}; // Disable debug output
+
+                    stompClient.connect({}, function(frame) {
+                        console.log('HR WebSocket connected');
+                        hrSocketConnected = true;
+
+                        // Subscribe to HR notifications
+                        stompClient.subscribe('/topic/hr/HR_SYSTEM/notifications', function(message) {
+                            handleHRRealTimeNotification(JSON.parse(message.body));
+                        });
+                    }, function(error) {
+                        console.error('HR WebSocket connection error:', error);
+                        hrSocketConnected = false;
+                    });
+                } catch (error) {
+                    console.error('Failed to initialize HR WebSocket:', error);
+                }
+            }
+
+            // Handle real-time HR notification
+            function handleHRRealTimeNotification(notification) {
+                console.log('Real-time HR notification received:', notification);
+                hrNotificationData.unshift(notification);
+                if (hrNotificationData.length > 5) {
+                    hrNotificationData = hrNotificationData.slice(0, 5);
+                }
+                updateHRNotificationUI();
+                showHRNotificationToast(notification);
+            }
+
+            // Update HR notification UI
+            function updateHRNotificationUI() {
+                const list = document.getElementById('hrNotificationList');
+                const empty = document.getElementById('emptyHRNotification');
+
+                if (!list) return;
+
+                // Update unread count
+                hrUnreadCount = hrNotificationData.filter(n => !n.read).length;
+                const badge = document.getElementById('hrNotificationBadge');
+                if (badge) {
+                    badge.textContent = hrUnreadCount;
+                    badge.style.display = hrUnreadCount > 0 ? 'flex' : 'none';
+                }
+
+                // Render notifications
+                if (hrNotificationData.length === 0) {
+                    empty.style.display = 'block';
+                    list.innerHTML = '';
+                    return;
+                }
+
+                empty.style.display = 'none';
+                list.innerHTML = hrNotificationData.map(notification =>
+                    createHRNotificationHTML(notification)
+                ).join('');
+            }
+
+            // Create HR notification HTML
+            function createHRNotificationHTML(notification) {
+                const iconInfo = getHRNotificationIcon(notification);
+                const timeAgo = getTimeAgo(notification.createdAt);
+
+                return `
+                    <div class="notification-item ${!notification.read ? 'unread' : ''}"
+                         onclick="showHRNotificationDetail(${notification.id})"
+                         style="display: flex; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--dark-border); transition: background 0.2s ease; cursor: pointer;">
+                        <div class="notification-icon ${iconInfo.class}" style="width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px;">
+                            <i class="fas ${iconInfo.icon}"></i>
+                        </div>
+                        <div class="notification-content" style="flex: 1; min-width: 0;">
+                            <div class="notification-title" style="font-size: 12px; font-weight: 600; color: var(--dark-text); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                ${notification.title}
+                            </div>
+                            <div class="notification-message" style="font-size: 11px; color: var(--dark-text-secondary); line-height: 1.3; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                ${formatMessage(notification.message)}
+                            </div>
+                            <div class="notification-time" style="font-size: 10px; color: var(--dark-text-secondary); opacity: 0.8;">
+                                ${timeAgo}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Get HR notification icon
+            function getHRNotificationIcon(notification) {
+                const iconMap = {
+                    'DOCUMENT_UPLOADED': { class: 'info', icon: 'fa-file-upload' },
+                    'DOCUMENT_VERIFIED': { class: 'success', icon: 'fa-check-circle' },
+                    'DOCUMENT_REJECTED': { class: 'error', icon: 'fa-times-circle' },
+                    'ONBOARDING_COMPLETED': { class: 'success', icon: 'fa-trophy' }
+                };
+                return iconMap[notification.type] || { class: 'info', icon: 'fa-bell' };
+            }
+
+            // Show HR notification toast
+            function showHRNotificationToast(notification) {
+                const toast = document.createElement('div');
+                toast.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: rgba(99, 102, 241, 0.95);
+                    color: white;
+                    padding: 12px 16px;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                    z-index: 10000;
+                    max-width: 300px;
+                    animation: slideInRight 0.3s ease-out;
+                    font-size: 13px;
+                `;
+
+                toast.innerHTML = `
+                    <div style="display: flex; align-items: flex-start; gap: 8px;">
+                        <i class="fas ${getHRNotificationIcon(notification).icon}" style="margin-top: 2px;"></i>
+                        <div>
+                            <div style="font-weight: 600; margin-bottom: 2px;">${notification.title}</div>
+                            <div style="opacity: 0.9; font-size: 11px;">${formatMessage(notification.message)}</div>
+                        </div>
+                    </div>
+                `;
+
+                document.body.appendChild(toast);
+
+                setTimeout(() => {
+                    if (toast.parentElement) {
+                        toast.style.animation = 'slideOutRight 0.3s ease-in';
+                        setTimeout(() => toast.remove(), 300);
+                    }
+                }, 4000);
+            }
+
+            // Utility functions
+            function getTimeAgo(dateString) {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diffMs = now - date;
+                const diffMins = Math.floor(diffMs / 60000);
+                const diffHours = Math.floor(diffMs / 3600000);
+                const diffDays = Math.floor(diffMs / 86400000);
+
+                if (diffMins < 1) return 'Just now';
+                if (diffMins < 60) return `${diffMins}m ago`;
+                if (diffHours < 24) return `${diffHours}h ago`;
+                if (diffDays < 7) return `${diffDays}d ago`;
+                return date.toLocaleDateString();
+            }
+
+            function formatMessage(text) {
+                if (!text) return '';
+                return text.length > 100 ? text.substring(0, 100) + '...' : text;
+            }
+
+            // Toggle dropdown
+            function toggleHRNotificationDropdown() {
+                const dropdown = document.getElementById('hrNotificationDropdownMenu');
+                if (dropdown) {
+                    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+                    if (dropdown.style.display === 'block') {
+                        loadHRNotifications();
+                    }
+                }
+            }
+
+            // Mark all as read
+            async function markAllHRNotificationsRead() {
+                try {
+                    const response = await fetch('/notifications/api/mark-all-read', {
+                        method: 'POST'
+                    });
+                    if (response.ok) {
+                        loadHRNotifications();
+                    }
+                } catch (error) {
+                    console.error('Error marking all HR notifications as read:', error);
+                }
+            }
+
+            // Event listeners
+            function setupHREventListeners() {
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    const dropdown = document.getElementById('hrNotificationDropdownMenu');
+                    const trigger = e.target.closest('.notification-trigger');
+                    if (dropdown && !dropdown.contains(e.target) && !trigger) {
+                        dropdown.style.display = 'none';
+                    }
+                });
+            }
+
+            // Initialize on load
+            document.addEventListener('DOMContentLoaded', initHRNotifications);
+        })();
+    </script>
+    <script>
+        // ==================== HR NAVIGATION SAFEGUARD (Prevents Employee Dashboard Fallback) ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🛡️ HR Navigation Safeguard initialized');
+
+            // Protect all sidebar navigation links from breaking
+            const navLinks = document.querySelectorAll('.sidebar .nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    const href = this.getAttribute('href');
+                    const role = /*[[${userRole}]]*/ null;
+
+                    if (href && href.includes('/candidate/') && (role === 'HR' || role === 'SUPER_ADMIN')) {
+                        console.log('🚨 BLOCKED Employee URL on HR dashboard: ', href);
+                        e.preventDefault();
+                        // Redirect to HR equivalent
+                        window.location.href = '/dashboard/hr';
+                        return false;
+                    }
+
+                    console.log('✅ HR Navigation allowed: ', href);
+                    // Allow normal navigation for HR URLs
+                });
+            });
+
+            // Prevent notification dropdown clicks from interfering with page
+            const notificationDropdown = document.getElementById('hrNotificationDropdownMenu');
+            if (notificationDropdown) {
+                notificationDropdown.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Prevent dropdown from closing on internal clicks
+                });
+            }
+
+            // Reinitialize notification badge after any AJAX operation
+            window.updateHRNotificationBadge = function() {
+                const badge = document.getElementById('hrNotificationBadge');
+                const list = document.getElementById('hrNotificationList');
+                if (badge && list) {
+                    const unreadCount = list.querySelectorAll('.notification-item.unread').length;
+                    badge.textContent = unreadCount;
+                    badge.style.display = unreadCount > 0 ? 'flex' : 'none';
+                    console.log('🔔 Notification badge updated:', unreadCount);
+                }
+            };
+
+            console.log('✅ HR Navigation Safeguard fully activated');
+        });
+    </script>
+</body>
+</html>
