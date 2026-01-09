@@ -2,6 +2,7 @@ package com.mentis.hrms.controller;
 
 import com.mentis.hrms.model.Employee;
 import com.mentis.hrms.model.OnboardingDocument;
+import com.mentis.hrms.model.Notification; // ADD THIS IMPORT
 import com.mentis.hrms.service.DocumentService;
 import com.mentis.hrms.service.EmployeeService;
 import com.mentis.hrms.service.ProfilePictureService;
@@ -29,6 +30,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import com.mentis.hrms.model.enums.UserRole;
 import com.mentis.hrms.service.EmployeeService;
+
 @Controller
 @RequestMapping("/candidate")
 public class CandidateOnboardingController {
@@ -267,10 +269,11 @@ public class CandidateOnboardingController {
         model.addAttribute("uploadedCount", uploadedCount);
         model.addAttribute("progress", calculateProgress(employee));
         model.addAttribute("timestamp", System.currentTimeMillis());
-// Add user info for header
+        // Add user info for header
         model.addAttribute("userRole", session.getAttribute("userRole"));
         model.addAttribute("userName", session.getAttribute("userName"));
 
+        // FIXED: Use getUnreadCount for backward compatibility
         model.addAttribute("unreadCount", notificationService.getUnreadCount(employeeId, "EMPLOYEE"));
         return "candidate/dashboard";
     }
@@ -312,7 +315,13 @@ public class CandidateOnboardingController {
 
         try {
             documentService.uploadDocument(employeeId, documentType, file, notes);
-            // Employee gets local success message (not notification)
+
+            // Check if all documents are now uploaded
+            Optional<Employee> employeeOpt = employeeService.getEmployeeByEmployeeId(employeeId);
+            if (employeeOpt.isPresent()) {
+                checkAndNotifyAllDocumentsUploaded(employeeOpt.get());
+            }
+
             ra.addFlashAttribute("success", "✅ Document uploaded successfully! HR will verify it.");
             return "redirect:/candidate/dashboard/" + employeeId + "?activeTab=profile&activeSubTab=documents";
         } catch (Exception e) {
@@ -465,6 +474,34 @@ public class CandidateOnboardingController {
         progress.put("pendingVerification", submitted - verified);
         return progress;
     }
+
+    /* ==================== 11. NEW: Check and send permanent notification when all docs uploaded ==================== */
+    private void checkAndNotifyAllDocumentsUploaded(Employee employee) {
+        try {
+            List<OnboardingDocument> documents = documentService.getDocumentsByEmployee(employee);
+            long uploadedCount = documents.stream()
+                    .filter(doc -> doc.getFilePath() != null && !doc.getFilePath().trim().isEmpty())
+                    .count();
+
+            // If all documents are uploaded
+            if (uploadedCount == documents.size() && documents.size() > 0) {
+                // Check if permanent notification already exists
+                List<Notification> existingNotifications = notificationService.getPersistentNotifications(
+                        employee.getEmployeeId(), "EMPLOYEE");
+
+                boolean alreadyNotified = existingNotifications.stream()
+                        .anyMatch(n -> "ALL_DOCUMENTS_UPLOADED".equals(n.getType()));
+
+                if (!alreadyNotified) {
+                    // Send permanent notification
+                    notificationService.notifyAllDocumentsUploaded(employee);
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Error checking all documents uploaded: {}", e.getMessage());
+        }
+    }
+
     // ADD this method at the end of CandidateOnboardingController class
     @GetMapping("/dashboard/{employeeId}/documents-fragment")
     @ResponseBody
@@ -550,6 +587,7 @@ public class CandidateOnboardingController {
             return "<tr><td colspan='6' style='text-align: center; padding: 20px; color: #ef4444;'><i class='fas fa-exclamation-triangle'></i> Error loading documents</td></tr>";
         }
     }
+
     private String getDocumentDisplayName(String documentType) {
         Map<String, String> names = Map.of(
                 "RESUME", "Resume/CV",

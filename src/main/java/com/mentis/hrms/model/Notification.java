@@ -40,6 +40,14 @@ public class Notification {
     @Column(name = "sender")
     private String sender;
 
+    // NEW: Persistent flag to distinguish permanent vs temporary notifications
+    @Column(name = "persistent", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private boolean persistent = true;
+
+    // NEW: Additional metadata for temporary notifications
+    @Column(name = "metadata", columnDefinition = "TEXT")
+    private String metadata;
+
     // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -74,85 +82,51 @@ public class Notification {
     public String getSender() { return sender; }
     public void setSender(String sender) { this.sender = sender; }
 
-    // NEW: Helper method to check if notification is read
+    // NEW: Getter and Setter for persistent field
+    public boolean isPersistent() { return persistent; }
+    public void setPersistent(boolean persistent) { this.persistent = persistent; }
+
+    public String getMetadata() { return metadata; }
+    public void setMetadata(String metadata) { this.metadata = metadata; }
+
+    // Helper methods
     public boolean isRead() {
         return readAt != null;
     }
 
-    // NEW: Helper method to mark as read
     public void markAsRead() {
         this.readAt = LocalDateTime.now();
     }
 
-    // NEW: Helper method to mark as unread
     public void markAsUnread() {
         this.readAt = null;
     }
 
-    // REMOVE or COMMENT OUT the getNotificationColor method from here
-    // since we now have it in NotificationService
-    /*
-    // NEW: Get notification color based on type
+    // Get notification color based on type
     public String getNotificationColor() {
         switch (this.type) {
             case "DOCUMENT_UPLOADED":
-                return "info"; // Blue
+                return "info";
             case "DOCUMENT_VERIFIED":
-                return "success"; // Green
+                return "success";
             case "DOCUMENT_REJECTED":
-                return "danger"; // Red
+                return "danger";
             case "ONBOARDING_COMPLETED":
-                return "success"; // Green
-            default:
-                return "primary"; // Default purple
-        }
-    }
-    */
-
-    // REMOVE or COMMENT OUT the getNotificationIcon method from here
-    /*
-    // NEW: Get notification icon based on type
-    public String getNotificationIcon() {
-        switch (this.type) {
-            case "DOCUMENT_UPLOADED":
-                return "fa-file-upload";
-            case "DOCUMENT_VERIFIED":
-                return "fa-check-circle";
-            case "DOCUMENT_REJECTED":
-                return "fa-times-circle";
-            case "ONBOARDING_COMPLETED":
-                return "fa-trophy";
-            default:
-                return "fa-bell";
-        }
-    }
-    */
-
-    // NEW: Get notification color based on type
-    public String getNotificationColor() {
-        switch (this.type) {
-            case "DOCUMENT_UPLOADED":
-                return "info"; // Blue
-            case "DOCUMENT_VERIFIED":
-                return "success"; // Green
-            case "DOCUMENT_REJECTED":
-                return "danger"; // Red
-            case "ONBOARDING_COMPLETED":
-                return "success"; // Green
-
+                return "success";
             case "DEADLINE_WARNING":
-                return "warning"; // Orange
+                return "warning";
             case "DEADLINE_REACHED":
-                return "danger"; // Red
+                return "danger";
             case "ALL_DOCUMENTS_UPLOADED":
-                return "success"; // Green
-
+                return "success";
+            case "VALIDATION_REQUIRED":
+                return "warning";
             default:
-                return "primary"; // Default purple
+                return "primary";
         }
     }
 
-    // NEW: Get notification icon based on type
+    // Get notification icon based on type
     public String getNotificationIcon() {
         switch (this.type) {
             case "DOCUMENT_UPLOADED":
@@ -163,16 +137,16 @@ public class Notification {
                 return "fa-times-circle";
             case "ONBOARDING_COMPLETED":
                 return "fa-trophy";
-            default:
-                return "fa-bell";
-
             case "DEADLINE_WARNING":
                 return "fa-clock";
             case "DEADLINE_REACHED":
                 return "fa-exclamation-triangle";
             case "ALL_DOCUMENTS_UPLOADED":
                 return "fa-check-double";
-
+            case "VALIDATION_REQUIRED":
+                return "fa-exclamation-circle";
+            default:
+                return "fa-bell";
         }
     }
 }

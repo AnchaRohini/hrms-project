@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org       ">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard – Menti's IT</title>
 
-    <!-- =====  EXTERNAL LIBS  ===== -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css       " rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css       ">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300       ;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- ===== EXTERNAL LIBS ===== -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- =====  CORE STYLES  ===== -->
+    <!-- ===== CORE STYLES ===== -->
     <style>
         :root {
             --dark-bg: #121826;
@@ -37,7 +37,7 @@
             line-height: 1.6;
         }
 
-        /* ----------  TOP NAV  ---------- */
+        /* ---------- TOP NAV ---------- */
         .top-nav {
             position: fixed;
             top: 0;
@@ -59,7 +59,7 @@
             gap: 16px;
         }
 
-        /* ----------  NOTIFICATION DROPDOWN  ---------- */
+        /* ---------- NOTIFICATION DROPDOWN ---------- */
         .notification-dropdown {
             position: relative;
             display: inline-flex;
@@ -211,7 +211,7 @@
             opacity: 0.5;
         }
 
-        /* ----------  WORKING HOURS WIDGET  ---------- */
+        /* ---------- WORKING HOURS WIDGET ---------- */
         .working-hours-topnav {
             position: relative;
             cursor: pointer;
@@ -279,7 +279,7 @@
             margin-top: 8px;
         }
 
-        /* ----------  MAIN LAYOUT  ---------- */
+        /* ---------- MAIN LAYOUT ---------- */
         .main-container {
             margin-top: 64px;
             display: flex;
@@ -317,7 +317,7 @@
             width: 100%;
         }
 
-        /* ----------  SIDEBAR PROFILE CARD  ---------- */
+        /* ---------- SIDEBAR PROFILE CARD ---------- */
         .profile-card-wrapper {
             text-align: center;
             margin-bottom: 24px;
@@ -375,7 +375,7 @@
             border-color: var(--primary);
         }
 
-        /* ----------  STATUS INDICATOR  ---------- */
+        /* ---------- STATUS INDICATOR ---------- */
         .status-indicator-card {
             position: absolute;
             top: 15px;
@@ -405,7 +405,7 @@
         }
         .status-indicator-card:hover { transform: scale(1.2); }
 
-        /* ----------  NAVIGATION  ---------- */
+        /* ---------- NAVIGATION ---------- */
         .nav-menu {
             background: var(--sidebar-bg);
             border: 1px solid var(--dark-border);
@@ -430,7 +430,7 @@
         }
         .menu-item i { width: 24px; margin-right: 12px; }
 
-        /* ----------  TABS  ---------- */
+        /* ---------- TABS ---------- */
         .tab-pane { display: none; }
         .tab-pane.active { display: block; }
         .sub-nav {
@@ -457,7 +457,7 @@
         .sub-tab-content { display: none; width: 100%; }
         .sub-tab-content.active { display: block; }
 
-        /* ----------  PROFILE CARDS  ---------- */
+        /* ---------- PROFILE CARDS ---------- */
         #profile.tab-pane .profile-cards-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -534,7 +534,7 @@
             word-break: break-word;
         }
 
-        /* ----------  DOCUMENTS TABLE  ---------- */
+        /* ---------- DOCUMENTS TABLE ---------- */
         .documents-table {
             width: 100%;
             border-collapse: separate;
@@ -664,7 +664,7 @@
         }
         .date-row i, .time-row i { width: 12px; text-align: center; }
 
-        /* ----------  PROFILE DROPDOWN  ---------- */
+        /* ---------- PROFILE DROPDOWN ---------- */
         .profile-dropdown {
             position: relative;
             display: inline-block;
@@ -733,74 +733,6 @@
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
             z-index: 1001;
         }
-
-        /* Compact Deadline Badge for Documents Tab */
-.deadline-control-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.deadline-countdown-badge {
-    background: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.2);
-    border-radius: 8px;
-    padding: 8px 14px;
-    font-size: 12px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-    min-width: fit-content;
-    white-space: nowrap;
-}
-
-.deadline-label {
-    color: var(--dark-text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-size: 10px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.deadline-value {
-    font-weight: 700;
-    color: var(--danger);
-    font-size: 13px;
-}
-
-.deadline-date {
-    color: var(--dark-text-secondary);
-    font-size: 10px;
-}
-
-/* Color coding based on urgency */
-.deadline-countdown-badge.urgent {
-    background: rgba(239, 68, 68, 0.2);
-    border-color: rgba(239, 68, 68, 0.5);
-}
-
-.deadline-countdown-badge.warning {
-    background: rgba(245, 158, 11, 0.2);
-    border-color: rgba(245, 158, 11, 0.5);
-}
-
-.deadline-countdown-badge.safe {
-    background: rgba(16, 185, 129, 0.2);
-    border-color: rgba(16, 185, 129, 0.5);
-}
-
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;  /* Increased from 20px */
-    flex-wrap: wrap;
-    gap: 15px;
-}
-
         .profile-dropdown .dropdown-menu.show { display: block; }
         .dropdown-item {
             display: flex;
@@ -820,7 +752,66 @@
         }
         .dropdown-item i { width: 16px; text-align: center; }
 
-        /* ----------  POSTS  ---------- */
+        /* Compact Deadline Badge */
+        .deadline-control-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .deadline-countdown-badge {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-size: 12px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
+            min-width: fit-content;
+            white-space: nowrap;
+        }
+        .deadline-label {
+            color: var(--dark-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .deadline-value {
+            font-weight: 700;
+            color: var(--danger);
+            font-size: 13px;
+        }
+        .deadline-date {
+            color: var(--dark-text-secondary);
+            font-size: 10px;
+        }
+        .deadline-countdown-badge.urgent {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.5);
+        }
+        .deadline-countdown-badge.warning {
+            background: rgba(245, 158, 11, 0.2);
+            border-color: rgba(245, 158, 11, 0.5);
+        }
+        .deadline-countdown-badge.safe {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: rgba(16, 185, 129, 0.5);
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .profile-dropdown .dropdown-menu.show { display: block; }
+
+        /* ---------- POSTS ---------- */
         .post-item {
             background: rgba(255, 255, 255, 0.02);
             padding: 20px;
@@ -842,7 +833,7 @@
         .post-time { font-size: 12px; color: #777; }
         .post-content { color: #ddd; margin: 0; }
 
-        /* ----------  VALIDATION MESSAGE  ---------- */
+        /* ---------- VALIDATION MESSAGE ---------- */
         .validation-message {
             font-size: 12px;
             color: var(--dark-text);
@@ -859,33 +850,57 @@
             border-left-color: var(--danger);
             background: rgba(239, 68, 68, 0.05);
         }
-@media (max-width: 768px) {
-    .deadline-control-wrapper {
-        margin-left: 0;
-        margin-top: 10px;
-        width: 100%;
-        justify-content: center;
-    }
 
-    /* Stack horizontally on mobile */
-    .deadline-countdown-badge {
-        padding: 6px 10px;
-        gap: 6px;
-    }
+        /* TEMPORARY TOAST STYLES */
+        .notification-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 350px;
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+            animation: slideIn 0.3s ease;
+            overflow: hidden;
+        }
+        .toast-header {
+            padding: 12px 16px;
+            background: var(--dark-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--dark-border);
+        }
+        .toast-header strong {
+            color: white;
+            font-size: 14px;
+        }
+        .toast-header button {
+            background: none;
+            border: none;
+            color: var(--dark-text-secondary);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .toast-header button:hover {
+            color: white;
+        }
+        .toast-body {
+            padding: 16px;
+            color: var(--dark-text-secondary);
+            font-size: 13px;
+            line-height: 1.4;
+        }
 
-    .deadline-label {
-        font-size: 9px;
-    }
-
-    .deadline-value {
-        font-size: 11px;
-    }
-
-    .deadline-date {
-        font-size: 9px;
-    }
-}
-        /* ----------  RESPONSIVE  ---------- */
+        /* ---------- RESPONSIVE ---------- */
         @media (max-width: 768px) {
             .main-container {
                 flex-direction: column;
@@ -899,13 +914,13 @@
             .working-hours-topnav { display: none; }
         }
 
-        /* ----------  SCROLLBAR  ---------- */
+        /* ---------- SCROLLBAR ---------- */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: var(--sidebar-bg); }
         ::-webkit-scrollbar-thumb { background: var(--dark-border); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
-        /* ----------  ANIMATIONS  ---------- */
+        /* ---------- ANIMATIONS ---------- */
         @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
@@ -922,7 +937,7 @@
     </style>
 </head>
 <body>
-<!-- =================  TOP NAV  ================= -->
+<!-- ================= TOP NAV ================= -->
 <nav class="top-nav">
     <a href="#" class="nav-brand">Menti's IT Solutions</a>
     <div class="ms-auto">
@@ -996,7 +1011,7 @@
     </div>
 </nav>
 
-<!-- =================  MAIN LAYOUT  ================= -->
+<!-- ================= MAIN LAYOUT ================= -->
 <div class="main-container">
     <aside class="left-sidebar">
         <div id="profileCardContainer" style="display: none;">
@@ -1038,10 +1053,6 @@
 
     <main class="main-content">
         <div class="tab-pane active" id="dashboard">
-
-
-
-
             <div class="content-card">
                 <h5 style="margin-bottom: 16px;">Organization Posts</h5>
                 <div class="post-item">
@@ -1193,14 +1204,7 @@
                 <div class="content-card">
                     <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 24px;">
                         <h5 style="margin: 0;">My Documents</h5>
-
-                        <!-- ✅ ENHANCED: Compact Deadline Badge - Right Aligned -->
-                        <!-- ✅ FIXED: Compact Deadline Badge - Right Aligned -->
-
-                        <!-- ✅ Compact Deadline Badge - Right Aligned -->
-                        <!-- ✅ ENHANCED: Compact Deadline Badge - Right Aligned -->
                         <div class="deadline-control-wrapper">
-                            <!-- ✅ FIXED: Add data-deadline attribute -->
                             <div th:if="${employee.documentDeadline != null}"
                                  class="deadline-countdown-badge"
                                  id="documentsTabDeadline"
@@ -1220,7 +1224,7 @@
                                  style="color: var(--warning); font-size: 12px; font-weight: 500;">
                                 <i class="fas fa-exclamation-triangle"></i> No deadline set
                             </div>
-                            </div>
+                        </div>
                     </div>
 
                     <div class="table-container">
@@ -1318,7 +1322,7 @@
     </aside>
 </div>
 
-<!-- =================  PREVIEW MODAL  ================= -->
+<!-- ================= PREVIEW MODAL ================= -->
 <div id="previewModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); z-index: 99999; justify-content: center; align-items: center;">
     <div style="background: var(--dark-card); border-radius: 12px; width: 90%; height: 90%; max-width: 1200px; max-height: 800px; display: flex; flex-direction: column; border: 1px solid var(--dark-border);">
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid var(--dark-border);">
@@ -1337,11 +1341,11 @@
     </div>
 </div>
 
-<!-- =================  JAVASCRIPT  ================= -->
-<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.2/dist/sockjs.min.js       "></script>
-<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js       "></script>
+<!-- ================= JAVASCRIPT ================= -->
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.2/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
 <script>
-    /* ----------  WORKING HOURS TRACKER  ---------- */
+    /* ---------- WORKING HOURS TRACKER ---------- */
     class WorkingHoursTracker {
         constructor() {
             this.totalMinutes = 0;
@@ -1360,7 +1364,6 @@
                 const data = JSON.parse(raw);
                 if (data.date === today) this.totalMinutes = data.minutes || 0;
             }
-
             const savedStatus = localStorage.getItem('presenceUpdate');
             if (savedStatus) {
                 const statusData = JSON.parse(savedStatus);
@@ -1396,7 +1399,6 @@
             const timeStr = this.format(this.totalMinutes);
             const hoursDisplay = document.getElementById('hoursDisplayTop');
             const percentageText = document.getElementById('percentageTextTooltip');
-
             if (hoursDisplay) hoursDisplay.textContent = timeStr;
             if (percentageText) percentageText.textContent = Math.round(perc) + '%';
         }
@@ -1411,16 +1413,14 @@
     }
     const whTracker = new WorkingHoursTracker();
 
-    /* ----------  MAIN NAVIGATION  ---------- */
+    /* ---------- MAIN NAVIGATION ---------- */
     let currentTab = 'dashboard';
     document.querySelectorAll('.menu-item').forEach(item => {
         item.addEventListener('click', () => {
             const target = item.getAttribute('data-tab');
             if (!target) return;
-
             currentTab = target;
             document.getElementById('profileCardContainer').style.display = target === 'profile' ? 'block' : 'none';
-
             document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
             item.classList.add('active');
@@ -1441,7 +1441,7 @@
         });
     });
 
-    /* ----------  PROFILE PICTURE  ---------- */
+    /* ---------- PROFILE PICTURE ---------- */
     function uploadProfilePic(input) {
         if (!input.files || !input.files[0]) return;
         const file = input.files[0];
@@ -1467,7 +1467,7 @@
         box.appendChild(span);
     }
 
-    /* ----------  DROPDOWN TOGGLES  ---------- */
+    /* ---------- DROPDOWN TOGGLES ---------- */
     function toggleNotificationDropdown(event) {
         event.stopPropagation();
         const dropdown = document.getElementById('notificationDropdownMenu');
@@ -1486,19 +1486,7 @@
         event.currentTarget.setAttribute('aria-expanded', dropdown.classList.contains('show'));
     }
 
-    function markAllNotificationsRead() {
-        if (notificationManager) {
-            notificationManager.notifications.forEach(notification => { notification.read = true; });
-            notificationManager.unreadCount = 0;
-            notificationManager.updateNotificationBadge();
-            notificationManager.saveNotifications();
-            document.querySelectorAll('.notification-item').forEach(item => item.classList.remove('unread'));
-            loadNotifications();
-        }
-        return false;
-    }
-
-    /* ----------  CLOSE DROPDOWNS ON OUTSIDE CLICK  ---------- */
+    /* ---------- CLOSE DROPDOWNS ON OUTSIDE CLICK ---------- */
     document.addEventListener('click', function(e) {
         const notificationDropdown = document.getElementById('notificationDropdownMenu');
         const profileDropdown = document.getElementById('profileDropdownMenu');
@@ -1516,7 +1504,7 @@
         }
     });
 
-    /* ----------  ESCAPE KEY TO CLOSE DROPDOWNS  ---------- */
+    /* ---------- ESCAPE KEY TO CLOSE DROPDOWNS ---------- */
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             const notificationDropdown = document.getElementById('notificationDropdownMenu');
@@ -1531,7 +1519,7 @@
         }
     });
 
-    /* ----------  ACTIVATE PROFILE TAB  ---------- */
+    /* ---------- ACTIVATE PROFILE TAB ---------- */
     function activateProfileTab() {
         document.getElementById('profileDropdownMenu').classList.remove('show');
         document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
@@ -1551,7 +1539,7 @@
         currentTab = 'profile';
     }
 
-    /* ----------  DOCUMENT PREVIEW  ---------- */
+    /* ---------- DOCUMENT PREVIEW ---------- */
     function viewDocument(documentId, documentType) {
         const isCandidatePage = window.location.pathname.includes('/candidate/');
         const previewUrl = isCandidatePage ? `/candidate/download/${documentId}` : `/onboarding/download/${documentId}`;
@@ -1615,7 +1603,7 @@
         if (img) URL.revokeObjectURL(img.src);
     }
 
-    /* ----------  URL PARAM HANDLER  ---------- */
+    /* ---------- URL PARAM HANDLER ---------- */
     document.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
         const activeTab = urlParams.get('activeTab');
@@ -1628,7 +1616,7 @@
         }
     });
 
-    /* ----------  STATUS INDICATOR  ---------- */
+    /* ---------- STATUS INDICATOR ---------- */
     const statusIndicator = document.getElementById('statusIndicatorCard');
     const employeeId = '[[${employee.employeeId}]]';
     let currentPresenceStatus = '[[${employee.presenceStatus}]]' || 'OFFLINE';
@@ -1651,7 +1639,6 @@
 
     statusIndicator.addEventListener('click', () => {
         const newStatus = statusIndicator.classList.contains('active') ? 'OFFLINE' : 'ACTIVE';
-
         fetch(`/api/presence/set/${employeeId}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -1662,55 +1649,15 @@
             if (data.success) {
                 currentPresenceStatus = newStatus;
                 updateStatusIndicator(newStatus);
-
-                localStorage.setItem('presenceUpdate', JSON.stringify({
-                    employeeId,
-                    status: newStatus
-                }));
-
-                const toast = document.createElement('div');
-                toast.style.cssText = `
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    background: ${newStatus === 'ACTIVE' ? 'rgba(16, 185, 129, 0.9)' : 'rgba(239, 68, 68, 0.9)'};
-                    color: white;
-                    padding: 12px 20px;
-                    border-radius: 8px;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-                    z-index: 10000;
-                    animation: slideIn 0.3s ease;
-                `;
-                toast.innerHTML = `<i class="fas fa-user-clock" style="margin-right: 8px;"></i> Status changed to: ${newStatus}`;
-                document.body.appendChild(toast);
-
-                setTimeout(() => {
-                    toast.style.animation = 'slideOut 0.3s ease';
-                    setTimeout(() => toast.remove(), 300);
-                }, 3000);
+                localStorage.setItem('presenceUpdate', JSON.stringify({ employeeId, status: newStatus }));
             }
         })
-        .catch(err => {
-            console.error('Status update failed:', err);
-            const toast = document.createElement('div');
-            toast.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: rgba(239, 68, 68, 0.9);
-                color: white;
-                padding: 12px 20px;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-                z-index: 10000;
-            `;
-            toast.innerHTML = `<i class="fas fa-exclamation-triangle" style="margin-right: 8px;"></i> Failed to update status`;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
-        });
+        .catch(err => console.error('Status update failed:', err));
     });
+</script>
 
-    /* ----------  NOTIFICATION MANAGER  ---------- */
+<script>
+    /* ---------- NOTIFICATION MANAGER ---------- */
     class NotificationManager {
         constructor() {
             this.notifications = [];
@@ -1720,153 +1667,35 @@
             this.loadExistingNotifications();
         }
 
-    initializeWebSocket() {
-    try {
-        const socket = new SockJS('/ws');
-        this.stompClient = Stomp.over(socket);
-        this.stompClient.debug = () => {};
+        initializeWebSocket() {
+            try {
+                const socket = new SockJS('/ws');
+                this.stompClient = Stomp.over(socket);
+                this.stompClient.debug = () => {};
 
-        this.stompClient.connect({}, (frame) => {
-            console.log('✅ Connected to WebSocket for notifications');
-
-            // Subscribe to employee notifications
-            this.stompClient.subscribe(
-                `/topic/employee/${this.employeeId}/notifications`,
-                (message) => {
-                    const notification = JSON.parse(message.body);
-                    console.log("📨 Received real-time notification:", notification);
-
-                    // Always handle deadline notifications with special care
-                    if (notification.type === 'DEADLINE_WARNING' ||
-                        notification.type === 'DEADLINE_REACHED') {
-                        console.log("🎯 Processing deadline notification:", notification.type);
-                        this.addNotification(notification);
-                        this.showDeadlineToast(notification);
-                        this.updateNotificationBadge(); // Force badge update
-                    } else {
-                        this.addNotification(notification);
-                        this.showNotificationToast(notification);
-                    }
-                }
-            );
-        });
-    } catch (error) {
-        console.error('❌ Failed to initialize WebSocket:', error);
-    }
-}
-
-// ✅ NEW: Add notification to dropdown immediately
-addNotification(notification) {
-    if (!notification.timestamp) {
-        notification.timestamp = new Date(notification.createdAt || Date.now()).toLocaleString('en-IN', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    }
-    notification.read = false;
-    this.notifications.unshift(notification);
-    this.unreadCount++;
-    this.renderNotification(notification);
-    this.updateNotificationBadge();
-    this.saveNotifications();
-}
-
-// ✅ NEW: Render notification in dropdown
-renderNotification(notification) {
-    const notificationList = document.getElementById('notificationList');
-    const emptyNotification = document.getElementById('emptyNotification');
-    if (emptyNotification) emptyNotification.style.display = 'none';
-
-    const notificationItem = document.createElement('div');
-    notificationItem.className = 'notification-item unread';
-    notificationItem.setAttribute('data-notification-id', notification.id);
-
-    // Get icon and color based on type
-    let iconClass = 'fa-bell';
-    let iconColor = 'var(--primary)';
-
-    if (notification.type === 'DEADLINE_REACHED') {
-        iconClass = 'fa-exclamation-triangle';
-        iconColor = 'var(--danger)';
-    } else if (notification.type === 'DEADLINE_WARNING') {
-        iconClass = 'fa-clock';
-        iconColor = 'var(--warning)';
-    }
-
-    notificationItem.innerHTML = `
-        <div class="notification-icon" style="background: ${iconColor}20; color: ${iconColor};">
-            <i class="fas ${iconClass}"></i>
-        </div>
-        <div class="notification-content">
-            <p class="notification-title">${notification.title}</p>
-            <p class="notification-message">${notification.message}</p>
-            <p class="notification-time">${notification.timestamp}</p>
-        </div>
-    `;
-
-    notificationItem.addEventListener('click', () => {
-        this.markAsRead(notification);
-        this.showFullNotification(notification);
-    });
-
-    notificationList.insertBefore(notificationItem, notificationList.firstChild);
-}
-// ✅ NEW: Special toast for deadline notifications
-showDeadlineToast(notification) {
-    const isUrgent = notification.type === 'DEADLINE_REACHED';
-
-    const toast = document.createElement('div');
-    toast.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: ${isUrgent ? 'rgba(239, 68, 68, 0.95)' : 'rgba(245, 158, 11, 0.95)'};
-        color: white;
-        padding: 18px 24px;
-        border-radius: 8px;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-        z-index: 10000;
-        max-width: 380px;
-        animation: slideIn 0.3s ease;
-        border-left: 5px solid ${isUrgent ? '#ef4444' : '#f59e0b'};
-        font-weight: 500;
-    `;
-
-    toast.innerHTML = `
-        <div style="display: flex; align-items: flex-start; gap: 12px;">
-            <i class="fas ${isUrgent ? 'fa-exclamation-triangle' : 'fa-clock'}"
-               style="margin-top: 3px; font-size: 18px; flex-shrink: 0;"></i>
-            <div>
-                <div style="font-weight: 700; margin-bottom: 6px; font-size: 15px;">
-                    ${notification.title}
-                </div>
-                <div style="opacity: 0.95; font-size: 13px; line-height: 1.4;">
-                    ${notification.message}
-                </div>
-                <div style="font-size: 11px; opacity: 0.8; margin-top: 4px;">
-                    ${new Date(notification.createdAt).toLocaleString()}
-                </div>
-            </div>
-        </div>
-    `;
-
-    document.body.appendChild(toast);
-
-    // Auto-remove after 8 seconds for deadline notifications
-    setTimeout(() => {
-        if (toast.parentElement) {
-            toast.style.animation = 'slideOut 0.3s ease';
-            setTimeout(() => toast.remove(), 300);
+                this.stompClient.connect({}, (frame) => {
+                    console.log('✅ Connected to WebSocket for notifications');
+                    this.stompClient.subscribe(
+                        `/topic/employee/${this.employeeId}/notifications`,
+                        (message) => {
+                            const notification = JSON.parse(message.body);
+                            console.log("📨 Received real-time notification:", notification);
+                            if (notification.persistent) {
+                                this.addNotification(notification);
+                            } else {
+                                this.showNotificationToast(notification);
+                            }
+                        }
+                    );
+                });
+            } catch (error) {
+                console.error('❌ Failed to initialize WebSocket:', error);
+            }
         }
-    }, 8000);
-}
 
         addNotification(notification) {
             if (!notification.timestamp) {
-                notification.timestamp = new Date().toLocaleString('en-IN', {
+                notification.timestamp = new Date(notification.createdAt || Date.now()).toLocaleString('en-IN', {
                     day: '2-digit',
                     month: 'short',
                     year: 'numeric',
@@ -1877,67 +1706,61 @@ showDeadlineToast(notification) {
             notification.read = false;
             this.notifications.unshift(notification);
             this.unreadCount++;
-            this.updateNotificationBadge();
             this.renderNotification(notification);
-            this.showNotificationToast(notification);
+            this.updateNotificationBadge();
             this.saveNotifications();
         }
 
-       renderNotification(notification) {
-    const notificationList = document.getElementById('notificationList');
-    const emptyNotification = document.getElementById('emptyNotification');
-    if (emptyNotification) emptyNotification.style.display = 'none';
+        renderNotification(notification) {
+            const notificationList = document.getElementById('notificationList');
+            const emptyNotification = document.getElementById('emptyNotification');
+            if (emptyNotification) emptyNotification.style.display = 'none';
 
-    const notificationItem = document.createElement('div');
-    notificationItem.className = 'notification-item' + (notification.read ? '' : ' unread');
-    notificationItem.setAttribute('data-notification-id', notification.documentId || Date.now());
+            const notificationItem = document.createElement('div');
+            notificationItem.className = 'notification-item' + (notification.read ? '' : ' unread');
+            notificationItem.setAttribute('data-notification-id', notification.id);
 
-    // ✅ FIX: Use type for both icon and color determination
-    let iconClass = 'fa-info-circle';
-    let iconColor = 'var(--primary)';
-    if (notification.type === 'DOCUMENT_VERIFIED') {
-        iconClass = 'fa-check-circle';
-        iconColor = 'var(--success)';
-    } else if (notification.type === 'DOCUMENT_REJECTED') {
-        iconClass = 'fa-times-circle';
-        iconColor = 'var(--danger)';
-    } else if (notification.type === 'DOCUMENT_UPLOADED') {
-        iconClass = 'fa-file-upload';
-        iconColor = 'var(--info)';
-    }
+            let iconClass = 'fa-info-circle';
+            let iconColor = 'var(--primary)';
 
-    notificationItem.innerHTML = `
-        <div class="notification-icon" style="background: ${iconColor}20; color: ${iconColor};">
-            <i class="fas ${iconClass}"></i>
-        </div>
-        <div class="notification-content">
-            <p class="notification-text">${this.formatNotificationText(notification)}</p>
-            <p class="notification-time">${notification.timestamp}</p>
-           ${notification.sender ? `<div style="margin-top: 4px;"><small style="color: var(--dark-text-secondary);"><strong>HR:</strong> ${notification.sender}</small></div>` : ''}
-        </div>
-    `;
+            if (notification.type === 'DOCUMENT_VERIFIED') {
+                iconClass = 'fa-check-circle';
+                iconColor = 'var(--success)';
+            } else if (notification.type === 'DOCUMENT_REJECTED') {
+                iconClass = 'fa-times-circle';
+                iconColor = 'var(--danger)';
+            } else if (notification.type === 'DOCUMENT_UPLOADED') {
+                iconClass = 'fa-file-upload';
+                iconColor = 'var(--info)';
+            } else if (notification.type === 'DEADLINE_WARNING') {
+                iconClass = 'fa-clock';
+                iconColor = 'var(--warning)';
+            } else if (notification.type === 'DEADLINE_REACHED') {
+                iconClass = 'fa-exclamation-triangle';
+                iconColor = 'var(--danger)';
+            } else if (notification.type === 'ALL_DOCUMENTS_UPLOADED') {
+                iconClass = 'fa-check-double';
+                iconColor = 'var(--success)';
+            }
 
-    notificationItem.addEventListener('click', () => {
-        this.showFullNotification(notification);
-        this.markAsRead(notification);
-    });
+            notificationItem.innerHTML = `
+                <div class="notification-icon" style="background: ${iconColor}20; color: ${iconColor};">
+                    <i class="fas ${iconClass}"></i>
+                </div>
+                <div class="notification-content">
+                    <p class="notification-title">${notification.title}</p>
+                    <p class="notification-message">${notification.message}</p>
+                    <p class="notification-time">${notification.timestamp}</p>
+                </div>
+            `;
 
-    notificationList.insertBefore(notificationItem, notificationList.firstChild);
-}
+            notificationItem.addEventListener('click', () => {
+                this.markAsRead(notification);
+                this.showFullNotification(notification);
+            });
 
-        // AFTER (New Code - Copy/Paste Exactly)
-formatNotificationText(notification) {
-    // ✅ FIX: Better formatting for document notifications
-    if (notification.type === 'DOCUMENT_VERIFIED') {
-        return `✅ ${notification.documentName || 'Document'} verified successfully`;
-    } else if (notification.type === 'DOCUMENT_REJECTED') {
-        return `❌ ${notification.documentName || 'Document'} was rejected`;
-    }
-
-    let text = notification.message || notification.text || 'New notification';
-    if (text.length > 120) text = text.substring(0, 120) + '...';
-    return text;
-}
+            notificationList.insertBefore(notificationItem, notificationList.firstChild);
+        }
 
         showFullNotification(notification) {
             const modal = document.createElement('div');
@@ -1955,8 +1778,8 @@ formatNotificationText(notification) {
                 align-items: center;
             `;
 
-            const statusColor = notification.status === 'VERIFIED' ? '#10b981' : '#ef4444';
-            const statusBg = notification.status === 'VERIFIED' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)';
+            const statusColor = notification.type.includes('VERIFIED') ? '#10b981' : '#ef4444';
+            const statusBg = notification.type.includes('VERIFIED') ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)';
 
             modal.innerHTML = `
                 <div style="background: var(--dark-card); padding: 24px; border-radius: 12px; width: 500px; border: 1px solid var(--dark-border); max-height: 80vh; overflow-y: auto;">
@@ -1968,15 +1791,14 @@ formatNotificationText(notification) {
                     </div>
                     <div style="margin-bottom: 15px;">
                         <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                            <span class="status-badge status-${notification.status.toLowerCase()}" style="font-size: 12px;">${notification.status}</span>
+                            <span class="status-badge status-${notification.type.toLowerCase()}" style="font-size: 12px;">${notification.type}</span>
                             <span style="color: var(--dark-text-secondary); font-size: 12px;">${notification.timestamp}</span>
                         </div>
                     </div>
-                    ${notification.documentName ? `
+                    ${notification.referenceId ? `
                     <div style="margin-bottom: 15px; padding: 10px; background: rgba(255, 255, 255, 0.05); border-radius: 6px;">
-                        <div style="margin-bottom: 8px;"><strong style="color: var(--dark-text-secondary);">Document:</strong><span style="color: white;">${notification.documentName}</span></div>
-                        <div style="margin-bottom: 8px;"><strong style="color: var(--dark-text-secondary);">Type:</strong><span style="color: white;">${notification.documentType}</span></div>
-                        ${notification.verifiedBy ? `<div><strong style="color: var(--dark-text-secondary);">Verified By:</strong><span style="color: white;">${notification.verifiedBy}</span></div>` : ''}
+                        <div style="margin-bottom: 8px;"><strong style="color: var(--dark-text-secondary);">Document:</strong><span style="color: white;">${notification.documentName || 'N/A'}</span></div>
+                        ${notification.sender ? `<div><strong style="color: var(--dark-text-secondary);">By:</strong><span style="color: white;">${notification.sender}</span></div>` : ''}
                     </div>` : ''}
                     <div style="margin-bottom: 15px;">
                         <strong style="color: var(--dark-text-secondary); display: block; margin-bottom: 8px;">Message:</strong>
@@ -2010,59 +1832,60 @@ formatNotificationText(notification) {
             }
         }
 
-   showNotificationToast(notification) {
-    const isDeadline = notification.type === 'DEADLINE_WARNING' ||
-                       notification.type === 'DEADLINE_REACHED';
+        showNotificationToast(notification) {
+            const isDeadline = notification.type === 'DEADLINE_WARNING' || notification.type === 'DEADLINE_REACHED';
+            const isUrgent = notification.type === 'DEADLINE_REACHED';
 
-    const isUrgent = notification.type === 'DEADLINE_REACHED';
+            const toast = document.createElement('div');
+            toast.className = 'notification-toast';
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${isUrgent ? 'rgba(239, 68, 68, 0.95)' : 'rgba(245, 158, 11, 0.95)'};
+                color: white;
+                padding: 18px 24px;
+                border-radius: 8px;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+                z-index: 10000;
+                max-width: 380px;
+                animation: slideIn 0.3s ease;
+                border-left: 5px solid ${isUrgent ? '#ef4444' : '#f59e0b'};
+                font-weight: 500;
+            `;
 
-    const toast = document.createElement('div');
-    toast.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: ${isUrgent ? 'rgba(239, 68, 68, 0.95)' : 'rgba(245, 158, 11, 0.95)'};
-        color: white;
-        padding: 15px 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        z-index: 10000;
-        max-width: 350px;
-        animation: slideIn 0.3s ease;
-        font-size: 13px;
-        border-left: 4px solid ${isUrgent ? '#ef4444' : '#f59e0b'};
-    `;
+            const iconClass = isUrgent ? 'fa-exclamation-triangle' : 'fa-clock';
 
-    const iconClass = isUrgent ? 'fa-exclamation-triangle' : 'fa-clock';
-
-    toast.innerHTML = `
-        <div style="display: flex; align-items: flex-start; gap: 10px;">
-            <i class="fas ${iconClass}" style="margin-top: 2px; font-size: 16px;"></i>
-            <div>
-                <div style="font-weight: 600; margin-bottom: 4px; font-size: 14px;">
-                    ${notification.title}
+            toast.innerHTML = `
+                <div style="display: flex; align-items: flex-start; gap: 12px;">
+                    <i class="fas ${iconClass}" style="margin-top: 3px; font-size: 18px; flex-shrink: 0;"></i>
+                    <div>
+                        <div style="font-weight: 700; margin-bottom: 6px; font-size: 15px;">
+                            ${notification.title}
+                        </div>
+                        <div style="opacity: 0.95; font-size: 13px; line-height: 1.4;">
+                            ${notification.message}
+                        </div>
+                        <div style="font-size: 11px; opacity: 0.8; margin-top: 4px;">
+                            ${new Date(notification.createdAt).toLocaleString()}
+                        </div>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; color: white; font-size: 16px; cursor: pointer; margin-left: auto; padding: 0; width: 24px; height: 24px;">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
-                <div style="opacity: 0.9; font-size: 12px; line-height: 1.4;">
-                    ${notification.message}
-                </div>
-                <div style="font-size: 10px; opacity: 0.7; margin-top: 6px;">
-                    ${notification.createdAt}
-                </div>
-            </div>
-        </div>
-    `;
+            `;
 
-    document.body.appendChild(toast);
-
-    // Auto-remove after 8 seconds for deadline notifications
-    const timeout = isDeadline ? 8000 : 5000;
-    setTimeout(() => {
-        if (toast.parentElement) {
-            toast.style.animation = 'slideOut 0.3s ease';
-            setTimeout(() => toast.remove(), 300);
+            document.body.appendChild(toast);
+            const timeout = isDeadline ? 8000 : 5000;
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, timeout);
         }
-    }, timeout);
-}
+
         loadExistingNotifications() {
             const saved = localStorage.getItem(`notifications_${this.employeeId}`);
             if (saved) {
@@ -2091,151 +1914,97 @@ formatNotificationText(notification) {
 
     document.addEventListener('DOMContentLoaded', function() {
         notificationManager = new NotificationManager();
+        loadAndRenderNotifications();
     });
+
+    /* ---------- GLOBAL FUNCTIONS FOR DROPDOWN ---------- */
+    function toggleNotificationDropdown(event) {
+        event.stopPropagation();
+        const dropdown = document.getElementById('notificationDropdownMenu');
+        const profileDropdown = document.getElementById('profileDropdownMenu');
+        profileDropdown.classList.remove('show');
+        dropdown.classList.toggle('show');
+        event.currentTarget.setAttribute('aria-expanded', dropdown.classList.contains('show'));
+    }
+
+    function markAllNotificationsRead() {
+        if (notificationManager) {
+            notificationManager.notifications.forEach(notification => { notification.read = true; });
+            notificationManager.unreadCount = 0;
+            notificationManager.updateNotificationBadge();
+            notificationManager.saveNotifications();
+            document.querySelectorAll('.notification-item').forEach(item => item.classList.remove('unread'));
+        }
+        return false;
+    }
+
+    function loadAndRenderNotifications() {
+        if (!notificationManager) return;
+        const notificationList = document.getElementById('notificationList');
+        const items = notificationList.querySelectorAll('.notification-item');
+        items.forEach(item => item.remove());
+        notificationManager.notifications.forEach(notification => {
+            notificationManager.renderNotification(notification);
+        });
+    }
 </script>
 
 <script th:inline="javascript">
-    // ✅ Ensure this is INSIDE the main <script> tag, after WorkingHoursTracker
+    // ---------- DEADLINE COUNTDOWN ----------
+    function updateDocumentsTabCountdown() {
+        const deadlineContainer = document.getElementById('documentsTabDeadline');
+        if (!deadlineContainer) return;
 
-    console.log('🔍 Deadline Countdown Script Loading...');
+        const deadlineStr = deadlineContainer.getAttribute('data-deadline');
+        if (!deadlineStr || deadlineStr === 'null' || deadlineStr.trim() === '') {
+            deadlineContainer.style.display = 'none';
+            return;
+        }
 
-   // ✅ CORRECT - Match the actual element ID in your HTML
-function updateDeadlineCountdown() {
-    const deadlineElement = document.getElementById('documentsTabCountdown'); // Fixed ID
-    if (!deadlineElement) {
-        console.log('❌ Countdown element NOT found!');
-        return;
-    }
+        const deadline = new Date(deadlineStr.trim());
+        if (isNaN(deadline.getTime())) {
+            document.getElementById('documentsTabCountdown').textContent = "Invalid deadline";
+            return;
+        }
 
-    const deadlineStr = '[[${employee.documentDeadline}]]';
-    console.log('📅 Raw deadline from server:', deadlineStr);
+        const now = new Date();
+        const diff = deadline - now;
 
-    if (!deadlineStr || deadlineStr === 'null') {
-        console.log('⚠️ Deadline is NULL - Countdown hidden');
-        deadlineElement.style.display = 'none'; // Hide if no deadline
-        return;
-    }
+        if (diff <= 0) {
+            document.getElementById('documentsTabCountdown').textContent = "⚠️ OVERDUE";
+            document.getElementById('documentsTabCountdown').style.color = 'var(--danger)';
+            deadlineContainer.classList.add('urgent');
+            return;
+        }
 
-    const deadline = new Date(deadlineStr);
-    const now = new Date();
-    const diff = deadline - now;
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
 
-    if (diff <= 0) {
-        deadlineElement.textContent = "⚠️ DEADLINE REACHED";
-        deadlineElement.style.color = 'var(--danger)';
-        document.getElementById('documentsTabDeadline').classList.add('urgent');
-        return;
-    }
+        let text = '';
+        if (days > 0) text += `${days}d `;
+        if (hours > 0 || days > 0) text += `${hours}h `;
+        text += `${minutes}m`;
 
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-
-    let text = '';
-    if (days > 0) text += `${days}d `;
-    if (hours > 0 || days > 0) text += `${hours}h `;
-    text += `${minutes}m`;
-
-    deadlineElement.textContent = text;
-
-    // Apply color coding
-    const badge = document.getElementById('documentsTabDeadline');
-    badge.classList.remove('urgent', 'warning', 'safe');
-
-    if (diff < 86400000) { // < 24 hours
-        badge.classList.add('urgent');
-        deadlineElement.style.color = 'var(--danger)';
-    } else if (diff < 259200000) { // < 3 days
-        badge.classList.add('warning');
-        deadlineElement.style.color = 'var(--warning)';
-    } else {
-        badge.classList.add('safe');
-        deadlineElement.style.color = 'var(--success)';
-    }
-}
-
-// Update every minute (not second - be more efficient)
-setInterval(updateDeadlineCountdown, 60000);
-updateDeadlineCountdown(); // Initial call
-
-    console.log('✅ Deadline Countdown Script Loaded');
-
-   // ✅ FIXED: Documents Tab Countdown - Uses data attribute for reliability
-function updateDocumentsTabCountdown() {
-    const deadlineElement = document.getElementById('documentsTabCountdown');
-    const deadlineContainer = document.getElementById('documentsTabDeadline');
-
-    if (!deadlineElement || !deadlineContainer) {
-        console.log("❌ Countdown elements not found in DOM");
-        return;
-    }
-
-    // Get deadline from data attribute (more reliable than Thymeleaf inline)
-    const deadlineStr = deadlineContainer.getAttribute('data-deadline');
-    console.log("📅 Deadline string from data attribute:", deadlineStr);
-
-    if (!deadlineStr || deadlineStr === 'null' || deadlineStr.trim() === '') {
-        console.log("⚠️ No deadline set, hiding countdown");
-        deadlineContainer.style.display = 'none';
-        return;
-    }
-
-    // Parse date with error checking
-    const deadline = new Date(deadlineStr.trim());
-    if (isNaN(deadline.getTime())) {
-        console.error("❌ Invalid date format:", deadlineStr);
-        deadlineElement.textContent = "Invalid deadline";
-        return;
-    }
-
-    const now = new Date();
-    const diff = deadline - now;
-
-    if (diff <= 0) {
-        console.log("⏰ Deadline has passed");
-        deadlineElement.textContent = "⚠️ OVERDUE";
-        deadlineElement.style.color = 'var(--danger)';
-        deadlineContainer.classList.add('urgent');
-        return;
-    }
-
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-
-    console.log(`⏱️ Calculated: ${days}d ${hours}h ${minutes}m`);
-
-    let text = '';
-    if (days > 0) text += `${days}d `;
-    if (hours > 0 || days > 0) text += `${hours}h `;
-    text += `${minutes}m`;
-
-    deadlineElement.textContent = text;
-
-    // Color coding
-    const badge = document.getElementById('documentsTabDeadline');
-    if (badge) {
+        document.getElementById('documentsTabCountdown').textContent = text;
+        const badge = document.getElementById('documentsTabDeadline');
         badge.classList.remove('urgent', 'warning', 'safe');
-        if (diff < 86400000) { // < 24 hours
+        if (diff < 86400000) {
             badge.classList.add('urgent');
-            deadlineElement.style.color = 'var(--danger)';
-        } else if (diff < 259200000) { // < 3 days
+            document.getElementById('documentsTabCountdown').style.color = 'var(--danger)';
+        } else if (diff < 259200000) {
             badge.classList.add('warning');
-            deadlineElement.style.color = 'var(--warning)';
+            document.getElementById('documentsTabCountdown').style.color = 'var(--warning)';
         } else {
             badge.classList.add('safe');
-            deadlineElement.style.color = 'var(--success)';
+            document.getElementById('documentsTabCountdown').style.color = 'var(--success)';
         }
     }
-}
 
-// Start countdown with delay to ensure DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("🚀 Initializing countdown after DOM ready");
-    setTimeout(updateDocumentsTabCountdown, 500); // Small delay
-});
-setInterval(updateDocumentsTabCountdown, 60000); // Update every minute
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(updateDocumentsTabCountdown, 500);
+    });
+    setInterval(updateDocumentsTabCountdown, 60000);
 </script>
-
 </body>
 </html>

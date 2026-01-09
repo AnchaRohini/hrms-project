@@ -22,7 +22,7 @@ public class NotificationViewController {
     @Autowired
     private EmployeeService employeeService;
 
-    /* ========== EMPLOYEE NOTIFICATIONS PAGE (NEW LAYOUT) ========== */
+    /* ========== EMPLOYEE NOTIFICATIONS PAGE - SHOWS ONLY PERSISTENT NOTIFICATIONS ========== */
     @GetMapping("/employee")
     public String employeeNotifications(HttpSession session, Model model) {
         // Check if employee is logged in
@@ -37,9 +37,9 @@ public class NotificationViewController {
             return "redirect:/candidate/login?error=Employee+not+found";
         }
 
-        // Get notifications for this employee
-        List<Notification> notifications = notificationService.getNotifications(employeeId, "EMPLOYEE");
-        long unreadCount = notificationService.getUnreadCount(employeeId, "EMPLOYEE");
+        // MODIFIED: Get only persistent notifications for this employee
+        List<Notification> notifications = notificationService.getPersistentNotifications(employeeId, "EMPLOYEE");
+        long unreadCount = notificationService.getUnreadPersistentCount(employeeId, "EMPLOYEE");
 
         // Add attributes to model
         model.addAttribute("notifications", notifications);
@@ -48,11 +48,10 @@ public class NotificationViewController {
         model.addAttribute("totalCount", notifications.size());
         model.addAttribute("isEmployee", true);
 
-        // Return the correct template name
-        return "notifications/employee-notifications"; // Changed from "notifications/full-notifications"
+        return "notifications/employee-notifications";
     }
 
-    /* ========== HR NOTIFICATIONS PAGE (NEW LAYOUT) ========== */
+    /* ========== HR NOTIFICATIONS PAGE - SHOWS ONLY PERSISTENT NOTIFICATIONS ========== */
     @GetMapping("/hr")
     public String hrNotifications(HttpSession session, Model model) {
         // Check if user is HR or Super Admin
@@ -61,10 +60,10 @@ public class NotificationViewController {
             return "redirect:/dashboard?error=Access+denied";
         }
 
-        // Get HR notifications
+        // MODIFIED: Get only persistent HR notifications
         String hrId = "HR_SYSTEM";
-        List<Notification> notifications = notificationService.getNotifications(hrId, "HR");
-        long unreadCount = notificationService.getUnreadCount(hrId, "HR");
+        List<Notification> notifications = notificationService.getPersistentNotifications(hrId, "HR");
+        long unreadCount = notificationService.getUnreadPersistentCount(hrId, "HR");
 
         // Get user details for sidebar
         String userName = (String) session.getAttribute("userName");
@@ -86,7 +85,7 @@ public class NotificationViewController {
         model.addAttribute("isHrPage", true);
         model.addAttribute("isEmployee", false);
 
-        return "notifications/hr-notifications"; // Return specific HR template
+        return "notifications/hr-notifications";
     }
 
     /* ========== HELPER METHOD: GET EMPLOYEE DETAILS ========== */
