@@ -45,6 +45,8 @@ public class DeadlineMonitorService {
         }
     }
 
+    // In DeadlineMonitorService.java
+
     @Transactional
     protected void processEmployeeDeadline(Employee employee) {
         if (employee.getDocumentDeadline() == null) return;
@@ -65,20 +67,18 @@ public class DeadlineMonitorService {
         boolean finalSent = employee.isDeadlineFinalSent();
         boolean needsUpdate = false;
 
-        // ✅ FIXED: Send notifications at 24h and overdue
+        // ✅ MODIFIED: Send TEMPORARY notifications only
         if (hoursUntilDeadline <= 0 && !finalSent) {
-            // ⏰ OVERDUE
-            System.out.println("🚨 OVERDUE - sending notification to: " + employee.getEmployeeId());
-            notificationService.notifyDeadlineReached(employee);
-            warningSent = true;
+            // ⏰ OVERDUE - Temporary notification
+            System.out.println("🚨 OVERDUE - sending TEMPORARY notification to: " + employee.getEmployeeId());
+            notificationService.sendTemporaryDeadlineReached(employee);
             finalSent = true;
             needsUpdate = true;
         } else if (hoursUntilDeadline <= 24 && !finalSent) {
-            // ⚠️ 24 HOURS LEFT
-            System.out.println("⚠️  24-hour warning - sending notification to: " + employee.getEmployeeId());
-            notificationService.notifyDeadlineApproaching(employee, 24);
-            warningSent = true;
-            finalSent = true; // Prevent duplicate warnings
+            // ⚠️ 24 HOURS LEFT - Temporary notification
+            System.out.println("⚠️  24-hour warning - sending TEMPORARY notification to: " + employee.getEmployeeId());
+            notificationService.sendTemporaryDeadlineWarning(employee, 24);
+            finalSent = true;
             needsUpdate = true;
         }
 
@@ -86,7 +86,6 @@ public class DeadlineMonitorService {
             updateDeadlineFlags(employee, warningSent, finalSent);
         }
     }
-
     private void updateDeadlineFlags(Employee employee, boolean warningSent, boolean finalSent) {
         employee.setDeadlineWarningSent(warningSent);
         employee.setDeadlineFinalSent(finalSent);

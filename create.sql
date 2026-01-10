@@ -4694,3 +4694,435 @@
 
     alter table offer_letters 
        modify column employee_id varchar(255);
+
+    alter table employees 
+       modify column profile_color varchar(255);
+
+    alter table notifications 
+       modify column recipient_id varchar(255) not null;
+
+    alter table notifications 
+       modify column recipient_type varchar(255) not null;
+
+    alter table notifications 
+       modify column reference_id varchar(255);
+
+    alter table notifications 
+       modify column reference_type varchar(255);
+
+    alter table notifications 
+       modify column sender varchar(255);
+
+    alter table notifications 
+       modify column title varchar(255) not null;
+
+    alter table notifications 
+       modify column type varchar(255) not null;
+
+    alter table offer_letters 
+       modify column employee_id varchar(255);
+
+    alter table employees 
+       modify column profile_color varchar(255);
+
+    alter table notifications 
+       modify column recipient_id varchar(255) not null;
+
+    alter table notifications 
+       modify column recipient_type varchar(255) not null;
+
+    alter table notifications 
+       modify column reference_id varchar(255);
+
+    alter table notifications 
+       modify column reference_type varchar(255);
+
+    alter table notifications 
+       modify column sender varchar(255);
+
+    alter table notifications 
+       modify column title varchar(255) not null;
+
+    alter table notifications 
+       modify column type varchar(255) not null;
+
+    alter table offer_letters 
+       modify column employee_id varchar(255);
+
+    alter table employees 
+       modify column profile_color varchar(255);
+
+    alter table notifications 
+       modify column recipient_id varchar(255) not null;
+
+    alter table notifications 
+       modify column recipient_type varchar(255) not null;
+
+    alter table notifications 
+       modify column reference_id varchar(255);
+
+    alter table notifications 
+       modify column reference_type varchar(255);
+
+    alter table notifications 
+       modify column sender varchar(255);
+
+    alter table notifications 
+       modify column title varchar(255) not null;
+
+    alter table notifications 
+       modify column type varchar(255) not null;
+
+    alter table offer_letters 
+       modify column employee_id varchar(255);
+
+    alter table employees 
+       modify column profile_color varchar(255);
+
+    alter table notifications 
+       modify column recipient_id varchar(255) not null;
+
+    alter table notifications 
+       modify column recipient_type varchar(255) not null;
+
+    alter table notifications 
+       modify column reference_id varchar(255);
+
+    alter table notifications 
+       modify column reference_type varchar(255);
+
+    alter table notifications 
+       modify column sender varchar(255);
+
+    alter table notifications 
+       modify column title varchar(255) not null;
+
+    alter table notifications 
+       modify column type varchar(255) not null;
+
+    alter table offer_letters 
+       modify column employee_id varchar(255);
+
+    alter table employees 
+       modify column profile_color varchar(255);
+
+    alter table notifications 
+       modify column recipient_id varchar(255) not null;
+
+    alter table notifications 
+       modify column recipient_type varchar(255) not null;
+
+    alter table notifications 
+       modify column reference_id varchar(255);
+
+    alter table notifications 
+       modify column reference_type varchar(255);
+
+    alter table notifications 
+       modify column sender varchar(255);
+
+    alter table notifications 
+       modify column title varchar(255) not null;
+
+    alter table notifications 
+       modify column type varchar(255) not null;
+
+    alter table offer_letters 
+       modify column employee_id varchar(255);
+
+    alter table employees 
+       modify column profile_color varchar(255);
+
+    alter table notifications 
+       modify column recipient_id varchar(255) not null;
+
+    alter table notifications 
+       modify column recipient_type varchar(255) not null;
+
+    alter table notifications 
+       modify column reference_id varchar(255);
+
+    alter table notifications 
+       modify column reference_type varchar(255);
+
+    alter table notifications 
+       modify column sender varchar(255);
+
+    alter table notifications 
+       modify column title varchar(255) not null;
+
+    alter table notifications 
+       modify column type varchar(255) not null;
+
+    alter table offer_letters 
+       modify column employee_id varchar(255);
+
+    alter table employees 
+       modify column profile_color varchar(255);
+
+    alter table notifications 
+       modify column recipient_id varchar(255) not null;
+
+    alter table notifications 
+       modify column recipient_type varchar(255) not null;
+
+    alter table notifications 
+       modify column reference_id varchar(255);
+
+    alter table notifications 
+       modify column reference_type varchar(255);
+
+    alter table notifications 
+       modify column sender varchar(255);
+
+    alter table notifications 
+       modify column title varchar(255) not null;
+
+    alter table notifications 
+       modify column type varchar(255) not null;
+
+    alter table offer_letters 
+       modify column employee_id varchar(255);
+
+    alter table employees 
+       modify column profile_color varchar(255);
+
+    alter table notifications 
+       modify column recipient_id varchar(255) not null;
+
+    alter table notifications 
+       modify column recipient_type varchar(255) not null;
+
+    alter table notifications 
+       modify column reference_id varchar(255);
+
+    alter table notifications 
+       modify column reference_type varchar(255);
+
+    alter table notifications 
+       modify column sender varchar(255);
+
+    alter table notifications 
+       modify column title varchar(255) not null;
+
+    alter table notifications 
+       modify column type varchar(255) not null;
+
+    alter table offer_letters 
+       modify column employee_id varchar(255);
+
+    alter table employees 
+       modify column profile_color varchar(255);
+
+    alter table notifications 
+       modify column recipient_id varchar(255) not null;
+
+    alter table notifications 
+       modify column recipient_type varchar(255) not null;
+
+    alter table notifications 
+       modify column reference_id varchar(255);
+
+    alter table notifications 
+       modify column reference_type varchar(255);
+
+    alter table notifications 
+       modify column sender varchar(255);
+
+    alter table notifications 
+       modify column title varchar(255) not null;
+
+    alter table notifications 
+       modify column type varchar(255) not null;
+
+    alter table offer_letters 
+       modify column employee_id varchar(255);
+
+    alter table employees 
+       modify column profile_color varchar(255);
+
+    alter table notifications 
+       modify column recipient_id varchar(255) not null;
+
+    alter table notifications 
+       modify column recipient_type varchar(255) not null;
+
+    alter table notifications 
+       modify column reference_id varchar(255);
+
+    alter table notifications 
+       modify column reference_type varchar(255);
+
+    alter table notifications 
+       modify column sender varchar(255);
+
+    alter table notifications 
+       modify column title varchar(255) not null;
+
+    alter table notifications 
+       modify column type varchar(255) not null;
+
+    alter table offer_letters 
+       modify column employee_id varchar(255);
+
+    alter table employees 
+       modify column profile_color varchar(255);
+
+    alter table notifications 
+       modify column recipient_id varchar(255) not null;
+
+    alter table notifications 
+       modify column recipient_type varchar(255) not null;
+
+    alter table notifications 
+       modify column reference_id varchar(255);
+
+    alter table notifications 
+       modify column reference_type varchar(255);
+
+    alter table notifications 
+       modify column sender varchar(255);
+
+    alter table notifications 
+       modify column title varchar(255) not null;
+
+    alter table notifications 
+       modify column type varchar(255) not null;
+
+    alter table offer_letters 
+       modify column employee_id varchar(255);
+
+    alter table employees 
+       modify column profile_color varchar(255);
+
+    alter table notifications 
+       modify column recipient_id varchar(255) not null;
+
+    alter table notifications 
+       modify column recipient_type varchar(255) not null;
+
+    alter table notifications 
+       modify column reference_id varchar(255);
+
+    alter table notifications 
+       modify column reference_type varchar(255);
+
+    alter table notifications 
+       modify column sender varchar(255);
+
+    alter table notifications 
+       modify column title varchar(255) not null;
+
+    alter table notifications 
+       modify column type varchar(255) not null;
+
+    alter table offer_letters 
+       modify column employee_id varchar(255);
+
+    alter table employees 
+       modify column profile_color varchar(255);
+
+    alter table notifications 
+       modify column recipient_id varchar(255) not null;
+
+    alter table notifications 
+       modify column recipient_type varchar(255) not null;
+
+    alter table notifications 
+       modify column reference_id varchar(255);
+
+    alter table notifications 
+       modify column reference_type varchar(255);
+
+    alter table notifications 
+       modify column sender varchar(255);
+
+    alter table notifications 
+       modify column title varchar(255) not null;
+
+    alter table notifications 
+       modify column type varchar(255) not null;
+
+    alter table offer_letters 
+       modify column employee_id varchar(255);
+
+    alter table employees 
+       modify column profile_color varchar(255);
+
+    alter table notifications 
+       modify column recipient_id varchar(255) not null;
+
+    alter table notifications 
+       modify column recipient_type varchar(255) not null;
+
+    alter table notifications 
+       modify column reference_id varchar(255);
+
+    alter table notifications 
+       modify column reference_type varchar(255);
+
+    alter table notifications 
+       modify column sender varchar(255);
+
+    alter table notifications 
+       modify column title varchar(255) not null;
+
+    alter table notifications 
+       modify column type varchar(255) not null;
+
+    alter table offer_letters 
+       modify column employee_id varchar(255);
+
+    alter table employees 
+       modify column profile_color varchar(255);
+
+    alter table notifications 
+       modify column recipient_id varchar(255) not null;
+
+    alter table notifications 
+       modify column recipient_type varchar(255) not null;
+
+    alter table notifications 
+       modify column reference_id varchar(255);
+
+    alter table notifications 
+       modify column reference_type varchar(255);
+
+    alter table notifications 
+       modify column sender varchar(255);
+
+    alter table notifications 
+       modify column title varchar(255) not null;
+
+    alter table notifications 
+       modify column type varchar(255) not null;
+
+    alter table offer_letters 
+       modify column employee_id varchar(255);
+
+    alter table employees 
+       modify column profile_color varchar(255);
+
+    alter table notifications 
+       modify column recipient_id varchar(255) not null;
+
+    alter table notifications 
+       modify column recipient_type varchar(255) not null;
+
+    alter table notifications 
+       modify column reference_id varchar(255);
+
+    alter table notifications 
+       modify column reference_type varchar(255);
+
+    alter table notifications 
+       modify column sender varchar(255);
+
+    alter table notifications 
+       modify column title varchar(255) not null;
+
+    alter table notifications 
+       modify column type varchar(255) not null;
+
+    alter table offer_letters 
+       modify column employee_id varchar(255);
