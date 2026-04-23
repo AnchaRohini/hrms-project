@@ -32,6 +32,7 @@ public class AnnouncementService {
         announcement.setCategory(dto.getCategory());
         announcement.setPriority(Announcement.AnnouncementPriority.valueOf(dto.getPriority()));
         announcement.setTargetAudience(Announcement.TargetAudience.valueOf(dto.getTargetAudience()));
+        announcement.setAnnouncementType(resolveAnnouncementType(dto.getCategory()));
         announcement.setPinned(dto.isPinned());
         announcement.setActive(true);
         announcement.setExpiresAt(dto.getExpiresAt());
@@ -122,5 +123,13 @@ public class AnnouncementService {
             messagingTemplate.convertAndSend("/topic/announcements/hr", dto);
             messagingTemplate.convertAndSend("/topic/announcements", dto);
         }
+    }
+
+    private String resolveAnnouncementType(String category) {
+        if (category == null || category.trim().isEmpty()) {
+            return "GENERAL";
+        }
+        String normalized = category.trim().toUpperCase().replace(' ', '_');
+        return normalized.length() > 20 ? normalized.substring(0, 20) : normalized;
     }
 }
