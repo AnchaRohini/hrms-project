@@ -4615,81 +4615,9 @@ tr[data-checked-out="true"] .status-indicator {
                             <th style="width: 100px;">Action</th>
                         </tr>
                         </thead>
-                        <tbody>
-                        <!-- Row 1 -->
-                        <tr onclick="showDashPopup('New Joining Policy', 'Welcome to the team! All new employees are requested to submit their physical documents to the HR desk by Friday. Please ensure all digital copies are already uploaded in the Documents tab for verification.')" style="cursor: pointer;">
-                            <td>
-                        <span class="mini-card corporate">
-                            <i class="fas fa-building"></i> Corporate
-                        </span>
-                            </td>
-                            <td class="announcement-title-cell">New Joining Policy</td>
-                            <td class="announcement-desc-cell">All new employees are requested to submit physical documents to HR by Friday. Digital copies must be uploaded in the Documents tab.</td>
-                            <td class="announcement-date-cell">
-                                <i class="far fa-clock"></i> 2 hours ago
-                            </td>
-                            <td>
-                                <button class="view-btn" onclick="event.stopPropagation(); showDashPopup('New Joining Policy', 'Welcome to the team! All new employees are requested to submit their physical documents to the HR desk by Friday. Please ensure all digital copies are already uploaded in the Documents tab for verification.')">
-                                    View <i class="fas fa-arrow-right"></i>
-                                </button>
-                            </td>
-                        </tr>
-
-                        <!-- Row 2 -->
-                        <tr onclick="showDashPopup('Office Renovation', 'Our office will be undergoing minor renovations in the cafeteria area starting next week. The cafeteria will be partially closed. We apologize for any inconvenience caused.')" style="cursor: pointer;">
-                            <td>
-                        <span class="mini-card maintenance">
-                            <i class="fas fa-tools"></i> Maintenance
-                        </span>
-                            </td>
-                            <td class="announcement-title-cell">Office Renovation</td>
-                            <td class="announcement-desc-cell">Cafeteria area will be undergoing minor renovations starting next week. Alternative dining arrangements will be made.</td>
-                            <td class="announcement-date-cell">
-                                <i class="far fa-clock"></i> 1 day ago
-                            </td>
-                            <td>
-                                <button class="view-btn" onclick="event.stopPropagation(); showDashPopup('Office Renovation', 'Our office will be undergoing minor renovations in the cafeteria area starting next week. The cafeteria will be partially closed. We apologize for any inconvenience caused.')">
-                                    View <i class="fas fa-arrow-right"></i>
-                                </button>
-                            </td>
-                        </tr>
-
-                        <!-- Row 3 -->
-                        <tr onclick="showDashPopup('Annual Health Checkup', 'Annual health check-up is scheduled for all employees next month. Please check your email for the schedule and prepare accordingly.')" style="cursor: pointer;">
-                            <td>
-                        <span class="mini-card health">
-                            <i class="fas fa-heartbeat"></i> Health
-                        </span>
-                            </td>
-                            <td class="announcement-title-cell">Annual Health Checkup</td>
-                            <td class="announcement-desc-cell">Scheduled for next month. Check your email for the schedule and prepare the required documents.</td>
-                            <td class="announcement-date-cell">
-                                <i class="far fa-clock"></i> 3 days ago
-                            </td>
-                            <td>
-                                <button class="view-btn" onclick="event.stopPropagation(); showDashPopup('Annual Health Checkup', 'Annual health check-up is scheduled for all employees next month. Please check your email for the schedule and prepare accordingly.')">
-                                    View <i class="fas fa-arrow-right"></i>
-                                </button>
-                            </td>
-                        </tr>
-
-                        <!-- Row 4 -->
-                        <tr onclick="showDashPopup('System Maintenance', 'The HRMS system will be under maintenance this weekend. Please complete all pending tasks before Friday 6 PM.')" style="cursor: pointer;">
-                            <td>
-                        <span class="mini-card system">
-                            <i class="fas fa-server"></i> System
-                        </span>
-                            </td>
-                            <td class="announcement-title-cell">System Maintenance</td>
-                            <td class="announcement-desc-cell">HRMS will be under maintenance this weekend. Complete all pending tasks before Friday 6 PM.</td>
-                            <td class="announcement-date-cell">
-                                <i class="far fa-clock"></i> 5 days ago
-                            </td>
-                            <td>
-                                <button class="view-btn" onclick="event.stopPropagation(); showDashPopup('System Maintenance', 'The HRMS system will be under maintenance this weekend. Please complete all pending tasks before Friday 6 PM.')">
-                                    View <i class="fas fa-arrow-right"></i>
-                                </button>
-                            </td>
+                        <tbody id="employeeAnnouncementsBody">
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: var(--dark-text-secondary);">Loading announcements...</td>
                         </tr>
                         </tbody>
                     </table>
@@ -11971,6 +11899,160 @@ function openApplyLeaveFromCalendar(dateStr) {
         }, 300);
     }
 }
+
+// ============================================
+// REAL-TIME ANNOUNCEMENTS (EMPLOYEE DASHBOARD)
+// ============================================
+let announcementStompClient = null;
+
+function getAnnouncementBodyElement() {
+    return document.getElementById('employeeAnnouncementsBody');
+}
+
+function announcementCategoryClass(category) {
+    const normalized = (category || 'general').toLowerCase();
+    const supported = ['corporate', 'hr', 'system', 'maintenance', 'health', 'security', 'leave'];
+    return supported.includes(normalized) ? normalized : 'corporate';
+}
+
+function announcementCategoryIcon(category) {
+    const key = (category || '').toLowerCase();
+    const icons = {
+        corporate: 'fa-building',
+        hr: 'fa-user-tie',
+        system: 'fa-server',
+        maintenance: 'fa-tools',
+        health: 'fa-heartbeat',
+        security: 'fa-shield-alt',
+        leave: 'fa-umbrella-beach',
+        general: 'fa-bullhorn'
+    };
+    return icons[key] || icons.general;
+}
+
+function truncateAnnouncement(text, maxLength) {
+    if (!text) return '';
+    return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
+}
+
+function formatTimeAgo(dateValue) {
+    if (!dateValue) return '-';
+    const now = new Date();
+    const then = new Date(dateValue);
+    const diffMinutes = Math.max(1, Math.floor((now - then) / 60000));
+
+    if (diffMinutes < 60) return `${diffMinutes} min ago`;
+    const diffHours = Math.floor(diffMinutes / 60);
+    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+    const diffDays = Math.floor(diffHours / 24);
+    return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+}
+
+function escapeAnnouncementHtml(text) {
+    return String(text || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+function announcementRowHtml(item, isNew) {
+    const badge = isNew ? ' <span style="background: var(--warning); color: #111; font-size: 10px; padding: 2px 7px; border-radius: 10px; margin-left: 6px; font-weight: 700;">NEW</span>' : '';
+    const categoryClass = announcementCategoryClass(item.category);
+    const categoryIcon = announcementCategoryIcon(item.category);
+    const title = escapeAnnouncementHtml(item.title);
+    const content = escapeAnnouncementHtml(item.content);
+    const preview = escapeAnnouncementHtml(truncateAnnouncement(item.content, 120));
+    const categoryLabel = escapeAnnouncementHtml(item.category || 'General');
+    const posted = formatTimeAgo(item.createdAt);
+
+    return `
+        <tr onclick="showDashPopup('${title}', '${content.replace(/'/g, "\\'")}')" style="cursor: pointer;">
+            <td>
+                <span class="mini-card ${categoryClass}">
+                    <i class="fas ${categoryIcon}"></i> ${categoryLabel}
+                </span>
+            </td>
+            <td class="announcement-title-cell">${title}${badge}</td>
+            <td class="announcement-desc-cell">${preview}</td>
+            <td class="announcement-date-cell"><i class="far fa-clock"></i> ${posted}</td>
+            <td>
+                <button class="view-btn" onclick="event.stopPropagation(); showDashPopup('${title}', '${content.replace(/'/g, "\\'")}')">
+                    View <i class="fas fa-arrow-right"></i>
+                </button>
+            </td>
+        </tr>
+    `;
+}
+
+function renderEmployeeAnnouncements(items) {
+    const body = getAnnouncementBodyElement();
+    if (!body) return;
+    if (!items || !items.length) {
+        body.innerHTML = '<tr><td colspan="5" style="text-align:center; color: var(--dark-text-secondary);">No announcements available right now.</td></tr>';
+        return;
+    }
+    body.innerHTML = items.map(item => announcementRowHtml(item, false)).join('');
+}
+
+function prependEmployeeAnnouncement(item) {
+    const body = getAnnouncementBodyElement();
+    if (!body) return;
+
+    const emptyRow = body.querySelector('tr td[colspan="5"]');
+    if (emptyRow) body.innerHTML = '';
+    body.insertAdjacentHTML('afterbegin', announcementRowHtml(item, true));
+}
+
+function showAnnouncementToast(message) {
+    const toast = document.createElement('div');
+    toast.textContent = message;
+    toast.style.cssText = 'position:fixed; right:20px; bottom:20px; z-index:16000; background:var(--dark-card); color:var(--dark-text); border:1px solid var(--primary); border-radius:8px; padding:10px 14px; box-shadow:0 8px 20px rgba(0,0,0,0.35);';
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2500);
+}
+
+async function loadEmployeeAnnouncements() {
+    try {
+        const response = await fetch('/api/announcements/employee');
+        const result = await response.json();
+        if (!result.success) {
+            throw new Error(result.error || 'Failed to fetch announcements');
+        }
+        renderEmployeeAnnouncements(result.data || []);
+    } catch (error) {
+        const body = getAnnouncementBodyElement();
+        if (body) {
+            body.innerHTML = '<tr><td colspan="5" style="text-align:center; color: var(--danger);">Unable to load announcements</td></tr>';
+        }
+    }
+}
+
+function connectAnnouncementWebSocket() {
+    if (announcementStompClient || typeof SockJS === 'undefined' || typeof Stomp === 'undefined') return;
+    const socket = new SockJS('/ws');
+    announcementStompClient = Stomp.over(socket);
+    announcementStompClient.debug = () => {};
+
+    announcementStompClient.connect({}, function() {
+        announcementStompClient.subscribe('/topic/announcements/all', function(message) {
+            const item = JSON.parse(message.body);
+            prependEmployeeAnnouncement(item);
+            showAnnouncementToast(`New announcement: ${item.title}`);
+        });
+        announcementStompClient.subscribe('/topic/announcements/employees', function(message) {
+            const item = JSON.parse(message.body);
+            prependEmployeeAnnouncement(item);
+            showAnnouncementToast(`New announcement: ${item.title}`);
+        });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadEmployeeAnnouncements();
+    connectAnnouncementWebSocket();
+});
 
 
 // EXPOSE TO GLOBAL SCOPE

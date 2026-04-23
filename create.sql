@@ -7837,3 +7837,219 @@
 
     alter table leave_requests 
        modify column total_days float(53);
+
+    alter table employees 
+       modify column date_of_birth date;
+
+    alter table employees 
+       modify column role enum ('SUPER_ADMIN','HR','HR_MANAGER','EMPLOYEE') not null;
+
+    alter table employees 
+       modify column start_date date;
+
+    alter table leave_balance 
+       modify column remaining_days float(53);
+
+    alter table leave_balance 
+       modify column used_days float(53) not null;
+
+    alter table leave_requests 
+       modify column total_days float(53);
+
+    alter table employees 
+       modify column date_of_birth date;
+
+    alter table employees 
+       modify column role enum ('SUPER_ADMIN','HR','HR_MANAGER','EMPLOYEE') not null;
+
+    alter table employees 
+       modify column start_date date;
+
+    alter table leave_balance 
+       modify column remaining_days float(53);
+
+    alter table leave_balance 
+       modify column used_days float(53) not null;
+
+    alter table leave_requests 
+       modify column total_days float(53);
+
+    alter table announcements 
+       add column category varchar(255);
+
+    alter table announcements 
+       add column content TEXT not null;
+
+    alter table announcements 
+       add column created_by_name varchar(255);
+
+    alter table announcements 
+       add column expires_at datetime(6);
+
+    alter table announcements 
+       add column is_pinned bit not null;
+
+    alter table announcements 
+       add column priority enum ('LOW','NORMAL','HIGH','URGENT') not null;
+
+    alter table announcements 
+       add column target_audience enum ('ALL','HR_ONLY','EMPLOYEES_ONLY') not null;
+
+    alter table announcements 
+       modify column type enum ('PERMANENT','TEMPORARY') not null;
+
+    alter table employees 
+       modify column date_of_birth date;
+
+    alter table employees 
+       modify column role enum ('SUPER_ADMIN','HR','HR_MANAGER','EMPLOYEE') not null;
+
+    alter table employees 
+       modify column start_date date;
+
+    alter table leave_balance 
+       modify column remaining_days float(53);
+
+    alter table leave_balance 
+       modify column used_days float(53) not null;
+
+    alter table leave_requests 
+       modify column total_days float(53);
+
+    alter table announcements 
+       add column category varchar(255);
+
+    alter table announcements 
+       add column content TEXT not null;
+
+    alter table announcements 
+       add column created_by_name varchar(255);
+
+    alter table announcements 
+       add column expires_at datetime(6);
+
+    alter table announcements 
+       add column is_pinned bit not null;
+
+    alter table announcements 
+       add column priority enum ('LOW','NORMAL','HIGH','URGENT') not null;
+
+    alter table announcements 
+       add column target_audience enum ('ALL','HR_ONLY','EMPLOYEES_ONLY') not null;
+
+    alter table announcements 
+       modify column type enum ('PERMANENT','TEMPORARY') not null;
+
+    alter table employees 
+       modify column date_of_birth date;
+
+    alter table employees 
+       modify column role enum ('SUPER_ADMIN','HR','HR_MANAGER','EMPLOYEE') not null;
+
+    alter table employees 
+       modify column start_date date;
+
+    alter table leave_balance 
+       modify column remaining_days float(53);
+
+    alter table leave_balance 
+       modify column used_days float(53) not null;
+
+    alter table leave_requests 
+       modify column total_days float(53);
+
+    alter table announcements 
+       add column category varchar(255);
+
+    alter table announcements 
+       add column content TEXT not null;
+
+    alter table announcements 
+       add column created_by_name varchar(255);
+
+    alter table announcements 
+       add column expires_at datetime(6);
+
+    alter table announcements 
+       add column is_pinned bit not null;
+
+    alter table announcements 
+       add column priority enum ('LOW','NORMAL','HIGH','URGENT') not null;
+
+    alter table announcements 
+       add column target_audience enum ('ALL','HR_ONLY','EMPLOYEES_ONLY') not null;
+
+    alter table employees 
+       modify column date_of_birth date;
+
+    alter table employees 
+       modify column role enum ('SUPER_ADMIN','HR','HR_MANAGER','EMPLOYEE') not null;
+
+    alter table employees 
+       modify column start_date date;
+
+    alter table leave_balance 
+       modify column remaining_days float(53);
+
+    alter table leave_balance 
+       modify column used_days float(53) not null;
+
+    alter table leave_requests 
+       modify column total_days float(53);
+
+    alter table announcements 
+       add column category varchar(255);
+
+    alter table announcements 
+       add column content TEXT not null;
+
+    alter table announcements 
+       add column created_by_name varchar(255);
+
+    alter table announcements 
+       add column expires_at datetime(6);
+
+    alter table announcements 
+       add column is_pinned bit not null;
+
+    alter table announcements 
+       add column priority enum ('LOW','NORMAL','HIGH','URGENT') not null;
+
+    alter table announcements 
+       add column target_audience enum ('ALL','HR_ONLY','EMPLOYEES_ONLY') not null;
+
+    alter table employees 
+       modify column date_of_birth date;
+
+    alter table employees 
+       modify column role enum ('SUPER_ADMIN','HR','HR_MANAGER','EMPLOYEE') not null;
+
+    alter table employees 
+       modify column start_date date;
+
+    alter table leave_balance 
+       modify column remaining_days float(53);
+
+    alter table leave_balance 
+       modify column used_days float(53) not null;
+
+    alter table leave_requests 
+       modify column total_days float(53);
+
+    alter table employees 
+       modify column date_of_birth date;
+
+    alter table employees 
+       modify column role enum ('SUPER_ADMIN','HR','HR_MANAGER','EMPLOYEE') not null;
+
+    alter table employees 
+       modify column start_date date;
+
+    alter table leave_balance 
+       modify column remaining_days float(53);
+
+    alter table leave_balance 
+       modify column used_days float(53) not null;
+
+    alter table leave_requests 
+       modify column total_days float(53);

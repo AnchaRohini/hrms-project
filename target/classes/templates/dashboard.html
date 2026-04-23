@@ -2972,6 +2972,43 @@
                     </div>
                 </div>
 
+                <div class="content-card fade-in" id="announcementAdminSection" style="margin-bottom: 20px;">
+                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <h5 class="card-title">
+                            <i class="fas fa-bullhorn"></i>
+                            Announcements
+                        </h5>
+                        <button class="create-employee-btn" type="button" onclick="openAnnouncementCreateModal()">
+                            <i class="fas fa-plus"></i>
+                            <span>Create Announcement</span>
+                        </button>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Category</th>
+                                    <th>Type</th>
+                                    <th>Priority</th>
+                                    <th>Target</th>
+                                    <th>Created</th>
+                                    <th>Expires</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody id="adminAnnouncementTableBody">
+                                <tr>
+                                    <td colspan="9" style="text-align: center;">Loading announcements...</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Alerts -->
                 <div th:if="${success}" class="alert alert-success">
                     <i class="fas fa-check-circle me-2"></i>
@@ -2981,6 +3018,69 @@
                     <i class="fas fa-exclamation-circle me-2"></i>
                     <span th:text="${error}">Error</span>
                 </div>
+
+                <div id="announcementCreateModal" class="popup-overlay" style="z-index: 12000;">
+                    <div class="popup-modal" style="max-width: 640px;">
+                        <div class="popup-header">
+                            <h3 style="font-size: 1rem;">Create Announcement</h3>
+                            <button class="close-popup-btn" type="button" onclick="closeAnnouncementCreateModal()">×</button>
+                        </div>
+                        <div class="popup-body">
+                            <form id="announcementCreateForm">
+                                <div style="display: grid; grid-template-columns: 1fr; gap: 12px;">
+                                    <input type="text" id="announcementTitle" placeholder="Title" required
+                                           style="background: var(--dark-bg); border: 1px solid var(--dark-border); color: var(--dark-text); border-radius: 8px; padding: 10px;">
+                                    <textarea id="announcementContent" placeholder="Content" required rows="4"
+                                              style="background: var(--dark-bg); border: 1px solid var(--dark-border); color: var(--dark-text); border-radius: 8px; padding: 10px; resize: vertical;"></textarea>
+                                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                                        <select id="announcementType" onchange="toggleAnnouncementExpiryField()" required
+                                                style="background: var(--dark-bg); border: 1px solid var(--dark-border); color: var(--dark-text); border-radius: 8px; padding: 10px;">
+                                            <option value="PERMANENT">PERMANENT</option>
+                                            <option value="TEMPORARY">TEMPORARY</option>
+                                        </select>
+                                        <input type="datetime-local" id="announcementExpiresAt"
+                                               style="display: none; background: var(--dark-bg); border: 1px solid var(--dark-border); color: var(--dark-text); border-radius: 8px; padding: 10px;">
+                                    </div>
+                                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                                        <select id="announcementCategory" required
+                                                style="background: var(--dark-bg); border: 1px solid var(--dark-border); color: var(--dark-text); border-radius: 8px; padding: 10px;">
+                                            <option value="Corporate">Corporate</option>
+                                            <option value="HR">HR</option>
+                                            <option value="System">System</option>
+                                            <option value="Maintenance">Maintenance</option>
+                                            <option value="Health">Health</option>
+                                            <option value="Security">Security</option>
+                                            <option value="Leave">Leave</option>
+                                            <option value="General">General</option>
+                                        </select>
+                                        <select id="announcementPriority" required
+                                                style="background: var(--dark-bg); border: 1px solid var(--dark-border); color: var(--dark-text); border-radius: 8px; padding: 10px;">
+                                            <option value="LOW">Low</option>
+                                            <option value="NORMAL" selected>Normal</option>
+                                            <option value="HIGH">High</option>
+                                            <option value="URGENT">Urgent</option>
+                                        </select>
+                                        <select id="announcementTargetAudience" required
+                                                style="background: var(--dark-bg); border: 1px solid var(--dark-border); color: var(--dark-text); border-radius: 8px; padding: 10px;">
+                                            <option value="ALL">All Employees</option>
+                                            <option value="HR_ONLY">HR Only</option>
+                                            <option value="EMPLOYEES_ONLY">Employees Only</option>
+                                        </select>
+                                    </div>
+                                    <label style="display: flex; align-items: center; gap: 8px; color: var(--dark-text-secondary);">
+                                        <input type="checkbox" id="announcementPinned">
+                                        Pin this announcement
+                                    </label>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="popup-footer">
+                            <button class="btn" type="button" onclick="closeAnnouncementCreateModal()">Cancel</button>
+                            <button class="btn btn-primary" type="button" onclick="submitAnnouncementCreateForm()">Submit</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="announcementToast" style="position: fixed; right: 24px; bottom: 24px; display: none; z-index: 15000; background: var(--dark-card); border: 1px solid var(--dark-border); color: var(--dark-text); padding: 10px 14px; border-radius: 8px; min-width: 240px;"></div>
 
                 <!-- Statistics - Matching Applications Page Style -->
                 <div class="stats-grid">
@@ -8707,6 +8807,177 @@ function filterDashboardStats(filterType) {
             }
         }
 
+        // ========== ANNOUNCEMENTS (HR/ADMIN) ==========
+        async function loadAdminAnnouncements() {
+            const tbody = document.getElementById('adminAnnouncementTableBody');
+            if (!tbody) return;
+            try {
+                const response = await fetch('/api/announcements/admin/all');
+                const result = await response.json();
+                if (!result.success) {
+                    throw new Error(result.error || 'Unable to load announcements');
+                }
+                const announcements = result.data || [];
+                if (!announcements.length) {
+                    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;">No announcements found</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = announcements.map(item => {
+                    const created = item.createdAt ? new Date(item.createdAt).toLocaleString() : '-';
+                    const expires = item.expiresAt ? new Date(item.expiresAt).toLocaleString() : '-';
+                    const status = item.isActive ? 'Active' : 'Inactive';
+                    return `
+                        <tr>
+                            <td>${escapeHtml(item.title || '')}</td>
+                            <td>${escapeHtml(item.category || '-')}</td>
+                            <td>${escapeHtml(item.type || '-')}</td>
+                            <td>${escapeHtml(item.priority || '-')}</td>
+                            <td>${escapeHtml(item.targetAudience || '-')}</td>
+                            <td>${created}</td>
+                            <td>${expires}</td>
+                            <td>${status}</td>
+                            <td style="display:flex; gap:6px; flex-wrap:wrap;">
+                                <button class="btn-action btn-edit" onclick="toggleAnnouncementPin(${item.id})">${item.isPinned ? 'Unpin' : 'Pin'}</button>
+                                <button class="btn-action btn-view" onclick="deactivateAnnouncement(${item.id})">Deactivate</button>
+                                <button class="btn-action btn-delete" onclick="deleteAnnouncement(${item.id})">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (error) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#ef4444;">Failed to load announcements</td></tr>';
+                showAnnouncementToast(error.message || 'Failed to load announcements', 'error');
+            }
+        }
+
+        function openAnnouncementCreateModal() {
+            const modal = document.getElementById('announcementCreateModal');
+            if (modal) modal.classList.add('active');
+        }
+
+        function closeAnnouncementCreateModal() {
+            const modal = document.getElementById('announcementCreateModal');
+            if (modal) modal.classList.remove('active');
+            const form = document.getElementById('announcementCreateForm');
+            if (form) form.reset();
+            toggleAnnouncementExpiryField();
+        }
+
+        function toggleAnnouncementExpiryField() {
+            const typeEl = document.getElementById('announcementType');
+            const expiresEl = document.getElementById('announcementExpiresAt');
+            if (!typeEl || !expiresEl) return;
+            const show = typeEl.value === 'TEMPORARY';
+            expiresEl.style.display = show ? 'block' : 'none';
+            expiresEl.required = show;
+            if (!show) expiresEl.value = '';
+        }
+
+        async function submitAnnouncementCreateForm() {
+            const payload = {
+                title: document.getElementById('announcementTitle').value.trim(),
+                content: document.getElementById('announcementContent').value.trim(),
+                type: document.getElementById('announcementType').value,
+                category: document.getElementById('announcementCategory').value,
+                priority: document.getElementById('announcementPriority').value,
+                targetAudience: document.getElementById('announcementTargetAudience').value,
+                expiresAt: document.getElementById('announcementExpiresAt').value || null,
+                pinned: document.getElementById('announcementPinned').checked,
+                active: true
+            };
+
+            if (!payload.title || !payload.content) {
+                showAnnouncementToast('Title and content are required', 'error');
+                return;
+            }
+            if (payload.type === 'TEMPORARY' && !payload.expiresAt) {
+                showAnnouncementToast('Expires At is required for temporary announcements', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/announcements/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                if (!result.success) {
+                    throw new Error(result.error || 'Failed to create announcement');
+                }
+                showAnnouncementToast('Announcement created successfully', 'success');
+                closeAnnouncementCreateModal();
+                await loadAdminAnnouncements();
+            } catch (error) {
+                showAnnouncementToast(error.message || 'Failed to create announcement', 'error');
+            }
+        }
+
+        async function toggleAnnouncementPin(id) {
+            try {
+                const response = await fetch(`/api/announcements/${id}/toggle-pin`, { method: 'PUT' });
+                const result = await response.json();
+                if (!result.success) {
+                    throw new Error(result.error || 'Unable to toggle pin');
+                }
+                showAnnouncementToast('Pin status updated', 'success');
+                await loadAdminAnnouncements();
+            } catch (error) {
+                showAnnouncementToast(error.message || 'Unable to toggle pin', 'error');
+            }
+        }
+
+        async function deactivateAnnouncement(id) {
+            try {
+                const response = await fetch(`/api/announcements/${id}/deactivate`, { method: 'PUT' });
+                const result = await response.json();
+                if (!result.success) {
+                    throw new Error(result.error || 'Unable to deactivate announcement');
+                }
+                showAnnouncementToast('Announcement deactivated', 'success');
+                await loadAdminAnnouncements();
+            } catch (error) {
+                showAnnouncementToast(error.message || 'Unable to deactivate announcement', 'error');
+            }
+        }
+
+        async function deleteAnnouncement(id) {
+            try {
+                const response = await fetch(`/api/announcements/${id}`, { method: 'DELETE' });
+                const result = await response.json();
+                if (!result.success) {
+                    throw new Error(result.error || 'Unable to delete announcement');
+                }
+                showAnnouncementToast('Announcement deleted', 'success');
+                await loadAdminAnnouncements();
+            } catch (error) {
+                showAnnouncementToast(error.message || 'Unable to delete announcement', 'error');
+            }
+        }
+
+        function showAnnouncementToast(message, type) {
+            const toast = document.getElementById('announcementToast');
+            if (!toast) return;
+            const color = type === 'error' ? 'var(--danger)' : 'var(--success)';
+            toast.style.display = 'block';
+            toast.style.borderColor = color;
+            toast.textContent = message;
+            clearTimeout(showAnnouncementToast.timeout);
+            showAnnouncementToast.timeout = setTimeout(() => {
+                toast.style.display = 'none';
+            }, 2500);
+        }
+
+        function escapeHtml(text) {
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
         // ========== INITIALIZATION ==========
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 HR Dashboard Attendance System Initializing...');
@@ -8819,6 +9090,8 @@ function filterDashboardStats(filterType) {
             document.head.appendChild(style);
 
             console.log('✅ HR Dashboard Attendance System Ready');
+            toggleAnnouncementExpiryField();
+            loadAdminAnnouncements();
         });
 
         window.addEventListener('load', function() {
