@@ -23,6 +23,11 @@ public class HomeController {
     private JobService jobService;
 
     @GetMapping("/")
+    public String showRoot() {
+        return "redirect:/candidate/login";
+    }
+
+    @GetMapping("/home")
     public String showHome(Model model) {
         try {
             List<Job> jobs = jobService.getActiveJobs();
