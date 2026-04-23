@@ -45,15 +45,11 @@ public class AnnouncementService {
         return savedDto;
     }
 
-    public List<AnnouncementDTO> getAnnouncementsForEmployee() {
-        return announcementRepository.findByTargetAudience(
-                        LocalDateTime.now(),
-                        Announcement.AnnouncementType.TEMPORARY,
-                        Announcement.TargetAudience.ALL,
-                        Announcement.TargetAudience.EMPLOYEES_ONLY
-                )
-                .stream()
-                .map(AnnouncementDTO::fromEntity)
+    public List<AnnouncementDTO> getAnnouncementsForEmployee(String employeeDepartment) {
+        List<Announcement> announcements = announcementRepository
+                .findActiveForEmployee(employeeDepartment);
+        return announcements.stream()
+                .map(this::toDTO)
                 .collect(Collectors.toList());
     }
 

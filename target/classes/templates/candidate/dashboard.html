@@ -11793,6 +11793,54 @@ function showHolidayDetails(date, name, type) {
     document.body.appendChild(modal);
 }
 
+async function loadAnnouncements() {
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    const tbody = document.getElementById('announcements-tbody'); // adjust ID to match your HTML
+
+    try {
+        const response = await fetch('/api/announcements/employee', {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        // Handle both paginated { content: [] } and plain array []
+        const announcements = Array.isArray(data) ? data : (data.content || []);
+
+        if (announcements.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:20px;">
+                No announcements available</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = announcements.map(a => `
+            <tr>
+                <td>${a.announcementType || a.type || ''}</td>
+                <td>${a.title || ''}</td>
+                <td>${a.description || ''}</td>
+                <td>${formatDate(a.createdAt || a.created_at)}</td>
+                <td><button onclick="viewAnnouncement(${a.id})">View</button></td>
+            </tr>
+        `).join('');
+
+    } catch (error) {
+        console.error('Failed to load announcements:', error);
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:red;padding:20px;">
+            Failed to load announcements. Please try again.</td></tr>`;
+    }
+}
+
+function formatDate(dateStr) {
+    if (!dateStr) return '-';
+    return new Date(dateStr).toLocaleDateString();
+}
 // ============================================
 // HOLIDAY HELPER FUNCTIONS
 // ============================================
