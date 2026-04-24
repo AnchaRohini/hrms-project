@@ -5928,10 +5928,29 @@ sessionStorage.setItem('autoShowAttendance', 'true');
     // ============================================
     // GLOBAL CONSTANTS & CONFIG
     // ============================================
-    const HOLIDAYS = [
-        '2026-01-01', '2026-01-26', '2026-03-29', '2026-08-15',
-        '2026-10-02', '2026-12-25'
-    ];
+
+
+// ============================================
+// GLOBAL CONSTANTS & CONFIG
+// ============================================
+// ============================================
+// GLOBAL STATE & CONFIG
+// ============================================
+// 1. Calendar Variables (Initialized immediately to prevent errors)
+window.dashCalMonth = new Date().getMonth();
+window.dashCalYear = new Date().getFullYear();
+window.mainCalendarMonth = new Date().getMonth();
+window.mainCalendarYear = new Date().getFullYear();
+window.smallCalendarMonth = new Date().getMonth();
+window.smallCalendarYear = new Date().getFullYear();
+
+// 2. Data Storage
+window.allHolidays = [];
+window.currentMonthExistingLeaves = {};
+
+// 3. Constant Holidays (Fallback)
+const HOLIDAYS = ['2026-01-01', '2026-01-26', '2026-03-29', '2026-08-15', '2026-10-02', '2026-12-25'];
+
 
     const COMPANY_HOLIDAYS = [
         '2026-01-15', '2026-05-01', '2026-10-31'
@@ -5964,15 +5983,10 @@ sessionStorage.setItem('autoShowAttendance', 'true');
     // ============================================
     // Replace the existing isHolidayDate in candidate/dashboard.html with this:
 function isHolidayDate(dateStr) {
-    // Check if the date exists in the database holidays fetched from the server
-    if (window.allHolidays && window.allHolidays.length > 0) {
-        return window.allHolidays.some(h => {
-            // Check both properties just in case (depending on how the DTO maps it)
-            const hDate = h.date || h.holidayDate;
-            return hDate === dateStr;
-        });
+    if (!window.allHolidays || window.allHolidays.length === 0) {
+        return HOLIDAYS.includes(dateStr); // Fallback to constants
     }
-    return false;
+    return window.allHolidays.some(h => (h.date || h.holidayDate) === dateStr);
 }
 
     function isSunday(date) {
@@ -7681,215 +7695,165 @@ loadTodayAttendanceFromServer().then(() => {
         }
     }
 
-    async function generateMainCalendar() {
-        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-                           'July', 'August', 'September', 'October', 'November', 'December'];
+   // ============================================
+// CONSOLIDATED MAIN CALENDAR GENERATION
+// ============================================
+async function generateMainCalendar() {
+    const calendarGrid = document.getElementById('main-calendar');
+    const monthYearEl = document.getElementById('calendar-month-year');
 
-        const monthYearElement = document.getElementById('calendar-month-year');
-        if (monthYearElement) {
-            monthYearElement.textContent = `${monthNames[currentCalendarMonth]} ${currentCalendarYear}`;
-        }
+    if (!calendarGrid || !monthYearEl) return;
 
-        const firstDay = new Date(currentCalendarYear, currentCalendarMonth, 1);
-        const lastDay = new Date(currentCalendarYear, currentCalendarMonth + 1, 0);
-        const daysInMonth = lastDay.getDate();
-        const startingDay = firstDay.getDay();
+    // 1. Setup Month/Year Info
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                       'July', 'August', 'September', 'October', 'November', 'December'];
 
-        const today = new Date();
-        const todayStr = today.toISOString().split('T')[0];
+    monthYearEl.textContent = `${monthNames[window.mainCalendarMonth]} ${window.mainCalendarYear}`;
+    calendarGrid.innerHTML = ''; // Clear existing
 
-        const calendarGrid = document.getElementById('main-calendar');
-        if (!calendarGrid) return;
+    // 2. Calculate Date Parameters
+    const firstDay = new Date(window.mainCalendarYear, window.mainCalendarMonth, 1).getDay();
+    const daysInMonth = new Date(window.mainCalendarYear, window.mainCalendarMonth + 1, 0).getDate();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayStr = today.toISOString().split('T')[0];
 
-        calendarGrid.innerHTML = '';
+    const employeeId = document.getElementById('currentEmployeeId')?.value ||
+                      document.getElementById('employeeIdData')?.value;
 
-        const dayHeaders = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        dayHeaders.forEach((day, index) => {
-            const dayHeader = document.createElement('div');
-            dayHeader.className = 'calendar-day-header';
-            if (index === 0 || index === 6) dayHeader.classList.add('weekend');
-            dayHeader.textContent = day.substring(0, 3);
-            calendarGrid.appendChild(dayHeader);
-        });
+    // 3. Fetch Data (Attendance & Existing Leaves)
+    let attendanceData = {};
+    if (employeeId) {
+        try {
+            // Load Attendance
+            const attResp = await fetch(`/api/attendance/calendar/${employeeId}/${window.mainCalendarYear}/${window.mainCalendarMonth + 1}`);
+            const attData = await attResp.json();
+            if (attData.success) attendanceData = attData.attendance || {};
 
-        for (let i = 0; i < startingDay; i++) {
-            const emptyDay = document.createElement('div');
-            emptyDay.className = 'calendar-day-main';
-            emptyDay.style.background = 'transparent';
-            emptyDay.style.border = 'none';
-            calendarGrid.appendChild(emptyDay);
-        }
-
-        const employeeId = document.getElementById('currentEmployeeId')?.value ||
-                          document.getElementById('employeeIdData')?.value;
-
-        let attendanceData = {};
-        if (employeeId) {
-            try {
-                const response = await fetch(`/api/attendance/calendar/${employeeId}/${currentCalendarYear}/${currentCalendarMonth + 1}`);
-                const data = await response.json();
-                if (data.success && data.attendance) {
-                    attendanceData = data.attendance;
-                }
-            } catch (error) {
-                console.error('Failed to load attendance:', error);
+            // Load Leaves (so we don't allow applying on existing leave days)
+            if (typeof loadExistingLeavesForMonth === 'function') {
+                await loadExistingLeavesForMonth(employeeId, window.mainCalendarYear, window.mainCalendarMonth + 1);
             }
-        }
-
-        await loadExistingLeavesForMonth(employeeId, currentCalendarYear, currentCalendarMonth + 1);
-
-        const holidaysByDate = {};
-        if (window.allHolidays && window.allHolidays.length > 0) {
-            window.allHolidays.forEach(holiday => {
-                const date = holiday.date || holiday.holidayDate;
-                if (date) {
-                    if (!holidaysByDate[date]) holidaysByDate[date] = [];
-                    holidaysByDate[date].push(holiday);
-                }
-            });
-        }
-
-        for (let day = 1; day <= daysInMonth; day++) {
-            const dateStr = `${currentCalendarYear}-${String(currentCalendarMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-            const dateObj = new Date(currentCalendarYear, currentCalendarMonth, day);
-            const dayOfWeek = dateObj.getDay();
-
-            const isToday = dateStr === todayStr;
-            const isPast = dateStr < todayStr;
-            const isSunday = dayOfWeek === 0;
-            const isSaturday = dayOfWeek === 6;
-            const isWeekend = isSunday || isSaturday;
-
-            const dayHolidays = holidaysByDate[dateStr] || [];
-            const isHoliday = dayHolidays.length > 0;
-
-            const status = attendanceData[dateStr];
-            const hasExistingLeave = !!currentMonthExistingLeaves[dateStr];
-
-            const dayElement = document.createElement('div');
-            dayElement.className = 'calendar-day-main';
-            dayElement.setAttribute('data-date', dateStr);
-
-            if (isWeekend) dayElement.classList.add('weekend');
-            if (isHoliday) dayElement.classList.add('holiday');
-            if (isToday) dayElement.classList.add('today');
-            if (hasExistingLeave) dayElement.classList.add('has-leave');
-
-            if (status === 'present') dayElement.classList.add('present-day');
-            else if (status === 'absent') dayElement.classList.add('absent-day');
-            else if (status === 'leave') dayElement.classList.add('leave-day');
-
-            const dayNumberContainer = document.createElement('div');
-            dayNumberContainer.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;';
-
-            const dayNumber = document.createElement('span');
-            dayNumber.className = 'calendar-day-number';
-            dayNumber.textContent = day;
-            dayNumberContainer.appendChild(dayNumber);
-
-            const isSelectable = !isWeekend && !isHoliday && !isPast && !hasExistingLeave;
-            if (isSelectable) {
-                const addButton = document.createElement('button');
-                addButton.className = 'calendar-day-add-btn';
-                addButton.innerHTML = '<i class="fas fa-plus"></i>';
-                addButton.title = 'Apply for Leave';
-                addButton.onclick = function(e) {
-                    e.stopPropagation();
-                    openApplyLeaveFromCalendar(dateStr);
-                };
-                dayNumberContainer.appendChild(addButton);
-            }
-
-            dayElement.appendChild(dayNumberContainer);
-
-            if (status) {
-                const statusElement = document.createElement('div');
-                statusElement.className = `calendar-day-status ${status}`;
-                if (status === 'present') statusElement.textContent = 'Present';
-                else if (status === 'absent') statusElement.textContent = 'Absent';
-                else if (status === 'leave') statusElement.textContent = 'Leave';
-                dayElement.appendChild(statusElement);
-            }
-
-            if (dayHolidays.length > 0) {
-                const holidaysContainer = document.createElement('div');
-                holidaysContainer.className = 'holiday-names-container';
-
-                const maxVisible = 3;
-                const totalHolidays = dayHolidays.length;
-                const hasMore = totalHolidays > maxVisible;
-
-                const visibleContainer = document.createElement('div');
-                visibleContainer.className = 'visible-holidays';
-
-                const hiddenContainer = document.createElement('div');
-                hiddenContainer.className = 'hidden-holidays';
-
-                dayHolidays.sort((a, b) => {
-                    const nameA = a.name || a.holidayName || '';
-                    const nameB = b.name || b.holidayName || '';
-                    return nameA.localeCompare(nameB);
-                });
-
-                dayHolidays.forEach((holiday, index) => {
-                    const holidayName = holiday.name || holiday.holidayName || 'Holiday';
-                    const holidayType = holiday.type || holiday.holidayType || 'public';
-                    const holidayItem = createHolidayItem(holidayName, holidayType, holiday);
-
-                    if (index < maxVisible) {
-                        visibleContainer.appendChild(holidayItem);
-                    } else {
-                        hiddenContainer.appendChild(holidayItem);
-                    }
-                });
-
-                holidaysContainer.appendChild(visibleContainer);
-                holidaysContainer.appendChild(hiddenContainer);
-
-                if (hasMore) {
-                    const viewMoreLink = document.createElement('div');
-                    viewMoreLink.className = 'view-more-link';
-                    viewMoreLink.innerHTML = `+${totalHolidays - maxVisible} more <i class="fas fa-chevron-down" style="font-size: 0.5rem; margin-left: 2px;"></i>`;
-
-                    viewMoreLink.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const isExpanded = hiddenContainer.style.display !== 'none';
-
-                        if (isExpanded) {
-                            hiddenContainer.style.display = 'none';
-                            viewMoreLink.innerHTML = `+${totalHolidays - maxVisible} more <i class="fas fa-chevron-down" style="font-size: 0.5rem; margin-left: 2px;"></i>`;
-                            viewMoreLink.style.color = 'var(--info)';
-                            viewMoreLink.className = 'view-more-link';
-                        } else {
-                            hiddenContainer.style.display = 'block';
-                            viewMoreLink.innerHTML = `show less <i class="fas fa-chevron-up" style="font-size: 0.5rem; margin-left: 2px;"></i>`;
-                            viewMoreLink.style.color = 'var(--warning)';
-                            viewMoreLink.className = 'view-less-link';
-                        }
-                    });
-
-                    holidaysContainer.appendChild(viewMoreLink);
-                }
-
-                dayElement.appendChild(holidaysContainer);
-            }
-
-            if (hasExistingLeave) {
-                const leaveIndicator = document.createElement('div');
-                leaveIndicator.className = 'calendar-day-existing-leave';
-                leaveIndicator.innerHTML = '<i class="fas fa-umbrella-beach"></i>';
-                leaveIndicator.setAttribute('data-tooltip',
-                    `${currentMonthExistingLeaves[dateStr].status} Leave: ${currentMonthExistingLeaves[dateStr].leaveType}`);
-                leaveIndicator.onclick = function(e) {
-                    e.stopPropagation();
-                    showExistingLeaveDetails(currentMonthExistingLeaves[dateStr]);
-                };
-                dayElement.appendChild(leaveIndicator);
-            }
-
-            calendarGrid.appendChild(dayElement);
+        } catch (error) {
+            console.error('Failed to load month data:', error);
         }
     }
+
+    // 4. Render Day Headers (Sun-Sat)
+    const dayHeaders = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    dayHeaders.forEach((day, index) => {
+        const header = document.createElement('div');
+        header.className = 'calendar-day-header';
+        if (index === 0 || index === 6) header.classList.add('weekend');
+        header.textContent = day;
+        calendarGrid.appendChild(header);
+    });
+
+    // 5. Render Empty Padding Cells
+    for (let i = 0; i < firstDay; i++) {
+        const emptyDay = document.createElement('div');
+        emptyDay.className = 'calendar-day-main';
+        emptyDay.style.background = 'transparent';
+        emptyDay.style.border = 'none';
+        calendarGrid.appendChild(emptyDay);
+    }
+
+    // 6. Render Days Loop
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dateObj = new Date(window.mainCalendarYear, window.mainCalendarMonth, day);
+        const dateStr = `${window.mainCalendarYear}-${String(window.mainCalendarMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+        const dayOfWeek = dateObj.getDay();
+        const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+        const isToday = (dateStr === todayStr);
+        const isPast = (dateObj < today);
+
+        // Check Holidays
+        const dayHolidays = (window.allHolidays || []).filter(h => (h.date || h.holidayDate) === dateStr);
+        const isHoliday = dayHolidays.length > 0;
+
+        // Check Attendance Status
+        const status = attendanceData[dateStr]; // 'present', 'absent', 'leave'
+
+        // Check Existing Approved/Pending Leaves
+        const hasExistingLeave = !!(window.currentMonthExistingLeaves && window.currentMonthExistingLeaves[dateStr]);
+
+        // Create the element
+        const dayElement = document.createElement('div');
+        dayElement.className = 'calendar-day-main';
+        dayElement.setAttribute('data-date', dateStr);
+
+        // Apply Styles
+        if (isWeekend) dayElement.classList.add('weekend');
+        if (isHoliday) dayElement.classList.add('holiday');
+        if (isToday) dayElement.classList.add('today');
+        if (hasExistingLeave) dayElement.classList.add('has-leave');
+        if (status) dayElement.classList.add(`${status}-day`);
+
+        // Create Day Header (Number + Plus Button)
+        const dayHeaderDiv = document.createElement('div');
+        dayHeaderDiv.className = 'calendar-day-number-container';
+        dayHeaderDiv.style.display = 'flex';
+        dayHeaderDiv.style.justifyContent = 'space-between';
+        dayHeaderDiv.style.alignItems = 'center';
+
+        const dayNumber = document.createElement('span');
+        dayNumber.className = 'calendar-day-number';
+        dayNumber.textContent = day;
+        dayHeaderDiv.appendChild(dayNumber);
+
+        // Add Apply Leave "+" Button
+        // Rules: Only for future dates, not weekends, not holidays, not already leave
+        if (!isPast && !isWeekend && !isHoliday && !hasExistingLeave) {
+            const addBtn = document.createElement('button');
+            addBtn.className = 'calendar-day-add-btn';
+            addBtn.innerHTML = '<i class="fas fa-plus"></i>';
+            addBtn.title = 'Apply for Leave';
+            addBtn.onclick = (e) => {
+                e.stopPropagation();
+                openApplyLeaveFromCalendar(dateStr);
+            };
+            dayHeaderDiv.appendChild(addBtn);
+        }
+        dayElement.appendChild(dayHeaderDiv);
+
+        // Add Holiday Labels
+        if (isHoliday) {
+            const holidayContainer = document.createElement('div');
+            holidayContainer.className = 'holiday-names-container';
+            dayHolidays.forEach(h => {
+                const item = document.createElement('div');
+                item.className = 'holiday-item';
+                item.textContent = h.name || h.holidayName;
+                item.title = h.description || h.type;
+                holidayContainer.appendChild(item);
+            });
+            dayElement.appendChild(holidayContainer);
+        }
+
+        // Add Status Badge (Present/Absent/Leave)
+        if (status) {
+            const badge = document.createElement('div');
+            badge.className = `calendar-day-status ${status}`;
+            badge.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+            dayElement.appendChild(badge);
+        }
+
+        // Add Leave Indicator (Icon) if already applied
+        if (hasExistingLeave) {
+            const leaveIcon = document.createElement('div');
+            leaveIcon.className = 'calendar-day-existing-leave';
+            leaveIcon.innerHTML = '<i class="fas fa-umbrella-beach"></i>';
+            leaveIcon.title = `Applied Leave: ${window.currentMonthExistingLeaves[dateStr].leaveType}`;
+            dayElement.appendChild(leaveIcon);
+        }
+
+        calendarGrid.appendChild(dayElement);
+    }
+
+    // Update the summary numbers (Available/Used)
+    if (typeof updateLeaveStatistics === 'function') updateLeaveStatistics();
+}
 
     function createHolidayItem(name, type, holidayData) {
         const item = document.createElement('div');
@@ -10321,111 +10285,33 @@ function setupDashboardSubTabs() {
     console.log('✅ Dashboard sub-tabs initialized:', dashTabButtons.length);
 }
 
-// Handler for dashboard tab clicks
 function handleDashTabClick(e) {
     e.preventDefault();
-    e.stopPropagation();
-
     const button = e.currentTarget;
     const targetId = button.getAttribute('data-dash-tab');
 
-    if (!targetId) return;
-
-    console.log('📊 Dashboard tab clicked:', targetId);
-
-    // Update button active states
-    document.querySelectorAll('[data-dash-tab]').forEach(btn => {
-        btn.classList.remove('active');
-    });
+    document.querySelectorAll('[data-dash-tab]').forEach(btn => btn.classList.remove('active'));
     button.classList.add('active');
 
-    // Update content active states
-    document.querySelectorAll('.dash-sub-content').forEach(content => {
-        content.classList.remove('active');
-    });
+    document.querySelectorAll('.dash-sub-content').forEach(content => content.classList.remove('active'));
 
     const targetContent = document.getElementById(targetId);
     if (targetContent) {
         targetContent.classList.add('active');
-
-        // If calendar tab is selected, generate the mini calendar
+        // Check if this is the calendar tab
         if (targetId === 'dash-calendar') {
-            // Make sure we have the latest holidays
-            if (typeof generateDashMiniCalendar === 'function') {
-                generateDashMiniCalendar();
-            } else {
-                // Fallback if function doesn't exist yet
-                initDashCalendar();
-            }
+            // Delay slightly to ensure DOM is ready
+            setTimeout(() => { generateDashMiniCalendar(); }, 50);
         }
     }
 }
+
 
 // Initialize dashboard calendar variables
 window.dashCalMonth = new Date().getMonth();
 window.dashCalYear = new Date().getFullYear();
 
-// Generate mini calendar for dashboard
-function generateDashMiniCalendar() {
-    const grid = document.getElementById('dash-mini-calendar');
-    const monthYear = document.getElementById('dash-cal-month-year');
 
-    if (!grid || !monthYear) {
-        console.warn('Dashboard calendar elements not found');
-        return;
-    }
-
-    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
-                       'July', 'August', 'September', 'October', 'November', 'December'];
-
-    monthYear.textContent = `${monthNames[window.dashCalMonth]} ${window.dashCalYear}`;
-    grid.innerHTML = '';
-
-    // Add day headers
-    const dayHeaders = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-    dayHeaders.forEach(day => {
-        const headerDiv = document.createElement('div');
-        headerDiv.style.cssText = 'text-align: center; font-size: 11px; font-weight: 700; color: var(--primary); padding: 8px 0;';
-        headerDiv.textContent = day;
-        grid.appendChild(headerDiv);
-    });
-
-    const firstDay = new Date(window.dashCalYear, window.dashCalMonth, 1).getDay();
-    const daysInMonth = new Date(window.dashCalYear, window.dashCalMonth + 1, 0).getDate();
-    const todayStr = new Date().toISOString().split('T')[0];
-
-    // Add empty cells for days before month starts
-    for (let i = 0; i < firstDay; i++) {
-        grid.appendChild(document.createElement('div'));
-    }
-
-    // Add day cells
-    for (let day = 1; day <= daysInMonth; day++) {
-        const dateStr = `${window.dashCalYear}-${String(window.dashCalMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-        const dayDiv = document.createElement('div');
-        dayDiv.className = 'mini-day';
-        dayDiv.textContent = day;
-
-        // Check if today
-        if (dateStr === todayStr) {
-            dayDiv.classList.add('today');
-        }
-
-        // Check if holiday (using global holidays if available)
-        if (typeof isHolidayDate === 'function' && isHolidayDate(dateStr)) {
-            dayDiv.classList.add('holiday');
-        } else {
-            // Fallback to hardcoded holidays if function not available
-            const holidays = ['2026-01-01', '2026-01-26', '2026-03-29', '2026-08-15',
-                            '2026-10-02', '2026-12-25', '2026-01-15', '2026-05-01', '2026-10-31'];
-            if (holidays.includes(dateStr)) {
-                dayDiv.classList.add('holiday');
-            }
-        }
-
-        grid.appendChild(dayDiv);
-    }
-}
 
 // Navigation functions for dashboard calendar
 function changeDashMonth(direction) {
@@ -10561,21 +10447,19 @@ function clearCurrentEmployeeAttendance() {
     }
 
     // ============================================
-    // INITIALIZATION
-    // ============================================
-    // In the DOMContentLoaded event handler
-// In your DOMContentLoaded event, ensure this order:
+// INITIALIZATION
+// ============================================
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('🚀 Dashboard initializing...');
 
-    // Display current date
+    // 1. Display current date
     displayCurrentDateInTopNav();
 
-    // Initialize notification manager
+    // 2. Initialize notification manager
     notificationManager = new NotificationManager();
     loadAndRenderNotifications();
 
-    // Initialize attendance storage
+    // 3. Initialize attendance storage
     const employeeId = document.getElementById('currentEmployeeId')?.value ||
                       document.getElementById('employeeIdData')?.value;
 
@@ -10583,20 +10467,17 @@ document.addEventListener('DOMContentLoaded', async function() {
         ATTENDANCE_STORAGE_KEY = getAttendanceStorageKey(employeeId);
         attendanceState.employeeId = employeeId;
 
-        // First try to load from localStorage (fast)
+        // Try to load from localStorage (fast)
         const loaded = loadAttendanceState();
         console.log('📦 Attendance state loaded from storage:', loaded ? attendanceState : 'none');
 
-        // THEN load from server to get the REAL check-in time (this overwrites localStorage if different)
-        // This is critical - server data has the authoritative check-in time
+        // Load from server to get the REAL check-in time
         const serverLoaded = await loadTodayAttendanceFromServer();
         console.log('🖥️ Attendance state loaded from server:', serverLoaded);
 
-        // If server has no data but localStorage does, check if it's from today
         if (!serverLoaded && loaded) {
             const today = new Date().toISOString().split('T')[0];
             if (attendanceState.date !== today) {
-                // Old data from previous day - clear it
                 console.log('🗑️ Clearing old attendance data from previous day');
                 localStorage.removeItem(ATTENDANCE_STORAGE_KEY);
                 resetAttendanceState();
@@ -10604,19 +10485,22 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
     }
 
+    // 4. Core UI Setup
     setupAttendanceEvents();
     startGlobalTimer();
+    setupDashboardSubTabs(); // Ensure sub-tabs work
 
+    // 5. Initial Data Load
     await initializeAttendanceTab();
     loadEmployeeLeaves();
     await updateEmployeeUpcomingHolidays();
 
+    // 6. LOAD ANNOUNCEMENTS (Fixed for Table & Notification Bell)
+    if (document.getElementById('announcementTableBody')) {
+        await loadAnnouncementsManually();
+    }
 
- // ===== LOAD ANNOUNCEMENTS =====
-    console.log('📢 Loading announcements on page load...');
-    await loadAnnouncementsManually();
-
-    // Also load when dashboard tab becomes active
+    // 7. Dynamic Reload Handlers
     const dashboardMenu = document.querySelector('.menu-item[data-tab="dashboard"]');
     if (dashboardMenu) {
         dashboardMenu.addEventListener('click', function() {
@@ -10624,59 +10508,49 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
     }
 
-    // ===== ADD THIS NEW CODE HERE =====
-    // Timesheet month/year change handlers
+    const announcementsSubTab = document.querySelector('[data-dash-tab="dash-announcements"]');
+    if (announcementsSubTab) {
+        announcementsSubTab.addEventListener('click', function() {
+            setTimeout(() => loadAnnouncementsManually(), 100);
+        });
+    }
+
+    // 8. Timesheet month/year change handlers
     const monthSelect = document.getElementById('timesheetMonth');
     const yearSelect = document.getElementById('timesheetYear');
 
     if (monthSelect) {
         monthSelect.addEventListener('change', function() {
-            console.log('📅 Month changed to:', this.value);
             if (document.getElementById('timesheet')?.classList.contains('active')) {
                 loadTimesheetData();
             }
         });
+        // Set current month (1-based)
+        monthSelect.value = new Date().getMonth() + 1;
     }
 
     if (yearSelect) {
         yearSelect.addEventListener('change', function() {
-            console.log('📅 Year changed to:', this.value);
             if (document.getElementById('timesheet')?.classList.contains('active')) {
                 loadTimesheetData();
             }
         });
     }
 
-    // Set current month in dropdown (January = 1, not 0)
-    if (monthSelect) {
-        monthSelect.value = new Date().getMonth() + 1;
-        console.log('📅 Set month to:', monthSelect.value);
-    }
-    // ===== END OF NEW CODE =====
-
-
-
-    // Auto-show attendance tab if parameter exists
+    // 9. Auto-show attendance tab if parameter exists
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('showAttendance') === 'true') {
         console.log('📋 Auto-showing attendance tab from URL parameter');
-
         setTimeout(() => {
             const attendanceMenuItem = document.querySelector('.menu-item[data-tab="attendance"]');
             if (attendanceMenuItem) {
                 attendanceMenuItem.click();
-
-                // Ensure dashboard tab is active
                 setTimeout(() => {
                     const dashboardTab = document.querySelector('#attendance .tab[onclick*="attendance-dashboard"]');
                     if (dashboardTab && !dashboardTab.classList.contains('active')) {
                         dashboardTab.click();
                     }
-
-                    // Force another UI update after tabs are loaded
-                    setTimeout(() => {
-                        updateAllDisplays();
-                    }, 200);
+                    setTimeout(() => updateAllDisplays(), 200);
                 }, 200);
             }
         }, 500);
@@ -10684,6 +10558,12 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     console.log('✅ Dashboard initialization complete');
 });
+
+
+
+
+
+
 function debugAttendanceState() {
     console.log('=== ATTENDANCE STATE DEBUG ===');
     console.log('Employee ID:', attendanceState.employeeId);
@@ -11109,46 +10989,54 @@ let dashCalYear = new Date().getFullYear();
 function generateDashMiniCalendar() {
     const grid = document.getElementById('dash-mini-calendar');
     const monthYear = document.getElementById('dash-cal-month-year');
-    const names = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-    monthYear.textContent = `${names[dashCalMonth]} ${dashCalYear}`;
+    if (!grid || !monthYear) return;
+
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                       'July', 'August', 'September', 'October', 'November', 'December'];
+
+    monthYear.textContent = `${monthNames[window.dashCalMonth]} ${window.dashCalYear}`;
     grid.innerHTML = '';
 
-    // Add Day Headers
-    ['S','M','T','W','T','F','S'].forEach(d => {
-        grid.innerHTML += `<div style="text-align:center; font-size:10px; font-weight:700; color:var(--primary); padding-bottom:5px;">${d}</div>`;
+    // Headers
+    ['S', 'M', 'T', 'W', 'T', 'F', 'S'].forEach(day => {
+        const h = document.createElement('div');
+        h.style.cssText = 'text-align:center; font-size:11px; font-weight:700; color:var(--primary); padding:8px 0;';
+        h.textContent = day;
+        grid.appendChild(h);
     });
 
-    const firstDay = new Date(dashCalYear, dashCalMonth, 1).getDay();
-    const daysInMonth = new Date(dashCalYear, dashCalMonth + 1, 0).getDate();
+    const firstDay = new Date(window.dashCalYear, window.dashCalMonth, 1).getDay();
+    const daysInMonth = new Date(window.dashCalYear, window.dashCalMonth + 1, 0).getDate();
+    const todayStr = new Date().toISOString().split('T')[0];
 
-    // Padding for first week
-    for(let i=0; i<firstDay; i++) grid.innerHTML += `<div></div>`;
+    for (let i = 0; i < firstDay; i++) grid.appendChild(document.createElement('div'));
 
-    for(let day=1; day<=daysInMonth; day++) {
-        const dateStr = `${dashCalYear}-${String(dashCalMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-        let classes = 'mini-day';
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = `${window.dashCalYear}-${String(window.dashCalMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'mini-day';
+        dayDiv.textContent = day;
 
-        // Simple logic to check holidays or leaves (This can be linked to your existing holiday array)
-        if(isHolidayDate(dateStr)) classes += ' holiday';
-        if(dateStr === new Date().toISOString().split('T')[0]) classes += ' today';
+        if (dateStr === todayStr) dayDiv.classList.add('today');
 
-        // Example leave date for demo
-        if(day === 15 || day === 16) classes += ' leave';
+        // Use the unified holiday checker
+        if (typeof isHolidayDate === 'function' && isHolidayDate(dateStr)) {
+            dayDiv.classList.add('holiday');
+            dayDiv.title = "Holiday";
+        }
 
-        grid.innerHTML += `<div class="${classes}">${day}</div>`;
+        grid.appendChild(dayDiv);
     }
 }
 
-// Nav buttons for mini calendar
-document.getElementById('prevDashCal')?.addEventListener('click', () => {
-    dashCalMonth--; if(dashCalMonth < 0) { dashCalMonth=11; dashCalYear--; }
+// Navigation for this specific calendar
+window.changeDashMonth = function(direction) {
+    window.dashCalMonth += direction;
+    if (window.dashCalMonth < 0) { window.dashCalMonth = 11; window.dashCalYear--; }
+    else if (window.dashCalMonth > 11) { window.dashCalMonth = 0; window.dashCalYear++; }
     generateDashMiniCalendar();
-});
-document.getElementById('nextDashCal')?.addEventListener('click', () => {
-    dashCalMonth++; if(dashCalMonth > 11) { dashCalMonth=0; dashCalYear++; }
-    generateDashMiniCalendar();
-});
+};
 
 // Debug function to check tab visibility
 function debugAttendanceTabs() {
@@ -11461,60 +11349,61 @@ function changeDashboardMonth(direction) {
 let mainCalendarMonth = new Date().getMonth();
 let mainCalendarYear = new Date().getFullYear();
 
+// ============================================
+// CONSOLIDATED MAIN CALENDAR GENERATION
+// ============================================
 async function generateMainCalendar() {
     const calendarGrid = document.getElementById('main-calendar');
     const monthYearEl = document.getElementById('calendar-month-year');
 
     if (!calendarGrid || !monthYearEl) return;
 
+    // 1. Setup Month/Year Info
     const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
                        'July', 'August', 'September', 'October', 'November', 'December'];
 
-    monthYearEl.textContent = `${monthNames[mainCalendarMonth]} ${mainCalendarYear}`;
-    calendarGrid.innerHTML = '';
+    monthYearEl.textContent = `${monthNames[window.mainCalendarMonth]} ${window.mainCalendarYear}`;
+    calendarGrid.innerHTML = ''; // Clear existing
 
-    // Add day headers
-    const dayHeaders = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    // 2. Calculate Date Parameters
+    const firstDay = new Date(window.mainCalendarYear, window.mainCalendarMonth, 1).getDay();
+    const daysInMonth = new Date(window.mainCalendarYear, window.mainCalendarMonth + 1, 0).getDate();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayStr = today.toISOString().split('T')[0];
+
+    const employeeId = document.getElementById('currentEmployeeId')?.value ||
+                      document.getElementById('employeeIdData')?.value;
+
+    // 3. Fetch Data (Attendance & Existing Leaves)
+    let attendanceData = {};
+    if (employeeId) {
+        try {
+            // Load Attendance
+            const attResp = await fetch(`/api/attendance/calendar/${employeeId}/${window.mainCalendarYear}/${window.mainCalendarMonth + 1}`);
+            const attData = await attResp.json();
+            if (attData.success) attendanceData = attData.attendance || {};
+
+            // Load Leaves (so we don't allow applying on existing leave days)
+            if (typeof loadExistingLeavesForMonth === 'function') {
+                await loadExistingLeavesForMonth(employeeId, window.mainCalendarYear, window.mainCalendarMonth + 1);
+            }
+        } catch (error) {
+            console.error('Failed to load month data:', error);
+        }
+    }
+
+    // 4. Render Day Headers (Sun-Sat)
+    const dayHeaders = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     dayHeaders.forEach((day, index) => {
         const header = document.createElement('div');
         header.className = 'calendar-day-header';
         if (index === 0 || index === 6) header.classList.add('weekend');
-        header.textContent = day.substring(0, 3);
+        header.textContent = day;
         calendarGrid.appendChild(header);
     });
 
-    const firstDay = new Date(mainCalendarYear, mainCalendarMonth, 1).getDay();
-    const daysInMonth = new Date(mainCalendarYear, mainCalendarMonth + 1, 0).getDate();
-    const todayStr = new Date().toISOString().split('T')[0];
-
-    // Get attendance data for this month
-    const employeeId = document.getElementById('currentEmployeeId')?.value ||
-                      document.getElementById('employeeIdData')?.value;
-
-    let attendanceData = {};
-    if (employeeId) {
-        try {
-            const response = await fetch(`/api/attendance/calendar/${employeeId}/${mainCalendarYear}/${mainCalendarMonth + 1}`);
-            const data = await response.json();
-            if (data.success && data.attendance) {
-                attendanceData = data.attendance;
-            }
-        } catch (error) {
-            console.error('Failed to load attendance:', error);
-        }
-    }
-
-    // Get holidays for this month
-    const holidaysByDate = {};
-    window.allHolidays.forEach(holiday => {
-        const date = holiday.date || holiday.holidayDate;
-        if (date && date.startsWith(`${mainCalendarYear}-${String(mainCalendarMonth + 1).padStart(2, '0')}`)) {
-            if (!holidaysByDate[date]) holidaysByDate[date] = [];
-            holidaysByDate[date].push(holiday);
-        }
-    });
-
-    // Add empty cells for days before month starts
+    // 5. Render Empty Padding Cells
     for (let i = 0; i < firstDay; i++) {
         const emptyDay = document.createElement('div');
         emptyDay.className = 'calendar-day-main';
@@ -11523,101 +11412,104 @@ async function generateMainCalendar() {
         calendarGrid.appendChild(emptyDay);
     }
 
-    // Add day cells
+    // 6. Render Days Loop
     for (let day = 1; day <= daysInMonth; day++) {
-        const dateStr = `${mainCalendarYear}-${String(mainCalendarMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-        const dateObj = new Date(mainCalendarYear, mainCalendarMonth, day);
+        const dateObj = new Date(window.mainCalendarYear, window.mainCalendarMonth, day);
+        const dateStr = `${window.mainCalendarYear}-${String(window.mainCalendarMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
         const dayOfWeek = dateObj.getDay();
+        const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+        const isToday = (dateStr === todayStr);
+        const isPast = (dateObj < today);
 
-        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-        const isToday = dateStr === todayStr;
-        const dayHolidays = holidaysByDate[dateStr] || [];
+        // Check Holidays
+        const dayHolidays = (window.allHolidays || []).filter(h => (h.date || h.holidayDate) === dateStr);
         const isHoliday = dayHolidays.length > 0;
-        const attendance = attendanceData[dateStr];
 
+        // Check Attendance Status
+        const status = attendanceData[dateStr]; // 'present', 'absent', 'leave'
+
+        // Check Existing Approved/Pending Leaves
+        const hasExistingLeave = !!(window.currentMonthExistingLeaves && window.currentMonthExistingLeaves[dateStr]);
+
+        // Create the element
         const dayElement = document.createElement('div');
         dayElement.className = 'calendar-day-main';
         dayElement.setAttribute('data-date', dateStr);
 
+        // Apply Styles
         if (isWeekend) dayElement.classList.add('weekend');
         if (isHoliday) dayElement.classList.add('holiday');
         if (isToday) dayElement.classList.add('today');
+        if (hasExistingLeave) dayElement.classList.add('has-leave');
+        if (status) dayElement.classList.add(`${status}-day`);
 
-        if (attendance === 'present') dayElement.classList.add('present-day');
-        else if (attendance === 'absent') dayElement.classList.add('absent-day');
-        else if (attendance === 'leave') dayElement.classList.add('leave-day');
-
-        // Day number with add button for future dates
-        const headerDiv = document.createElement('div');
-        headerDiv.style.cssText = 'display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;';
+        // Create Day Header (Number + Plus Button)
+        const dayHeaderDiv = document.createElement('div');
+        dayHeaderDiv.className = 'calendar-day-number-container';
+        dayHeaderDiv.style.display = 'flex';
+        dayHeaderDiv.style.justifyContent = 'space-between';
+        dayHeaderDiv.style.alignItems = 'center';
 
         const dayNumber = document.createElement('span');
         dayNumber.className = 'calendar-day-number';
         dayNumber.textContent = day;
-        headerDiv.appendChild(dayNumber);
+        dayHeaderDiv.appendChild(dayNumber);
 
-        // Add leave button for future non-weekend, non-holiday dates
-        if (!isWeekend && !isHoliday && dateObj > new Date()) {
+        // Add Apply Leave "+" Button
+        // Rules: Only for future dates, not weekends, not holidays, not already leave
+        if (!isPast && !isWeekend && !isHoliday && !hasExistingLeave) {
             const addBtn = document.createElement('button');
             addBtn.className = 'calendar-day-add-btn';
             addBtn.innerHTML = '<i class="fas fa-plus"></i>';
-            addBtn.title = 'Apply for leave';
-            addBtn.onclick = function(e) {
+            addBtn.title = 'Apply for Leave';
+            addBtn.onclick = (e) => {
                 e.stopPropagation();
-                if (typeof openApplyLeaveFromCalendar === 'function') {
-                    openApplyLeaveFromCalendar(dateStr);
-                }
+                openApplyLeaveFromCalendar(dateStr);
             };
-            headerDiv.appendChild(addBtn);
+            dayHeaderDiv.appendChild(addBtn);
         }
+        dayElement.appendChild(dayHeaderDiv);
 
-        dayElement.appendChild(headerDiv);
-
-        // Add holiday names if any
-        if (dayHolidays.length > 0) {
-            const holidaysContainer = document.createElement('div');
-            holidaysContainer.className = 'holiday-names-container';
-
-            dayHolidays.slice(0, 2).forEach(holiday => {
-                const holidayItem = document.createElement('div');
-                holidayItem.className = 'holiday-item';
-                holidayItem.textContent = holiday.name || holiday.holidayName || 'Holiday';
-                holidayItem.style.cssText = `
-                    padding: 4px 8px;
-                    margin-bottom: 2px;
-                    background: rgba(14, 165, 233, 0.08);
-                    border-radius: 4px;
-                    border-left: 3px solid var(--info);
-                    font-size: 0.7rem;
-                `;
-                holidaysContainer.appendChild(holidayItem);
+        // Add Holiday Labels
+        if (isHoliday) {
+            const holidayContainer = document.createElement('div');
+            holidayContainer.className = 'holiday-names-container';
+            dayHolidays.forEach(h => {
+                const item = document.createElement('div');
+                item.className = 'holiday-item';
+                item.textContent = h.name || h.holidayName;
+                item.title = h.description || h.type;
+                holidayContainer.appendChild(item);
             });
-
-            if (dayHolidays.length > 2) {
-                const moreLink = document.createElement('div');
-                moreLink.className = 'view-more-link';
-                moreLink.textContent = `+${dayHolidays.length - 2} more`;
-                moreLink.onclick = (e) => {
-                    e.stopPropagation();
-                    showAllHolidays(dateStr, dayHolidays);
-                };
-                holidaysContainer.appendChild(moreLink);
-            }
-
-            dayElement.appendChild(holidaysContainer);
+            dayElement.appendChild(holidayContainer);
         }
 
-        // Add attendance status
-        if (attendance) {
-            const statusDiv = document.createElement('div');
-            statusDiv.className = `calendar-day-status ${attendance}`;
-            statusDiv.textContent = attendance.charAt(0).toUpperCase() + attendance.slice(1);
-            dayElement.appendChild(statusDiv);
+        // Add Status Badge (Present/Absent/Leave)
+        if (status) {
+            const badge = document.createElement('div');
+            badge.className = `calendar-day-status ${status}`;
+            badge.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+            dayElement.appendChild(badge);
+        }
+
+        // Add Leave Indicator (Icon) if already applied
+        if (hasExistingLeave) {
+            const leaveIcon = document.createElement('div');
+            leaveIcon.className = 'calendar-day-existing-leave';
+            leaveIcon.innerHTML = '<i class="fas fa-umbrella-beach"></i>';
+            leaveIcon.title = `Applied Leave: ${window.currentMonthExistingLeaves[dateStr].leaveType}`;
+            dayElement.appendChild(leaveIcon);
         }
 
         calendarGrid.appendChild(dayElement);
     }
+
+    // Update the summary numbers (Available/Used)
+    if (typeof updateLeaveStatistics === 'function') updateLeaveStatistics();
 }
+
+
 
 function showAllHolidays(dateStr, holidays) {
     const formattedDate = new Date(dateStr).toLocaleDateString('en-US', {
@@ -11913,6 +11805,21 @@ function openApplyLeaveFromCalendar(dateStr) {
         }, 300);
     }
 }
+document.addEventListener('DOMContentLoaded', async function() {
+    // 1. Load Holidays first
+    await loadAllHolidays();
+
+    // 2. Initialize Dash Calendar
+    generateDashMiniCalendar();
+
+    // 3. Initialize Main Calendar (if tab is active)
+    if(document.getElementById('calendar').classList.contains('active')) {
+        generateMainCalendar();
+    }
+
+    // 4. Start your timers
+    startGlobalTimer();
+});
 
 
 
@@ -11926,11 +11833,10 @@ window.printTimesheet = printTimesheet;
 
 
 
-    // ============================================
-// ANNOUNCEMENTS - CORRECTED VERSION
+   // ============================================
+// ANNOUNCEMENTS - FIXED VERSION
 // ============================================
 
-// Format date for display
 function formatAnnouncementDate(dateString) {
     if (!dateString) return 'Just now';
     try {
@@ -11948,162 +11854,154 @@ function formatAnnouncementDate(dateString) {
     }
 }
 
-// Get category class for styling based on title
 function getAnnouncementCategory(title) {
-    const titleLower = (title || '').toLowerCase();
-    if (titleLower.includes('security')) return 'security';
-    if (titleLower.includes('privacy')) return 'hr';
-    if (titleLower.includes('tax') || titleLower.includes('finance') || titleLower.includes('government')) return 'corporate';
-    if (titleLower.includes('health')) return 'health';
-    if (titleLower.includes('maintenance')) return 'maintenance';
-    if (titleLower.includes('leave')) return 'leave';
+    const t = (title || '').toLowerCase();
+    if (t.includes('security')) return 'security';
+    if (t.includes('privacy') || t.includes('hr')) return 'hr';
+    if (t.includes('tax') || t.includes('finance') || t.includes('government') || t.includes('corporate')) return 'corporate';
+    if (t.includes('health')) return 'health';
+    if (t.includes('maintenance')) return 'maintenance';
+    if (t.includes('leave')) return 'leave';
     return 'corporate';
 }
 
-// Get category icon
 function getAnnouncementIcon(title) {
-    const titleLower = (title || '').toLowerCase();
-    if (titleLower.includes('security')) return 'fa-shield-alt';
-    if (titleLower.includes('privacy')) return 'fa-user-secret';
-    if (titleLower.includes('tax')) return 'fa-file-invoice-dollar';
-    if (titleLower.includes('finance')) return 'fa-chart-line';
-    if (titleLower.includes('government')) return 'fa-building';
-    if (titleLower.includes('health')) return 'fa-heartbeat';
-    if (titleLower.includes('maintenance')) return 'fa-tools';
-    if (titleLower.includes('leave')) return 'fa-umbrella-beach';
+    const t = (title || '').toLowerCase();
+    if (t.includes('security')) return 'fa-shield-alt';
+    if (t.includes('privacy')) return 'fa-user-secret';
+    if (t.includes('tax') || t.includes('government')) return 'fa-building';
+    if (t.includes('finance')) return 'fa-chart-line';
+    if (t.includes('health')) return 'fa-heartbeat';
+    if (t.includes('maintenance')) return 'fa-tools';
+    if (t.includes('leave')) return 'fa-umbrella-beach';
     return 'fa-bullhorn';
 }
 
-// Load announcements from API
-async function loadAnnouncementsManually() {
-    console.log('📢 Loading announcements...');
-    const tbody = document.getElementById('announcementTableBody');
-
-    if (!tbody) {
-        console.error('❌ Announcement table body not found');
-        return;
-    }
-
-    // Show loading state
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;"><i class="fas fa-spinner fa-spin"></i> Loading announcements...</td></tr>';
-
-    try {
-        const response = await fetch('/api/announcements/employee');
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const result = await response.json();
-        console.log('📢 API Response:', result);
-
-        // CRITICAL FIX: Extract data correctly
-        let announcements = [];
-        if (result.success && Array.isArray(result.data)) {
-            announcements = result.data;
-        } else if (Array.isArray(result)) {
-            announcements = result;
-        } else if (result.content && Array.isArray(result.content)) {
-            announcements = result.content;
-        }
-
-        console.log(`📢 Found ${announcements.length} announcements`);
-
-        if (announcements.length === 0) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="5" style="text-align: center; padding: 40px; color: var(--dark-text-secondary);">
-                        <i class="fas fa-bullhorn" style="font-size: 32px; margin-bottom: 12px; display: block; opacity: 0.5;"></i>
-                        No announcements available at this time
-                    </td>
-                </tr>
-            `;
-            return;
-        }
-
-        // Build table rows
-        tbody.innerHTML = '';
-        announcements.forEach(announcement => {
-            // Extract fields from your API response
-            const id = announcement.id;
-            const title = announcement.title || 'Announcement';
-            const description = announcement.description || 'No description provided';
-            const createdAt = announcement.createdAt || announcement.formattedDate || new Date().toISOString();
-            const type = announcement.announcementType || announcement.type || announcement.category || 'General';
-
-            const categoryClass = getAnnouncementCategory(title);
-            const iconClass = getAnnouncementIcon(title);
-            const postedDate = formatAnnouncementDate(createdAt);
-
-            const row = document.createElement('tr');
-            row.style.cursor = 'pointer';
-
-            // Create safe strings for popup
-            const safeTitle = escapeHtml(title);
-            const safeDesc = escapeHtml(description);
-            const safeType = escapeHtml(type);
-
-            row.onclick = () => showAnnouncementDetails(safeTitle, safeDesc, safeType, postedDate);
-
-            row.innerHTML = `
-                <td>
-                    <span class="mini-card ${categoryClass}">
-                        <i class="fas ${iconClass}"></i> ${safeType}
-                    </span>
-                </td>
-                <td class="announcement-title-cell" title="${safeTitle}">${safeTitle}</td>
-                <td class="announcement-desc-cell" title="${safeDesc}">${truncateText(safeDesc, 100)}</td>
-                <td class="announcement-date-cell">
-                    <i class="far fa-clock"></i> ${postedDate}
-                </td>
-                <td>
-                    <button class="view-btn" onclick="event.stopPropagation(); showAnnouncementDetails('${safeTitle.replace(/'/g, "\\'")}', '${safeDesc.replace(/'/g, "\\'")}', '${safeType.replace(/'/g, "\\'")}', '${postedDate}')">
-                        View <i class="fas fa-arrow-right"></i>
-                    </button>
-                </td>
-            `;
-            tbody.appendChild(row);
-        });
-
-        console.log(`✅ Successfully loaded ${announcements.length} announcements into table`);
-
-    } catch (error) {
-        console.error('❌ Failed to load announcements:', error);
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="5" style="text-align: center; padding: 40px; color: var(--danger);">
-                    <i class="fas fa-exclamation-triangle" style="font-size: 32px; margin-bottom: 12px; display: block;"></i>
-                    Failed to load announcements. Please refresh the page.
-                    <br><small>${error.message}</small>
-                </td>
-            </tr>
-        `;
-    }
-}
-
-// Helper: Escape HTML to prevent XSS
-function escapeHtml(text) {
+function safeEscape(text) {
     if (!text) return '';
     const div = document.createElement('div');
-    div.textContent = text;
+    div.textContent = String(text);
     return div.innerHTML;
 }
 
-// Helper: Truncate text
 function truncateText(text, maxLength) {
     if (!text) return '';
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength) + '...';
 }
 
-// Show announcement details popup
-function showAnnouncementDetails(title, description, type, date) {
-    // Remove any existing modal
-    const existingModal = document.querySelector('.announcement-modal');
-    if (existingModal) existingModal.remove();
+
+// ============================================
+// ANNOUNCEMENT LOADING LOGIC (FIXED)
+// ============================================
+async function loadAnnouncementsManually() {
+    console.log('📢 [Announcements] Starting to load...');
+    const tbody = document.getElementById('announcementTableBody');
+    if (!tbody) return;
+
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> Loading announcements...</td></tr>';
+
+    try {
+        const response = await fetch('/api/announcements/employee');
+        const result = await response.json();
+
+        // FIX: The array is inside result.data
+        const announcements = result.data || [];
+
+        if (announcements.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" style="text-align: center; padding: 40px; color: var(--dark-text-secondary);">
+                        <i class="fas fa-bullhorn" style="font-size: 32px; margin-bottom: 12px; display: block; opacity: 0.5;"></i>
+                        No announcements available
+                    </td>
+                </tr>`;
+            return;
+        }
+
+        tbody.innerHTML = '';
+        announcements.forEach(item => {
+            const date = item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-IN') : 'Recently';
+            const catClass = (item.category || 'corporate').toLowerCase();
+            const icon = item.priority === 'URGENT' ? 'fa-exclamation-triangle' : 'fa-bullhorn';
+
+            const row = document.createElement('tr');
+            row.style.cursor = 'pointer';
+            row.innerHTML = `
+                <td><span class="mini-card ${catClass}"><i class="fas ${icon}"></i> ${item.category}</span></td>
+                <td class="announcement-title-cell"><strong>${item.title}</strong></td>
+                <td class="announcement-desc-cell">${item.description.substring(0, 80)}...</td>
+                <td class="announcement-date-cell"><i class="far fa-clock"></i> ${date}</td>
+                <td><button class="view-btn">View <i class="fas fa-arrow-right"></i></button></td>
+            `;
+
+            // Set up click event correctly
+            row.onclick = () => showAnnouncementPopup(item.title, item.description, item.category, date);
+            tbody.appendChild(row);
+        });
+
+        // Push announcements to the notification bell UI
+        updateNotificationBellWithAnnouncements(announcements);
+
+    } catch (error) {
+        console.error('❌ Error loading announcements:', error);
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--danger);">Failed to load announcements</td></tr>';
+    }
+}
+
+// ============================================
+// NOTIFICATION BELL SYNC
+// ============================================
+function updateNotificationBellWithAnnouncements(announcements) {
+    const list = document.getElementById('notificationList');
+    const badge = document.getElementById('notificationBadge');
+    if (!list || !badge) return;
+
+    // Clear previous dynamic items to avoid duplicates
+    const existing = list.querySelectorAll('.announcement-notify-item');
+    existing.forEach(el => el.remove());
+
+    announcements.forEach(item => {
+        const notifyItem = document.createElement('div');
+        notifyItem.className = 'notification-item unread announcement-notify-item';
+        notifyItem.innerHTML = `
+            <div class="notification-icon info" style="background:rgba(99,102,241,0.1); color:var(--primary);">
+                <i class="fas fa-bullhorn"></i>
+            </div>
+            <div class="notification-content">
+                <p class="notification-title" style="font-weight:700;">${item.title}</p>
+                <p class="notification-message">${item.description.substring(0, 50)}...</p>
+                <p class="notification-time">New Update</p>
+            </div>
+        `;
+        notifyItem.onclick = (e) => {
+            e.stopPropagation();
+            showAnnouncementPopup(item.title, item.description, item.category, 'Just now');
+        };
+        list.insertBefore(notifyItem, list.firstChild);
+    });
+
+    if (announcements.length > 0) {
+        badge.textContent = announcements.length;
+        badge.style.display = 'flex';
+        const empty = document.getElementById('emptyNotification');
+        if (empty) empty.style.display = 'none';
+    }
+}
+
+
+
+
+function showAnnouncementPopup(title, description, type, date) {
+    // Remove existing popup
+    const existing = document.querySelector('.announcement-detail-modal');
+    if (existing) existing.remove();
+
+    const categoryClass = getAnnouncementCategory(title);
+    const iconClass = getAnnouncementIcon(title);
 
     const modal = document.createElement('div');
-    modal.className = 'announcement-modal';
+    modal.className = 'announcement-detail-modal';
     modal.style.cssText = `
         position: fixed;
         top: 0; left: 0; right: 0; bottom: 0;
@@ -12114,42 +12012,56 @@ function showAnnouncementDetails(title, description, type, date) {
         justify-content: center;
     `;
 
-    const categoryClass = getAnnouncementCategory(title);
-    const iconClass = getAnnouncementIcon(title);
+    const modalContent = document.createElement('div');
+    modalContent.style.cssText = `
+        background: var(--dark-card);
+        border: 1px solid var(--dark-border);
+        border-radius: 16px;
+        width: 90%;
+        max-width: 550px;
+        max-height: 80vh;
+        overflow-y: auto;
+    `;
 
-    modal.innerHTML = `
-        <div style="background: var(--dark-card); border: 1px solid var(--dark-border); border-radius: 16px; width: 90%; max-width: 550px; max-height: 80vh; overflow-y: auto;">
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 18px 24px; border-bottom: 1px solid var(--dark-border); background: linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(99,102,241,0.05) 100%);">
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <span class="mini-card ${categoryClass}" style="font-size: 14px; padding: 8px 16px;">
-                        <i class="fas ${iconClass}"></i> ${escapeHtml(type)}
-                    </span>
-                    <h3 style="margin: 0; color: white; font-size: 1.1rem;">Announcement</h3>
-                </div>
-                <button onclick="this.closest('.announcement-modal').remove()" style="background: none; border: none; color: var(--dark-text-secondary); font-size: 24px; cursor: pointer;">×</button>
+    modalContent.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 18px 24px; border-bottom: 1px solid var(--dark-border); background: linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(99,102,241,0.05) 100%);">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span class="mini-card ${categoryClass}" style="font-size: 14px; padding: 8px 16px;">
+                    <i class="fas ${iconClass}"></i> ${safeEscape(type)}
+                </span>
+                <h3 style="margin: 0; color: white; font-size: 1.1rem;">Announcement</h3>
             </div>
-            <div style="padding: 24px;">
-                <h4 style="color: white; margin-bottom: 16px; font-size: 1.2rem;">${escapeHtml(title)}</h4>
-                <div style="color: var(--dark-text-secondary); margin-bottom: 20px; font-size: 13px;">
-                    <i class="far fa-clock"></i> Posted: ${escapeHtml(date)}
-                </div>
-                <div style="background: var(--dark-bg); padding: 16px; border-radius: 8px; border: 1px solid var(--dark-border);">
-                    <p style="color: var(--dark-text); margin: 0; line-height: 1.6; white-space: pre-wrap;">${escapeHtml(description)}</p>
-                </div>
+            <button id="closeAnnouncementModal" style="background: none; border: none; color: var(--dark-text-secondary); font-size: 24px; cursor: pointer;">×</button>
+        </div>
+        <div style="padding: 24px;">
+            <h4 style="color: white; margin-bottom: 16px; font-size: 1.2rem;">${safeEscape(title)}</h4>
+            <div style="color: var(--dark-text-secondary); margin-bottom: 20px; font-size: 13px;">
+                <i class="far fa-clock"></i> Posted: ${safeEscape(date)}
             </div>
-            <div style="padding: 16px 24px; border-top: 1px solid var(--dark-border); text-align: right;">
-                <button onclick="this.closest('.announcement-modal').remove()" style="background: var(--primary); color: white; border: none; padding: 8px 20px; border-radius: 8px; cursor: pointer;">
-                    Close
-                </button>
+            <div style="background: var(--dark-bg); padding: 16px; border-radius: 8px; border: 1px solid var(--dark-border);">
+                <p style="color: var(--dark-text); margin: 0; line-height: 1.6; white-space: pre-wrap;">${safeEscape(description)}</p>
             </div>
+        </div>
+        <div style="padding: 16px 24px; border-top: 1px solid var(--dark-border); text-align: right;">
+            <button id="closeAnnouncementModalBtn" style="background: var(--primary); color: white; border: none; padding: 8px 20px; border-radius: 8px; cursor: pointer;">
+                Close
+            </button>
         </div>
     `;
 
+    modal.appendChild(modalContent);
     document.body.appendChild(modal);
+
+    // Close handlers
+    document.getElementById('closeAnnouncementModal').addEventListener('click', () => modal.remove());
+    document.getElementById('closeAnnouncementModalBtn').addEventListener('click', () => modal.remove());
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
 }
 
-// Make function globally available
-window.showAnnouncementDetails = showAnnouncementDetails;
+// Make globally available
+window.loadAnnouncementsManually = loadAnnouncementsManually;
+window.showAnnouncementPopup = showAnnouncementPopup;
+window.showAnnouncementDetails = showAnnouncementPopup; // backward compat
 </script>
 
 </body>

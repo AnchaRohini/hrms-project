@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -64,13 +64,15 @@ public class AnnouncementController {
      * GET /api/announcements/employee
      */
     @GetMapping("/employee")
-    public ResponseEntity<?> getAnnouncementsForEmployee() {
+    public ResponseEntity<?> getAnnouncementsForEmployee(HttpServletRequest request) {
         logger.info("=== GET /api/announcements/employee ===");
+        // Log session info for debugging
+        HttpSession session = request.getSession(false);
+        logger.info("Session exists: {}", session != null);
 
         try {
             List<AnnouncementDTO> announcements = announcementService.getAnnouncementsForEmployee();
             logger.info("✅ Retrieved {} announcements for employee", announcements.size());
-
             return ResponseEntity.ok(Map.of(
                     "success", true,
                     "data", announcements,
