@@ -1578,7 +1578,37 @@ public class HrDashboardController {
         }
     }
 
+    // ===== ANNOUNCEMENTS - SUPER_ADMIN ONLY =====
+    @GetMapping("/announcements")
+    public String hrAnnouncementsPage(Model model, HttpSession session, RedirectAttributes ra) {
+        logger.info("=== HR ANNOUNCEMENTS PAGE REQUESTED ===");
 
+        if (!isAuthorized(session, ra)) {
+            return "redirect:/candidate/login";
+        }
+
+        // CHECK: Only SUPER_ADMIN can see this page
+        String role = (String) session.getAttribute("userRole");
+        if (!"SUPER_ADMIN".equals(role)) {
+            logger.warn("❌ Access denied to announcements page for role: {}", role);
+            ra.addFlashAttribute("error", "Only Super Admin can create announcements");
+            return "redirect:/dashboard/hr";
+        }
+
+        try {
+            model.addAttribute("isSuperAdmin", true);
+            model.addAttribute("offerCount", offerService.getOfferCount());
+            addHRAttributes(model, session);
+
+            logger.info("✅ Announcements page loaded for SUPER_ADMIN");
+            return "announcements"; // Thymeleaf template
+
+        } catch (Exception e) {
+            logger.error("Error loading announcements page: {}", e.getMessage(), e);
+            ra.addFlashAttribute("error", "Failed to load announcements page");
+            return "redirect:/dashboard/hr";
+        }
+    }
     /* ========== SAVE EMPLOYEE ========== */
     @PostMapping("/save-employee")
     public String saveEmployee(@ModelAttribute EmployeeFormDTO employeeDTO,

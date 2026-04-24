@@ -4604,6 +4604,7 @@ tr[data-checked-out="true"] .status-indicator {
             <!-- Announcements Tab Content -->
             <!-- Announcements Tab Content -->
             <div class="dash-sub-content active" id="dash-announcements">
+                <!-- Replace the announcements table (lines ~947-973) with this: -->
                 <div class="announcements-table-container">
                     <table class="announcements-table">
                         <thead>
@@ -4613,11 +4614,10 @@ tr[data-checked-out="true"] .status-indicator {
                             <th>Description</th>
                             <th style="width: 130px;">Posted</th>
                             <th style="width: 100px;">Action</th>
-                        </tr>
                         </thead>
-                        <tbody id="employeeAnnouncementsBody">
+                        <tbody id="announcementTableBody">
                         <tr>
-                            <td colspan="5" style="text-align: center; color: var(--dark-text-secondary);">Loading announcements...</td>
+                            <td colspan="5" style="text-align: center;">Loading announcements...</td>
                         </tr>
                         </tbody>
                     </table>
@@ -10612,6 +10612,17 @@ document.addEventListener('DOMContentLoaded', async function() {
     await updateEmployeeUpcomingHolidays();
 
 
+ // ===== LOAD ANNOUNCEMENTS =====
+    console.log('📢 Loading announcements on page load...');
+    await loadAnnouncementsManually();
+
+    // Also load when dashboard tab becomes active
+    const dashboardMenu = document.querySelector('.menu-item[data-tab="dashboard"]');
+    if (dashboardMenu) {
+        dashboardMenu.addEventListener('click', function() {
+            setTimeout(() => loadAnnouncementsManually(), 300);
+        });
+    }
 
     // ===== ADD THIS NEW CODE HERE =====
     // Timesheet month/year change handlers
@@ -11793,54 +11804,9 @@ function showHolidayDetails(date, name, type) {
     document.body.appendChild(modal);
 }
 
-async function loadAnnouncements() {
-    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-    const tbody = document.getElementById('announcements-tbody'); // adjust ID to match your HTML
 
-    try {
-        const response = await fetch('/api/announcements/employee', {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error: ${response.status}`);
-        }
 
-        const data = await response.json();
-
-        // Handle both paginated { content: [] } and plain array []
-        const announcements = Array.isArray(data) ? data : (data.content || []);
-
-        if (announcements.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:20px;">
-                No announcements available</td></tr>`;
-            return;
-        }
-
-        tbody.innerHTML = announcements.map(a => `
-            <tr>
-                <td>${a.announcementType || a.type || ''}</td>
-                <td>${a.title || ''}</td>
-                <td>${a.description || ''}</td>
-                <td>${formatDate(a.createdAt || a.created_at)}</td>
-                <td><button onclick="viewAnnouncement(${a.id})">View</button></td>
-            </tr>
-        `).join('');
-
-    } catch (error) {
-        console.error('Failed to load announcements:', error);
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:red;padding:20px;">
-            Failed to load announcements. Please try again.</td></tr>`;
-    }
-}
-
-function formatDate(dateStr) {
-    if (!dateStr) return '-';
-    return new Date(dateStr).toLocaleDateString();
-}
 // ============================================
 // HOLIDAY HELPER FUNCTIONS
 // ============================================
@@ -11948,159 +11914,6 @@ function openApplyLeaveFromCalendar(dateStr) {
     }
 }
 
-// ============================================
-// REAL-TIME ANNOUNCEMENTS (EMPLOYEE DASHBOARD)
-// ============================================
-let announcementStompClient = null;
-
-function getAnnouncementBodyElement() {
-    return document.getElementById('employeeAnnouncementsBody');
-}
-
-function announcementCategoryClass(category) {
-    const normalized = (category || 'general').toLowerCase();
-    const supported = ['corporate', 'hr', 'system', 'maintenance', 'health', 'security', 'leave'];
-    return supported.includes(normalized) ? normalized : 'corporate';
-}
-
-function announcementCategoryIcon(category) {
-    const key = (category || '').toLowerCase();
-    const icons = {
-        corporate: 'fa-building',
-        hr: 'fa-user-tie',
-        system: 'fa-server',
-        maintenance: 'fa-tools',
-        health: 'fa-heartbeat',
-        security: 'fa-shield-alt',
-        leave: 'fa-umbrella-beach',
-        general: 'fa-bullhorn'
-    };
-    return icons[key] || icons.general;
-}
-
-function truncateAnnouncement(text, maxLength) {
-    if (!text) return '';
-    return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
-}
-
-function formatTimeAgo(dateValue) {
-    if (!dateValue) return '-';
-    const now = new Date();
-    const then = new Date(dateValue);
-    const diffMinutes = Math.max(1, Math.floor((now - then) / 60000));
-
-    if (diffMinutes < 60) return `${diffMinutes} min ago`;
-    const diffHours = Math.floor(diffMinutes / 60);
-    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
-    const diffDays = Math.floor(diffHours / 24);
-    return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
-}
-
-function escapeAnnouncementHtml(text) {
-    return String(text || '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-}
-
-function announcementRowHtml(item, isNew) {
-    const badge = isNew ? ' <span style="background: var(--warning); color: #111; font-size: 10px; padding: 2px 7px; border-radius: 10px; margin-left: 6px; font-weight: 700;">NEW</span>' : '';
-    const categoryClass = announcementCategoryClass(item.category);
-    const categoryIcon = announcementCategoryIcon(item.category);
-    const title = escapeAnnouncementHtml(item.title);
-    const content = escapeAnnouncementHtml(item.content);
-    const preview = escapeAnnouncementHtml(truncateAnnouncement(item.content, 120));
-    const categoryLabel = escapeAnnouncementHtml(item.category || 'General');
-    const posted = formatTimeAgo(item.createdAt);
-
-    return `
-        <tr onclick="showDashPopup('${title}', '${content.replace(/'/g, "\\'")}')" style="cursor: pointer;">
-            <td>
-                <span class="mini-card ${categoryClass}">
-                    <i class="fas ${categoryIcon}"></i> ${categoryLabel}
-                </span>
-            </td>
-            <td class="announcement-title-cell">${title}${badge}</td>
-            <td class="announcement-desc-cell">${preview}</td>
-            <td class="announcement-date-cell"><i class="far fa-clock"></i> ${posted}</td>
-            <td>
-                <button class="view-btn" onclick="event.stopPropagation(); showDashPopup('${title}', '${content.replace(/'/g, "\\'")}')">
-                    View <i class="fas fa-arrow-right"></i>
-                </button>
-            </td>
-        </tr>
-    `;
-}
-
-function renderEmployeeAnnouncements(items) {
-    const body = getAnnouncementBodyElement();
-    if (!body) return;
-    if (!items || !items.length) {
-        body.innerHTML = '<tr><td colspan="5" style="text-align:center; color: var(--dark-text-secondary);">No announcements available right now.</td></tr>';
-        return;
-    }
-    body.innerHTML = items.map(item => announcementRowHtml(item, false)).join('');
-}
-
-function prependEmployeeAnnouncement(item) {
-    const body = getAnnouncementBodyElement();
-    if (!body) return;
-
-    const emptyRow = body.querySelector('tr td[colspan="5"]');
-    if (emptyRow) body.innerHTML = '';
-    body.insertAdjacentHTML('afterbegin', announcementRowHtml(item, true));
-}
-
-function showAnnouncementToast(message) {
-    const toast = document.createElement('div');
-    toast.textContent = message;
-    toast.style.cssText = 'position:fixed; right:20px; bottom:20px; z-index:16000; background:var(--dark-card); color:var(--dark-text); border:1px solid var(--primary); border-radius:8px; padding:10px 14px; box-shadow:0 8px 20px rgba(0,0,0,0.35);';
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 2500);
-}
-
-async function loadEmployeeAnnouncements() {
-    try {
-        const response = await fetch('/api/announcements/employee');
-        const result = await response.json();
-        if (!result.success) {
-            throw new Error(result.error || 'Failed to fetch announcements');
-        }
-        renderEmployeeAnnouncements(result.data || []);
-    } catch (error) {
-        const body = getAnnouncementBodyElement();
-        if (body) {
-            body.innerHTML = '<tr><td colspan="5" style="text-align:center; color: var(--danger);">Unable to load announcements</td></tr>';
-        }
-    }
-}
-
-function connectAnnouncementWebSocket() {
-    if (announcementStompClient || typeof SockJS === 'undefined' || typeof Stomp === 'undefined') return;
-    const socket = new SockJS('/ws');
-    announcementStompClient = Stomp.over(socket);
-    announcementStompClient.debug = () => {};
-
-    announcementStompClient.connect({}, function() {
-        announcementStompClient.subscribe('/topic/announcements/all', function(message) {
-            const item = JSON.parse(message.body);
-            prependEmployeeAnnouncement(item);
-            showAnnouncementToast(`New announcement: ${item.title}`);
-        });
-        announcementStompClient.subscribe('/topic/announcements/employees', function(message) {
-            const item = JSON.parse(message.body);
-            prependEmployeeAnnouncement(item);
-            showAnnouncementToast(`New announcement: ${item.title}`);
-        });
-    });
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    loadEmployeeAnnouncements();
-    connectAnnouncementWebSocket();
-});
 
 
 // EXPOSE TO GLOBAL SCOPE
@@ -12110,6 +11923,234 @@ window.exportTimesheetCSV = exportTimesheetCSV;
 window.exportTimesheetPDF = exportTimesheetPDF;
 window.printTimesheet = printTimesheet;
 
+
+
+
+    // ============================================
+// ANNOUNCEMENTS - CORRECTED VERSION
+// ============================================
+
+// Format date for display
+function formatAnnouncementDate(dateString) {
+    if (!dateString) return 'Just now';
+    try {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffMs = now - date;
+        const diffMins = Math.floor(diffMs / 60000);
+
+        if (diffMins < 1) return 'Just now';
+        if (diffMins < 60) return `${diffMins} min ago`;
+        if (diffMins < 1440) return `${Math.floor(diffMins / 60)} hour${Math.floor(diffMins / 60) > 1 ? 's' : ''} ago`;
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    } catch(e) {
+        return dateString;
+    }
+}
+
+// Get category class for styling based on title
+function getAnnouncementCategory(title) {
+    const titleLower = (title || '').toLowerCase();
+    if (titleLower.includes('security')) return 'security';
+    if (titleLower.includes('privacy')) return 'hr';
+    if (titleLower.includes('tax') || titleLower.includes('finance') || titleLower.includes('government')) return 'corporate';
+    if (titleLower.includes('health')) return 'health';
+    if (titleLower.includes('maintenance')) return 'maintenance';
+    if (titleLower.includes('leave')) return 'leave';
+    return 'corporate';
+}
+
+// Get category icon
+function getAnnouncementIcon(title) {
+    const titleLower = (title || '').toLowerCase();
+    if (titleLower.includes('security')) return 'fa-shield-alt';
+    if (titleLower.includes('privacy')) return 'fa-user-secret';
+    if (titleLower.includes('tax')) return 'fa-file-invoice-dollar';
+    if (titleLower.includes('finance')) return 'fa-chart-line';
+    if (titleLower.includes('government')) return 'fa-building';
+    if (titleLower.includes('health')) return 'fa-heartbeat';
+    if (titleLower.includes('maintenance')) return 'fa-tools';
+    if (titleLower.includes('leave')) return 'fa-umbrella-beach';
+    return 'fa-bullhorn';
+}
+
+// Load announcements from API
+async function loadAnnouncementsManually() {
+    console.log('📢 Loading announcements...');
+    const tbody = document.getElementById('announcementTableBody');
+
+    if (!tbody) {
+        console.error('❌ Announcement table body not found');
+        return;
+    }
+
+    // Show loading state
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;"><i class="fas fa-spinner fa-spin"></i> Loading announcements...</td></tr>';
+
+    try {
+        const response = await fetch('/api/announcements/employee');
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log('📢 API Response:', result);
+
+        // CRITICAL FIX: Extract data correctly
+        let announcements = [];
+        if (result.success && Array.isArray(result.data)) {
+            announcements = result.data;
+        } else if (Array.isArray(result)) {
+            announcements = result;
+        } else if (result.content && Array.isArray(result.content)) {
+            announcements = result.content;
+        }
+
+        console.log(`📢 Found ${announcements.length} announcements`);
+
+        if (announcements.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" style="text-align: center; padding: 40px; color: var(--dark-text-secondary);">
+                        <i class="fas fa-bullhorn" style="font-size: 32px; margin-bottom: 12px; display: block; opacity: 0.5;"></i>
+                        No announcements available at this time
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        // Build table rows
+        tbody.innerHTML = '';
+        announcements.forEach(announcement => {
+            // Extract fields from your API response
+            const id = announcement.id;
+            const title = announcement.title || 'Announcement';
+            const description = announcement.description || 'No description provided';
+            const createdAt = announcement.createdAt || announcement.formattedDate || new Date().toISOString();
+            const type = announcement.announcementType || announcement.type || announcement.category || 'General';
+
+            const categoryClass = getAnnouncementCategory(title);
+            const iconClass = getAnnouncementIcon(title);
+            const postedDate = formatAnnouncementDate(createdAt);
+
+            const row = document.createElement('tr');
+            row.style.cursor = 'pointer';
+
+            // Create safe strings for popup
+            const safeTitle = escapeHtml(title);
+            const safeDesc = escapeHtml(description);
+            const safeType = escapeHtml(type);
+
+            row.onclick = () => showAnnouncementDetails(safeTitle, safeDesc, safeType, postedDate);
+
+            row.innerHTML = `
+                <td>
+                    <span class="mini-card ${categoryClass}">
+                        <i class="fas ${iconClass}"></i> ${safeType}
+                    </span>
+                </td>
+                <td class="announcement-title-cell" title="${safeTitle}">${safeTitle}</td>
+                <td class="announcement-desc-cell" title="${safeDesc}">${truncateText(safeDesc, 100)}</td>
+                <td class="announcement-date-cell">
+                    <i class="far fa-clock"></i> ${postedDate}
+                </td>
+                <td>
+                    <button class="view-btn" onclick="event.stopPropagation(); showAnnouncementDetails('${safeTitle.replace(/'/g, "\\'")}', '${safeDesc.replace(/'/g, "\\'")}', '${safeType.replace(/'/g, "\\'")}', '${postedDate}')">
+                        View <i class="fas fa-arrow-right"></i>
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        console.log(`✅ Successfully loaded ${announcements.length} announcements into table`);
+
+    } catch (error) {
+        console.error('❌ Failed to load announcements:', error);
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5" style="text-align: center; padding: 40px; color: var(--danger);">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 32px; margin-bottom: 12px; display: block;"></i>
+                    Failed to load announcements. Please refresh the page.
+                    <br><small>${error.message}</small>
+                </td>
+            </tr>
+        `;
+    }
+}
+
+// Helper: Escape HTML to prevent XSS
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Helper: Truncate text
+function truncateText(text, maxLength) {
+    if (!text) return '';
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+}
+
+// Show announcement details popup
+function showAnnouncementDetails(title, description, type, date) {
+    // Remove any existing modal
+    const existingModal = document.querySelector('.announcement-modal');
+    if (existingModal) existingModal.remove();
+
+    const modal = document.createElement('div');
+    modal.className = 'announcement-modal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.85);
+        z-index: 20000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    `;
+
+    const categoryClass = getAnnouncementCategory(title);
+    const iconClass = getAnnouncementIcon(title);
+
+    modal.innerHTML = `
+        <div style="background: var(--dark-card); border: 1px solid var(--dark-border); border-radius: 16px; width: 90%; max-width: 550px; max-height: 80vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 18px 24px; border-bottom: 1px solid var(--dark-border); background: linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(99,102,241,0.05) 100%);">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span class="mini-card ${categoryClass}" style="font-size: 14px; padding: 8px 16px;">
+                        <i class="fas ${iconClass}"></i> ${escapeHtml(type)}
+                    </span>
+                    <h3 style="margin: 0; color: white; font-size: 1.1rem;">Announcement</h3>
+                </div>
+                <button onclick="this.closest('.announcement-modal').remove()" style="background: none; border: none; color: var(--dark-text-secondary); font-size: 24px; cursor: pointer;">×</button>
+            </div>
+            <div style="padding: 24px;">
+                <h4 style="color: white; margin-bottom: 16px; font-size: 1.2rem;">${escapeHtml(title)}</h4>
+                <div style="color: var(--dark-text-secondary); margin-bottom: 20px; font-size: 13px;">
+                    <i class="far fa-clock"></i> Posted: ${escapeHtml(date)}
+                </div>
+                <div style="background: var(--dark-bg); padding: 16px; border-radius: 8px; border: 1px solid var(--dark-border);">
+                    <p style="color: var(--dark-text); margin: 0; line-height: 1.6; white-space: pre-wrap;">${escapeHtml(description)}</p>
+                </div>
+            </div>
+            <div style="padding: 16px 24px; border-top: 1px solid var(--dark-border); text-align: right;">
+                <button onclick="this.closest('.announcement-modal').remove()" style="background: var(--primary); color: white; border: none; padding: 8px 20px; border-radius: 8px; cursor: pointer;">
+                    Close
+                </button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+}
+
+// Make function globally available
+window.showAnnouncementDetails = showAnnouncementDetails;
 </script>
+
 </body>
 </html>

@@ -2676,6 +2676,38 @@
                     display: none !important;
                 }
             }
+
+
+            /* Announcements Table */
+.announcements-table { width: 100%; border-collapse: collapse; }
+.announcements-table th {
+    background: rgba(0,0,0,0.3);
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--dark-text);
+    border-bottom: 2px solid var(--primary);
+}
+.announcements-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--dark-border);
+    vertical-align: middle;
+    color: var(--dark-text);
+}
+.announcements-table tbody tr:hover { background: rgba(99,102,241,0.05); }
+
+/* Announcement Create Modal */
+.popup-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 11000; align-items: center; justify-content: center; }
+.popup-overlay.active { display: flex; }
+.popup-modal { background: var(--dark-card); border: 1px solid var(--dark-border); border-radius: 12px; width: 90%; max-width: 640px; max-height: 85vh; overflow-y: auto; }
+.popup-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--dark-border); }
+.popup-body { padding: 20px; }
+.popup-footer { padding: 16px 20px; border-top: 1px solid var(--dark-border); display: flex; justify-content: flex-end; gap: 10px; }
+.close-popup-btn { background: none; border: none; color: var(--dark-text-secondary); font-size: 24px; cursor: pointer; }
+.btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; }
+.btn-primary { background: var(--primary); color: white; }
         </style>
 
         <!-- FIXED META TAG -->
@@ -2983,31 +3015,30 @@
                             <span>Create Announcement</span>
                         </button>
                     </div>
-                    <div class="card-body p-0">
-                        <div class="table-container">
-                            <table class="table">
-                                <thead>
-                                <tr>
-                                    <th>Title</th>
-                                    <th>Category</th>
-                                    <th>Type</th>
-                                    <th>Priority</th>
-                                    <th>Target</th>
-                                    <th>Created</th>
-                                    <th>Expires</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                                </thead>
-                                <tbody id="adminAnnouncementTableBody">
-                                <tr>
-                                    <td colspan="9" style="text-align: center;">Loading announcements...</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                    <div id="announcements-section" style="overflow-x:auto; margin-top: 16px;">
+                        <table class="announcements-table" style="width:100%; border-collapse:collapse; font-size:13px;">
+                            <thead>
+                            <tr>
+                                <th>TITLE</th>
+                                <th>CATEGORY</th>
+                                <th>TYPE</th>
+                                <th>PRIORITY</th>
+                                <th>TARGET</th>
+                                <th>CREATED</th>
+                                <th>EXPIRES</th>
+                                <th>STATUS</th>
+                                <th>ACTIONS</th>
+                            </tr>
+                            </thead>
+                            <tbody id="announcements-tbody">
+                            <tr>
+                                <td colspan="9" style="text-align: center; padding: 20px;">
+                                    <span id="loading-text">Loading announcements...</span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
-                </div>
 
                 <!-- Alerts -->
                 <div th:if="${success}" class="alert alert-success">
@@ -8808,11 +8839,11 @@ function filterDashboardStats(filterType) {
         }
 
         // ========== ANNOUNCEMENTS (HR/ADMIN) ==========
-        async function loadAdminAnnouncements() {
-            const tbody = document.getElementById('adminAnnouncementTableBody');
+       async function loadAdminAnnouncements() {
+    const tbody = document.getElementById('announcements-tbody');
             if (!tbody) return;
             try {
-                const response = await fetch('/api/announcements/admin/all');
+                const response = await fetch('/api/announcements/admin');
                 const result = await response.json();
                 if (!result.success) {
                     throw new Error(result.error || 'Unable to load announcements');
@@ -8823,33 +8854,43 @@ function filterDashboardStats(filterType) {
                     return;
                 }
 
-                tbody.innerHTML = announcements.map(item => {
-                    const created = item.createdAt ? new Date(item.createdAt).toLocaleString() : '-';
-                    const expires = item.expiresAt ? new Date(item.expiresAt).toLocaleString() : '-';
-                    const status = item.isActive ? 'Active' : 'Inactive';
-                    return `
-                        <tr>
-                            <td>${escapeHtml(item.title || '')}</td>
-                            <td>${escapeHtml(item.category || '-')}</td>
-                            <td>${escapeHtml(item.type || '-')}</td>
-                            <td>${escapeHtml(item.priority || '-')}</td>
-                            <td>${escapeHtml(item.targetAudience || '-')}</td>
-                            <td>${created}</td>
-                            <td>${expires}</td>
-                            <td>${status}</td>
-                            <td style="display:flex; gap:6px; flex-wrap:wrap;">
-                                <button class="btn-action btn-edit" onclick="toggleAnnouncementPin(${item.id})">${item.isPinned ? 'Unpin' : 'Pin'}</button>
-                                <button class="btn-action btn-view" onclick="deactivateAnnouncement(${item.id})">Deactivate</button>
-                                <button class="btn-action btn-delete" onclick="deleteAnnouncement(${item.id})">Delete</button>
-                            </td>
-                        </tr>
-                    `;
-                }).join('');
-            } catch (error) {
-                tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#ef4444;">Failed to load announcements</td></tr>';
-                showAnnouncementToast(error.message || 'Failed to load announcements', 'error');
-            }
-        }
+               tbody.innerHTML = announcements.map(item => {
+    const created = item.createdAt ? new Date(item.createdAt).toLocaleDateString('en-IN') : '-';
+    const expires = item.expiresAt ? new Date(item.expiresAt).toLocaleDateString('en-IN') : 'No Expiry';
+    const status = item.isActive ? '<span style="color:var(--success);">Active</span>' : '<span style="color:var(--danger);">Inactive</span>';
+    const pinned = item.isPinned ? '📌 ' : '';
+    const priorityColors = { LOW: '#94a3b8', NORMAL: '#0ea5e9', HIGH: '#f59e0b', URGENT: '#ef4444' };
+    const priorityColor = priorityColors[item.priority] || '#94a3b8';
+
+    return `<tr>
+        <td><strong>${pinned}${escapeHtml(item.title || '')}</strong></td>
+        <td>${escapeHtml(item.category || 'General')}</td>
+        <td><span style="background:rgba(99,102,241,0.1);color:var(--primary);padding:2px 8px;border-radius:12px;font-size:0.75rem;">${item.type || '-'}</span></td>
+        <td><span style="color:${priorityColor};font-weight:600;">${item.priority || 'NORMAL'}</span></td>
+        <td>${escapeHtml(item.targetAudience || 'ALL')}</td>
+        <td>${created}</td>
+        <td>${expires}</td>
+        <td>${status}</td>
+        <td>
+            <div style="display:flex;gap:4px;flex-wrap:wrap;">
+                <button class="btn-action btn-edit" onclick="toggleAnnouncementPin(${item.id})" title="${item.isPinned ? 'Unpin' : 'Pin'}">
+                    <i class="fas fa-thumbtack"></i>
+                </button>
+                <button class="btn-action btn-view" onclick="deactivateAnnouncement(${item.id})" title="Deactivate">
+                    <i class="fas fa-ban"></i>
+                </button>
+                <button class="btn-action btn-delete" onclick="deleteAnnouncement(${item.id})" title="Delete">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </td>
+    </tr>`;
+}).join('');
+ } catch (error) {
+        console.error('Error loading announcements:', error);
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--danger);">Failed to load announcements</td></tr>';
+    }
+}
 
         function openAnnouncementCreateModal() {
             const modal = document.getElementById('announcementCreateModal');
@@ -8875,22 +8916,24 @@ function filterDashboardStats(filterType) {
         }
 
         async function submitAnnouncementCreateForm() {
-            const payload = {
-                title: document.getElementById('announcementTitle').value.trim(),
-                content: document.getElementById('announcementContent').value.trim(),
-                type: document.getElementById('announcementType').value,
-                category: document.getElementById('announcementCategory').value,
-                priority: document.getElementById('announcementPriority').value,
-                targetAudience: document.getElementById('announcementTargetAudience').value,
-                expiresAt: document.getElementById('announcementExpiresAt').value || null,
-                pinned: document.getElementById('announcementPinned').checked,
-                active: true
-            };
+           const payload = {
+    title: document.getElementById('announcementTitle').value.trim(),
+    description: document.getElementById('announcementContent').value.trim(),
+    type: document.getElementById('announcementType').value,
+    category: document.getElementById('announcementCategory').value,
+    priority: document.getElementById('announcementPriority').value,
+    targetAudience: document.getElementById('announcementTargetAudience').value,
+    isPinned: document.getElementById('announcementPinned').checked,
+    isActive: true,
+    expiresAt: document.getElementById('announcementExpiresAt').value || null
+};
 
-            if (!payload.title || !payload.content) {
-                showAnnouncementToast('Title and content are required', 'error');
-                return;
-            }
+if (!payload.title || !payload.description) {
+    showAnnouncementToast('Title and description are required', 'error');
+    return;
+}
+
+
             if (payload.type === 'TEMPORARY' && !payload.expiresAt) {
                 showAnnouncementToast('Expires At is required for temporary announcements', 'error');
                 return;
@@ -8930,7 +8973,7 @@ function filterDashboardStats(filterType) {
 
         async function deactivateAnnouncement(id) {
             try {
-                const response = await fetch(`/api/announcements/${id}/deactivate`, { method: 'PUT' });
+                const response = await fetch(`/api/announcements/${id}/deactivate`, { method: 'PATCH' });
                 const result = await response.json();
                 if (!result.success) {
                     throw new Error(result.error || 'Unable to deactivate announcement');
@@ -8944,7 +8987,7 @@ function filterDashboardStats(filterType) {
 
         async function deleteAnnouncement(id) {
             try {
-                const response = await fetch(`/api/announcements/${id}`, { method: 'DELETE' });
+                    const response = await fetch(`/api/announcements/${id}`, { method: 'DELETE' });
                 const result = await response.json();
                 if (!result.success) {
                     throw new Error(result.error || 'Unable to delete announcement');
@@ -8988,6 +9031,9 @@ function filterDashboardStats(filterType) {
             window.hrAttendanceMonitor = new HrAttendanceMonitor();
 
             loadCompanyDataFromStorage();
+
+ toggleAnnouncementExpiryField();
+    loadAdminAnnouncements();
 
 
       initRecruitmentChart('bar');
@@ -9335,6 +9381,8 @@ window.filterDashboardStats = filterDashboardStats;
     <script>
         console.log('✅ All functions loaded successfully');
     </script>
+
+
 
     </body>
     </html>

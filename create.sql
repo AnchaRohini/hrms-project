@@ -8053,3 +8053,237 @@
 
     alter table leave_requests 
        modify column total_days float(53);
+
+    alter table employees 
+       modify column date_of_birth date;
+
+    alter table employees 
+       modify column role enum ('SUPER_ADMIN','HR','HR_MANAGER','EMPLOYEE') not null;
+
+    alter table employees 
+       modify column start_date date;
+
+    alter table leave_balance 
+       modify column remaining_days float(53);
+
+    alter table leave_balance 
+       modify column used_days float(53) not null;
+
+    alter table leave_requests 
+       modify column total_days float(53);
+
+    alter table employees 
+       modify column date_of_birth date;
+
+    alter table employees 
+       modify column role enum ('SUPER_ADMIN','HR','HR_MANAGER','EMPLOYEE') not null;
+
+    alter table employees 
+       modify column start_date date;
+
+    alter table leave_balance 
+       modify column remaining_days float(53);
+
+    alter table leave_balance 
+       modify column used_days float(53) not null;
+
+    alter table leave_requests 
+       modify column total_days float(53);
+
+    alter table employees 
+       modify column date_of_birth date;
+
+    alter table employees 
+       modify column role enum ('SUPER_ADMIN','HR','HR_MANAGER','EMPLOYEE') not null;
+
+    alter table employees 
+       modify column start_date date;
+
+    alter table leave_balance 
+       modify column remaining_days float(53);
+
+    alter table leave_balance 
+       modify column used_days float(53) not null;
+
+    alter table leave_requests 
+       modify column total_days float(53);
+
+    alter table employees 
+       modify column date_of_birth date;
+
+    alter table employees 
+       modify column role enum ('SUPER_ADMIN','HR','HR_MANAGER','EMPLOYEE') not null;
+
+    alter table employees 
+       modify column start_date date;
+
+    alter table leave_balance 
+       modify column remaining_days float(53);
+
+    alter table leave_balance 
+       modify column used_days float(53) not null;
+
+    alter table leave_requests 
+       modify column total_days float(53);
+
+    alter table employees 
+       modify column date_of_birth date;
+
+    alter table employees 
+       modify column role enum ('SUPER_ADMIN','HR','HR_MANAGER','EMPLOYEE') not null;
+
+    alter table employees 
+       modify column start_date date;
+
+    alter table leave_balance 
+       modify column remaining_days float(53);
+
+    alter table leave_balance 
+       modify column used_days float(53) not null;
+
+    alter table leave_requests 
+       modify column total_days float(53);
+
+    alter table employees 
+       modify column date_of_birth date;
+
+    alter table employees 
+       modify column role enum ('SUPER_ADMIN','HR','HR_MANAGER','EMPLOYEE') not null;
+
+    alter table employees 
+       modify column start_date date;
+
+    alter table leave_balance 
+       modify column remaining_days float(53);
+
+    alter table leave_balance 
+       modify column used_days float(53) not null;
+
+    alter table leave_requests 
+       modify column total_days float(53);
+
+    alter table employees 
+       modify column date_of_birth date;
+
+    alter table employees 
+       modify column role enum ('SUPER_ADMIN','HR','HR_MANAGER','EMPLOYEE') not null;
+
+    alter table employees 
+       modify column start_date date;
+
+    alter table leave_balance 
+       modify column remaining_days float(53);
+
+    alter table leave_balance 
+       modify column used_days float(53) not null;
+
+    alter table leave_requests 
+       modify column total_days float(53);
+
+    alter table employees 
+       modify column date_of_birth date;
+
+    alter table employees 
+       modify column role enum ('SUPER_ADMIN','HR','HR_MANAGER','EMPLOYEE') not null;
+
+    alter table employees 
+       modify column start_date date;
+
+    alter table leave_balance 
+       modify column remaining_days float(53);
+
+    alter table leave_balance 
+       modify column used_days float(53) not null;
+
+    alter table leave_requests 
+       modify column total_days float(53);
+
+    alter table employees 
+       modify column date_of_birth date;
+
+    alter table employees 
+       modify column role enum ('SUPER_ADMIN','HR','HR_MANAGER','EMPLOYEE') not null;
+
+    alter table employees 
+       modify column start_date date;
+
+    alter table leave_balance 
+       modify column remaining_days float(53);
+
+    alter table leave_balance 
+       modify column used_days float(53) not null;
+
+    alter table leave_requests 
+       modify column total_days float(53);
+
+    alter table employees 
+       modify column date_of_birth date;
+
+    alter table employees 
+       modify column role enum ('SUPER_ADMIN','HR','HR_MANAGER','EMPLOYEE') not null;
+
+    alter table employees 
+       modify column start_date date;
+
+    alter table leave_balance 
+       modify column remaining_days float(53);
+
+    alter table leave_balance 
+       modify column used_days float(53) not null;
+
+    alter table leave_requests 
+       modify column total_days float(53);
+
+    alter table employees 
+       modify column date_of_birth date;
+
+    alter table employees 
+       modify column role enum ('SUPER_ADMIN','HR','HR_MANAGER','EMPLOYEE') not null;
+
+    alter table employees 
+       modify column start_date date;
+
+    alter table leave_balance 
+       modify column remaining_days float(53);
+
+    alter table leave_balance 
+       modify column used_days float(53) not null;
+
+    alter table leave_requests 
+       modify column total_days float(53);
+
+    alter table employees 
+       modify column date_of_birth date;
+
+    alter table employees 
+       modify column role enum ('SUPER_ADMIN','HR','HR_MANAGER','EMPLOYEE') not null;
+
+    alter table employees 
+       modify column start_date date;
+
+    alter table leave_balance 
+       modify column remaining_days float(53);
+
+    alter table leave_balance 
+       modify column used_days float(53) not null;
+
+    alter table leave_requests 
+       modify column total_days float(53);
+
+    alter table employees 
+       modify column date_of_birth date;
+
+    alter table employees 
+       modify column role enum ('SUPER_ADMIN','HR','HR_MANAGER','EMPLOYEE') not null;
+
+    alter table employees 
+       modify column start_date date;
+
+    alter table leave_balance 
+       modify column remaining_days float(53);
+
+    alter table leave_balance 
+       modify column used_days float(53) not null;
+
+    alter table leave_requests 
+       modify column total_days float(53);

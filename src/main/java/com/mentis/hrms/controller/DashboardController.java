@@ -713,7 +713,38 @@ public class DashboardController implements WebMvcConfigurer {
             ));
         }
     }
+    // ===== EMPLOYEE ANNOUNCEMENTS TAB =====
+    @GetMapping("/announcements")
+    public String employeeAnnouncementsPage(Model model, HttpSession session, RedirectAttributes ra) {
+        logger.info("=== EMPLOYEE ANNOUNCEMENTS PAGE REQUESTED ===");
 
+        if (session.getAttribute("userId") == null) {
+            ra.addFlashAttribute("error", "Session expired. Please login again.");
+            return "redirect:/candidate/login";
+        }
+
+        String loginType = (String) session.getAttribute("loginType");
+        String empId = (String) session.getAttribute("userId");
+
+        // Only employees see this
+        if (!"EMPLOYEE".equals(loginType)) {
+            logger.warn("Non-employee trying to access announcements: {}", loginType);
+            return "redirect:/dashboard?error=Access+denied";
+        }
+
+        try {
+            model.addAttribute("isEmployee", true);
+            model.addAttribute("empId", empId);
+
+            logger.info("✅ Announcements page loaded for EMPLOYEE: {}", empId);
+            return "candidate/announcements"; // Separate template for employees
+
+        } catch (Exception e) {
+            logger.error("Error loading announcements: {}", e.getMessage(), e);
+            ra.addFlashAttribute("error", "Failed to load announcements");
+            return "redirect:/candidate/dashboard/" + empId;
+        }
+    }
     @GetMapping("/api/departments/{departmentName}/designations")
     @ResponseBody
     public ResponseEntity<?> getDesignationsByDepartmentApi(@PathVariable String departmentName) {
