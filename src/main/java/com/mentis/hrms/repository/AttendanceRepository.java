@@ -1,18 +1,16 @@
 package com.mentis.hrms.repository;
-
 import com.mentis.hrms.model.Attendance;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
 @Repository
 public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
+
 
     // Find the MOST RECENT active session (not checked out)
     @Query("SELECT a FROM Attendance a WHERE a.employeeId = :employeeId " +
