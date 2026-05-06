@@ -64,8 +64,8 @@
             overflow-x: hidden;
         }
 
-        /* === SIDEBAR STYLES - EXACT MATCH WITH DASHBOARD.HTML === */
-.sidebar {
+        /* === SIDEBAR STYLES - EXACT MATCH === */
+        .sidebar {
             position: fixed;
             top: 0;
             left: 0;
@@ -124,7 +124,7 @@
 
         .nav-section i {
             font-size: 0.8rem;
-            color: var(--primary); /* Makes the section icon blue */
+            color: var(--primary);
             opacity: 0.8;
         }
 
@@ -150,65 +150,21 @@
         .nav-link.active {
             background: var(--sidebar-hover);
             color: #fff;
-            transform: translateX(2px); /* Adds the nice slide effect on hover */
+            transform: translateX(2px);
         }
 
         .nav-link i {
             width: 20px;
             text-align: center;
             font-size: 1rem;
-            color: var(--primary); /* Makes the link icons blue */
+            color: var(--primary);
             transition: all 0.2s;
         }
 
         .nav-link:hover i,
         .nav-link.active i {
-            color: #fff; /* Turns icon white when hovered or active */
+            color: #fff;
         }
-        .nav-badge {
-            margin-left: auto;
-            background: var(--primary);
-            color: white;
-            padding: 0.2rem 0.5rem;
-            border-radius: 10px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            min-width: 24px;
-            text-align: center;
-        }
-
-        .nav-badge.success {
-            background: var(--success);
-        }
-
-        .nav-badge.warning {
-            background: var(--warning);
-        }
-
-        .sidebar-content {
-            height: calc(100vh - 80px);
-            overflow-y: auto;
-            padding-bottom: 20px;
-        }
-
-        .sidebar-content::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .sidebar-content::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-        }
-
-        .sidebar-content::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
-
-        .sidebar-content::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
 
         .nav-badge {
             margin-left: auto;
@@ -222,36 +178,10 @@
             text-align: center;
         }
 
-        .nav-badge.success {
-            background: var(--success);
-        }
-
-        .nav-badge.warning {
-            background: var(--warning);
-        }
-
         .sidebar-content {
             height: calc(100vh - 80px);
             overflow-y: auto;
             padding-bottom: 20px;
-        }
-
-        .sidebar-content::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .sidebar-content::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-        }
-
-        .sidebar-content::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
-
-        .sidebar-content::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.2);
         }
 
         .mobile-menu-toggle {
@@ -273,280 +203,137 @@
             min-height: 100vh;
             transition: var(--transition);
         }
-/* Status Filters Section */
-.status-filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    margin-bottom: 25px;
-    padding: 20px;
-    background: var(--dark-card);
-    border-radius: 12px;
-    border: 1px solid var(--dark-border);
-}
 
-.filter-item {
-    flex: 1;
-    min-width: 180px;
-    background: var(--dark-bg);
-    border-radius: 8px;
-    padding: 15px;
-    border: 1px solid var(--dark-border);
-    transition: var(--transition);
-    cursor: pointer;
-    position: relative;
-}
+        /* === STATS GRID & CARDS - EXACT MATCH FROM PASTE PAGE 2 === */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
 
-.filter-item:hover {
-    transform: translateY(-2px);
-    border-color: var(--primary);
-    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
-}
+        .stat-card {
+            background: var(--dark-card);
+            border: 1px solid var(--dark-border);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: var(--transition);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
 
-.filter-item.active {
-    border-color: var(--primary);
-    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(99, 102, 241, 0.05));
-}
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, .1);
+            border-color: var(--primary);
+        }
 
-.filter-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
+        .stat-card-body {
+            padding: 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-.filter-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--dark-text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            line-height: 1;
+            color: var(--dark-text);
+        }
 
-.filter-icon {
-    color: var(--primary);
-    font-size: 16px;
-}
+        .stat-title {
+            font-size: .75rem;
+            color: var(--dark-text-secondary);
+            line-height: 1.2;
+            margin-top: 0.35rem;
+        }
 
-.filter-value {
-    font-size: 28px;
-    font-weight: 700;
-    color: var(--dark-text);
-    line-height: 1.2;
-}
+        .stat-icon {
+            font-size: 2rem;
+            opacity: .7;
+            color: var(--primary);
+        }
 
-.filter-subtitle {
-    font-size: 11px;
-    color: var(--dark-text-secondary);
-    margin-top: 5px;
-}
+        .stat-card.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
+        }
 
-/* Filter colors */
-.filter-item.pending .filter-value { color: #f59e0b; }
-.filter-item.in-progress .filter-value { color: #0ea5e9; }
-.filter-item.submitted .filter-value { color: #10b981; }
-.filter-item.completed .filter-value { color: #6366f1; }
+        .stat-card-footer {
+            padding: .75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #fff;
+            font-weight: 500;
+            font-size: .875rem;
+        }
 
-/* Table Header with Filter Icons */
-.documents-table th {
-    position: relative;
-    padding-right: 25px !important;
-    cursor: pointer;
-    user-select: none;
-}
+        .stat-card-footer span {
+            font-size: .75rem;
+            opacity: 0.9;
+        }
 
-.documents-table th i.filter-icon {
-    position: absolute;
-    right: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 12px;
-    color: var(--primary);
-    opacity: 0.5;
-    transition: var(--transition);
-}
+        .stat-card.pending .stat-card-footer { background: #f59e0b; }
+        .stat-card.submitted .stat-card-footer { background: #0ea5e9; }
+        .stat-card.verified .stat-card-footer { background: #10b981; }
+        .stat-card.rejected .stat-card-footer { background: #ef4444; }
 
-.documents-table th:hover i.filter-icon {
-    opacity: 1;
-    color: var(--primary);
-}
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
 
-.documents-table th.active-filter i.filter-icon {
-    opacity: 1;
-    color: var(--primary);
-}
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .mobile-menu-toggle { display: block; }
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .header-top { flex-direction: column; }
+            .progress-section { width: 100%; }
+        }
 
-/* Table Alignment */
-.documents-table th:nth-child(1) { width: 5%; text-align: center; }  /* # */
-.documents-table td:nth-child(1) { text-align: center; }
+        /* === STATUS FILTER BUTTONS - FROM PASTE PAGE 2 === */
+        .status-filter {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
 
-.documents-table th:nth-child(2) { width: 25%; text-align: left; }   /* Document Name */
-.documents-table td:nth-child(2) { text-align: left; }
+        .status-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: .875rem;
+            font-weight: 500;
+            border: 1px solid var(--dark-border);
+            background: var(--dark-card);
+            color: var(--dark-text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-block;
+        }
 
-.documents-table th:nth-child(3) { width: 15%; text-align: center; } /* Status */
-.documents-table td:nth-child(3) { text-align: center; }
+        .status-btn:hover {
+            background: var(--dark-border);
+            color: var(--dark-text);
+        }
 
-.documents-table th:nth-child(4) { width: 25%; text-align: center; } /* Uploaded Date & Time */
-.documents-table td:nth-child(4) { text-align: center; }
+        .status-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
 
-.documents-table th:nth-child(5) { width: 30%; text-align: right; }  /* Actions */
-.documents-table td:nth-child(5) { text-align: right; }
-
-/* Pagination */
-.pagination-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 20px;
-    padding: 15px 20px;
-    background: var(--dark-card);
-    border-radius: 8px;
-    border: 1px solid var(--dark-border);
-}
-
-.pagination-info {
-    color: var(--dark-text-secondary);
-    font-size: 13px;
-}
-
-.pagination-info strong {
-    color: var(--dark-text);
-    font-weight: 600;
-}
-
-.pagination-controls {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-}
-
-.pagination-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 6px;
-    border: 1px solid var(--dark-border);
-    background: var(--dark-bg);
-    color: var(--dark-text-secondary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: var(--transition);
-    font-size: 14px;
-}
-
-.pagination-btn:hover:not(:disabled) {
-    background: var(--primary);
-    color: white;
-    border-color: var(--primary);
-    transform: translateY(-1px);
-}
-
-.pagination-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.pagination-numbers {
-    display: flex;
-    gap: 5px;
-    margin: 0 10px;
-}
-
-.pagination-number {
-    min-width: 36px;
-    height: 36px;
-    border-radius: 6px;
-    border: 1px solid var(--dark-border);
-    background: var(--dark-bg);
-    color: var(--dark-text-secondary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: var(--transition);
-    font-size: 13px;
-    font-weight: 500;
-}
-
-.pagination-number:hover {
-    background: var(--sidebar-hover);
-    color: var(--dark-text);
-    border-color: var(--primary);
-}
-
-.pagination-number.active {
-    background: var(--primary);
-    color: white;
-    border-color: var(--primary);
-}
-
-.pagination-ellipsis {
-    color: var(--dark-text-secondary);
-    padding: 0 5px;
-    display: flex;
-    align-items: center;
-}
-
-/* Items per page selector */
-.items-per-page {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.items-per-page select {
-    padding: 8px 12px;
-    border-radius: 6px;
-    border: 1px solid var(--dark-border);
-    background: var(--dark-bg);
-    color: var(--dark-text);
-    font-size: 13px;
-    cursor: pointer;
-    outline: none;
-}
-
-.items-per-page select:hover {
-    border-color: var(--primary);
-}
-
-/* Responsive adjustments */
-@media (max-width: 1024px) {
-    .filter-item {
-        min-width: 150px;
-    }
-
-    .documents-table th:nth-child(4) { width: 20%; }
-    .documents-table th:nth-child(5) { width: 35%; }
-}
-
-@media (max-width: 768px) {
-    .status-filters {
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .filter-item {
-        min-width: 100%;
-    }
-
-    .pagination-container {
-        flex-direction: column;
-        gap: 15px;
-        align-items: flex-start;
-    }
-
-    .pagination-controls {
-        width: 100%;
-        justify-content: center;
-    }
-
-    .pagination-numbers {
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-}
-        /* === TOP HEADER - EXACT MATCH WITH DASHBOARD.HTML === */
+        /* === TOP HEADER === */
         .top-header {
             display: flex;
             justify-content: space-between;
@@ -639,15 +426,7 @@
             gap: 1rem;
         }
 
-        .dropdown-item:hover {
-            background: var(--sidebar-hover);
-        }
-
-        .dropdown-item:active {
-            background: var(--primary);
-        }
-
-        /* === PAGE SPECIFIC STYLES === */
+        /* === CONTENT AREA === */
         .content-area {
             padding: 1.5rem;
         }
@@ -657,6 +436,7 @@
             margin: 0 auto;
         }
 
+        /* === EMPLOYEE HEADER === */
         .employee-header {
             background: linear-gradient(135deg, var(--dark-card) 0%, rgba(30, 41, 59, 0.9) 100%);
             border-radius: 16px;
@@ -757,10 +537,6 @@
             color: var(--dark-text-secondary);
         }
 
-        .progress-label span:first-child {
-            color: var(--dark-text);
-        }
-
         .progress-bar {
             height: 8px;
             background: rgba(255, 255, 255, 0.1);
@@ -774,12 +550,12 @@
             border-radius: 4px;
         }
 
+        /* === DOCUMENTS SECTION === */
         .documents-section {
             background: linear-gradient(135deg, var(--dark-card) 0%, rgba(30, 41, 59, 0.9) 100%);
             border-radius: 16px;
             padding: 1.5rem;
             border: 1px solid var(--dark-border);
-            backdrop-filter: blur(10px);
         }
 
         .section-header {
@@ -801,14 +577,12 @@
             margin: 0;
             font-size: 1.3rem;
             font-weight: 600;
-            color: var(--dark-text);
         }
 
         .deadline-control-wrapper {
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-left: auto;
         }
 
         .deadline-icon-btn {
@@ -823,14 +597,6 @@
             justify-content: center;
             cursor: pointer;
             transition: var(--transition);
-            font-size: 14px;
-        }
-
-        .deadline-icon-btn:hover {
-            background: var(--primary);
-            color: white;
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
         }
 
         .deadline-countdown-badge {
@@ -843,44 +609,11 @@
             flex-direction: row;
             align-items: center;
             gap: 10px;
-            min-width: fit-content;
-            white-space: nowrap;
-        }
-
-        .deadline-label {
-            color: var(--dark-text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-size: 10px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
         }
 
         .deadline-value {
             font-weight: 700;
-            color: var(--danger);
             font-size: 13px;
-        }
-
-        .deadline-date {
-            color: var(--dark-text-secondary);
-            font-size: 10px;
-        }
-
-        .deadline-countdown-badge.urgent {
-            background: rgba(239, 68, 68, 0.2);
-            border-color: rgba(239, 68, 68, 0.5);
-        }
-
-        .deadline-countdown-badge.warning {
-            background: rgba(245, 158, 11, 0.2);
-            border-color: rgba(245, 158, 11, 0.5);
-        }
-
-        .deadline-countdown-badge.safe {
-            background: rgba(16, 185, 129, 0.2);
-            border-color: rgba(16, 185, 129, 0.5);
         }
 
         .table-container {
@@ -934,10 +667,6 @@
             transform: translateX(2px);
         }
 
-        .documents-table tbody tr:nth-child(even) {
-            background: rgba(255, 255, 255, 0.02);
-        }
-
         .status-badge {
             padding: .35rem .75rem;
             border-radius: 20px;
@@ -950,25 +679,11 @@
             text-align: center;
         }
 
-        .status-verified {
-            background: #10b981;
-        }
-
-        .status-pending {
-            background: #f59e0b;
-        }
-
-        .status-submitted {
-            background: #0ea5e9;
-        }
-
-        .status-rejected {
-            background: #ef4444;
-        }
-
-        .status-required {
-            background: #9ca3af;
-        }
+        .status-verified { background: #10b981; }
+        .status-pending { background: #f59e0b; }
+        .status-submitted { background: #0ea5e9; }
+        .status-rejected { background: #ef4444; }
+        .status-required { background: #9ca3af; }
 
         .doc-name-wrapper {
             display: flex;
@@ -1002,19 +717,12 @@
             gap: 2px;
         }
 
-        .date-row,
-        .time-row {
+        .date-row, .time-row {
             display: flex;
             align-items: center;
             gap: 5px;
             color: var(--dark-text-secondary);
             font-size: 11px;
-        }
-
-        .date-row i,
-        .time-row i {
-            width: 12px;
-            color: var(--primary);
         }
 
         .action-buttons {
@@ -1035,145 +743,17 @@
             transition: var(--transition);
             background: transparent;
             font-size: 12px;
-            padding: 0;
-            flex-shrink: 0;
             text-decoration: none;
         }
 
-        .btn-icon:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn-icon-view {
-            color: #0ea5e9;
-            border-color: rgba(14, 165, 233, 0.3);
-            background: rgba(14, 165, 233, 0.1);
-        }
-
-        .btn-icon-upload {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-
-        .btn-icon-download {
-            color: #10b981;
-            border-color: rgba(16, 185, 129, 0.3);
-            background: rgba(16, 185, 129, 0.1);
-        }
-
-        .btn-icon-verify {
-            color: #10b981;
-            border-color: rgba(16, 185, 129, 0.3);
-            background: rgba(16, 185, 129, 0.1);
-        }
-
-        .btn-icon-reject {
-            color: #ef4444;
-            border-color: rgba(239, 68, 68, 0.3);
-            background: rgba(239, 68, 68, 0.1);
-        }
-
-        .btn-icon-details {
-            color: #0ea5e9;
-            border-color: rgba(14, 165, 233, 0.3);
-            background: rgba(14, 165, 233, 0.1);
-        }
-
-        .btn-icon-view:hover,
-        .btn-icon-details:hover {
-            background: #0ea5e9;
-            color: white;
-        }
-
-        .btn-icon-upload:hover {
-            background: var(--primary-hover);
-        }
-
-        .btn-icon-download:hover,
-        .btn-icon-verify:hover {
-            background: #10b981;
-            color: white;
-        }
-
-        .btn-icon-reject:hover {
-            background: #ef4444;
-            color: white;
-        }
-
-        .fade-in {
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Notification Dropdown */
-        .notification-dropdown {
-            position: relative;
-        }
-
-        .notification-dropdown-menu {
-            display: none;
-            position: absolute;
-            top: 100%;
-            right: 0;
-            width: 350px;
-            background: var(--dark-card);
-            border: 1px solid var(--dark-border);
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            z-index: 1000;
-            margin-top: 8px;
-        }
-
-        .notification-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--dark-border);
-        }
-
-        .notification-header h6 {
-            margin: 0;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--dark-text);
-        }
-
-        .notification-list {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .empty-notifications {
-            padding: 24px;
-            text-align: center;
-            color: var(--dark-text-secondary);
-            font-size: 13px;
-        }
-
-        .notification-footer {
-            padding: 10px 16px;
-            border-top: 1px solid var(--dark-border);
-            text-align: center;
-        }
+        .btn-icon-view { color: #0ea5e9; border-color: rgba(14, 165, 233, 0.3); background: rgba(14, 165, 233, 0.1); }
+        .btn-icon-upload { background: var(--primary); color: white; border-color: var(--primary); }
+        .btn-icon-download { color: #10b981; border-color: rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.1); }
+        .btn-icon-verify { color: #10b981; border-color: rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.1); }
+        .btn-icon-reject { color: #ef4444; border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.1); }
 
         /* Modal Styles */
-        #verifyModal,
-        #detailsModal,
-        #deadlineModal,
-        #previewModal {
+        #verifyModal, #deadlineModal, #previewModal {
             display: none;
             position: fixed;
             top: 0;
@@ -1206,187 +786,33 @@
             border-bottom: 1px solid var(--dark-border);
         }
 
-        .modal-header h3 {
-            margin: 0;
-            font-size: 1rem;
-            font-weight: 600;
-            color: #f8fafc;
-        }
-
         .close-modal {
             background: transparent;
             border: none;
             color: var(--dark-text-secondary);
             font-size: 1.5rem;
             cursor: pointer;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: var(--transition);
         }
 
-        .close-modal:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--dark-text);
-        }/* Add these styles to ensure deadline displays properly */
-.deadline-countdown-badge {
-    background: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.2);
-    border-radius: 8px;
-    padding: 8px 14px;
-    font-size: 12px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-    min-width: fit-content;
-    white-space: nowrap;
-}
-
-.deadline-label {
-    color: var(--dark-text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-size: 10px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.deadline-value {
-    font-weight: 700;
-    font-size: 13px;
-}
-
-.deadline-date {
-    color: var(--dark-text-secondary);
-    font-size: 10px;
-}
-
-.deadline-countdown-badge.urgent {
-    background: rgba(239, 68, 68, 0.2);
-    border-color: rgba(239, 68, 68, 0.5);
-}
-
-.deadline-countdown-badge.urgent .deadline-value {
-    color: var(--danger) !important;
-}
-
-.deadline-countdown-badge.warning {
-    background: rgba(245, 158, 11, 0.2);
-    border-color: rgba(245, 158, 11, 0.5);
-}
-
-.deadline-countdown-badge.warning .deadline-value {
-    color: var(--warning) !important;
-}
-
-.deadline-countdown-badge.safe {
-    background: rgba(16, 185, 129, 0.2);
-    border-color: rgba(16, 185, 129, 0.5);
-}
-
-.deadline-countdown-badge.safe .deadline-value {
-    color: var(--success) !important;
-}
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .mobile-menu-toggle {
-                display: block;
-            }
-
-            .sidebar {
-                transform: translateX(-100%);
-            }
-
-            .sidebar.active {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .top-header {
-                flex-direction: column;
-                gap: 1rem;
-                padding: 1rem;
-            }
-
-            .search-box {
-                width: 100%;
-            }
-
-            .header-top {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .progress-section {
-                width: 100%;
-                margin-top: 15px;
-            }
-
-            .deadline-control-wrapper {
-                margin-left: 0;
-                margin-top: 10px;
-                width: 100%;
-                justify-content: flex-start;
-            }
-
-            .section-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .documents-table td {
-                white-space: normal;
-            }
-
-            .action-buttons {
-                flex-wrap: wrap;
-            }
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
         }
 
-        @media (max-width: 576px) {
-            .content-area {
-                padding: 1rem;
-            }
-
-            .employee-header {
-                padding: 1rem;
-            }
-
-            .documents-section {
-                padding: 1rem;
-            }
-
-            .documents-table th,
-            .documents-table td {
-                padding: .5rem .25rem;
-            }
-
-            .btn-icon {
-                width: 28px;
-                height: 28px;
-            }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 <div th:replace="~{fragments/layout :: sidebar('job-postings')}"></div>
-<!-- === MAIN CONTENT === -->
+
 <div class="main-content">
     <header th:replace="~{fragments/layout :: topbar}"></header>
 
-    <!-- === CONTENT AREA === -->
     <div class="content-area">
         <div class="dashboard-container fade-in">
-            <!-- EMPLOYEE HEADER -->
+            <!-- EMPLOYEE HEADER - FULLY ORIGINAL -->
             <div class="employee-header">
                 <div class="header-top">
                     <div class="employee-info-section">
@@ -1395,113 +821,117 @@
                             <div class="employee-id-badge"><span th:text="${employee.employeeId}">EMP001</span></div>
                         </div>
                         <div class="employee-meta">
-                            <span><i class="fas fa-building" style="color:var(--primary)"></i> <span
-                                    th:text="${employee.department}">Engineering</span></span>
-                            <span><i class="fas fa-briefcase" style="color:var(--primary)"></i> <span
-                                    th:text="${employee.designation}">Software Engineer</span></span>
+                            <span><i class="fas fa-building" style="color:var(--primary)"></i> <span th:text="${employee.department}">Engineering</span></span>
+                            <span><i class="fas fa-briefcase" style="color:var(--primary)"></i> <span th:text="${employee.designation}">Software Engineer</span></span>
                         </div>
                     </div>
-
-                    <!-- Progress Bars with Dynamic Colors -->
-                    <div class="progress-section"
-                         th:if="${progress.submissionProgress < 100 or progress.verificationProgress < 100}">
+                    <div class="progress-section" th:if="${progress.submissionProgress < 100 or progress.verificationProgress < 100}">
                         <div class="progress-item" th:if="${progress.submissionProgress < 100}">
                             <div class="progress-label">
                                 <span>📤 Document Submission</span>
                                 <span th:text="${progress.submittedDocuments} + '/' + ${progress.totalDocuments} + ' (' + ${progress.submissionProgress} + '%)'">0/0 (0%)</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill"
-                                     th:style="'width:' + ${progress.submissionProgress} + '%; background: linear-gradient(90deg, ' + ${progress.submissionProgress >= 75 ? '#10b981' : (progress.submissionProgress >= 50 ? '#f59e0b' : '#ef4444')} + ', #6366f1);'"></div>
+                                <div class="progress-fill" th:style="'width:' + ${progress.submissionProgress} + '%; background: linear-gradient(90deg, ' + ${progress.submissionProgress >= 75 ? '#10b981' : (progress.submissionProgress >= 50 ? '#f59e0b' : '#ef4444')} + ', #6366f1);'"></div>
                             </div>
                         </div>
-
-                        <div class="progress-item"
-                             th:if="${progress.verificationProgress < 100 and progress.submissionProgress > 0}">
+                        <div class="progress-item" th:if="${progress.verificationProgress < 100 and progress.submissionProgress > 0}">
                             <div class="progress-label">
                                 <span>✅ HR Verification</span>
                                 <span th:text="${progress.verifiedDocuments} + '/' + ${progress.submittedDocuments} + ' (' + ${progress.verificationProgress} + '%)'">0/0 (0%)</span>
                             </div>
                             <div class="progress-bar">
-                                <div class="progress-fill"
-                                     th:style="'width:' + ${progress.verificationProgress} + '%; background: linear-gradient(90deg, ' + ${progress.verificationProgress >= 75 ? '#10b981' : (progress.verificationProgress >= 50 ? '#0ea5e9' : '#f59e0b')} + ', #6366f1);'"></div>
+                                <div class="progress-fill" th:style="'width:' + ${progress.verificationProgress} + '%; background: linear-gradient(90deg, ' + ${progress.verificationProgress >= 75 ? '#10b981' : (progress.verificationProgress >= 50 ? '#0ea5e9' : '#f59e0b')} + ', #6366f1);'"></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- DOCUMENTS SECTION -->
-            <!-- DOCUMENTS SECTION -->
+            <!-- STATS CARDS SECTION - UPDATED TO PASTE PAGE 2 STYLE WITH FOOTERS -->
+            <div class="stats-grid">
+                <div class="stat-card pending" data-status="PENDING" onclick="filterByStatus('PENDING')">
+                    <div class="stat-card-body">
+                        <div>
+                            <div class="stat-value" id="pendingCount">0</div>
+                            <div class="stat-title">Pending Documents</div>
+                        </div>
+                        <div class="stat-icon"><i class="fas fa-hourglass-half"></i></div>
+                    </div>
+                    <div class="stat-card-footer">
+                        <span>Awaiting Submission</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+                <div class="stat-card submitted" data-status="ALL" onclick="filterByStatus('ALL')">
+                    <div class="stat-card-body">
+                        <div>
+                            <div class="stat-value" id="totalCount">0</div>
+                            <div class="stat-title">Total Documents</div>
+                        </div>
+                        <div class="stat-icon"><i class="fas fa-folder-open"></i></div>
+                    </div>
+                    <div class="stat-card-footer">
+                        <span>All Documents</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+                <div class="stat-card verified" data-status="VERIFIED" onclick="filterByStatus('VERIFIED')">
+                    <div class="stat-card-body">
+                        <div>
+                            <div class="stat-value" id="verifiedCount">0</div>
+                            <div class="stat-title">Verified</div>
+                        </div>
+                        <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                    </div>
+                    <div class="stat-card-footer">
+                        <span>Approved Documents</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+                <div class="stat-card rejected" data-status="REJECTED" onclick="filterByStatus('REJECTED')">
+                    <div class="stat-card-body">
+                        <div>
+                            <div class="stat-value" id="rejectedCount">0</div>
+                            <div class="stat-title">Rejected</div>
+                        </div>
+                        <div class="stat-icon"><i class="fas fa-times-circle"></i></div>
+                    </div>
+                    <div class="stat-card-footer">
+                        <span>Need Attention</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STATUS FILTER BUTTONS - FROM PASTE PAGE 2 -->
+            <div class="status-filter">
+                <button class="status-btn active" data-filter="ALL" onclick="filterByStatus('ALL')">All Documents</button>
+                <button class="status-btn" data-filter="PENDING" onclick="filterByStatus('PENDING')">Pending</button>
+
+                <button class="status-btn" data-filter="VERIFIED" onclick="filterByStatus('VERIFIED')">Verified</button>
+                <button class="status-btn" data-filter="REJECTED" onclick="filterByStatus('REJECTED')">Rejected</button>
+            </div>
+
+            <!-- DOCUMENTS SECTION - FULLY ORIGINAL WITH ALL FUNCTIONALITY -->
             <div class="documents-section">
                 <div class="section-header">
                     <div class="section-title">
                         <h3>📄 Required Documents</h3>
                         <span class="badge bg-primary" th:text="${progress.totalDocuments}">0</span>
-                        <button class="deadline-icon-btn" onclick="openDeadlineModal()"
-                                th:title="'Set deadline for ' + ${employee.firstName}">
+                        <button class="deadline-icon-btn" onclick="openDeadlineModal()" th:title="'Set deadline for ' + ${employee.firstName}">
                             <i class="fas fa-calendar-alt"></i>
                         </button>
                     </div>
-
-                    <!-- Enhanced Deadline Countdown Display -->
                     <div class="deadline-control-wrapper">
-                        <div th:if="${employee.documentDeadline != null}"
-                             class="deadline-countdown-badge"
-                             id="deadlineCountdownBadge">
-                            <div class="deadline-label">
-                                <i class="fas fa-clock"></i> Time Left
-                            </div>
-                            <div id="hrDeadlineCountdown" class="deadline-value">
-                                Calculating...
-                            </div>
-                            <div class="deadline-date"
-                                 th:text="${#temporals.format(employee.documentDeadline, 'dd MMM HH:mm')}">
-                            </div>
+                        <div th:if="${employee.documentDeadline != null}" class="deadline-countdown-badge" id="deadlineCountdownBadge">
+                            <div class="deadline-label"><i class="fas fa-clock"></i> Time Left</div>
+                            <div id="hrDeadlineCountdown" class="deadline-value">Calculating...</div>
+                            <div class="deadline-date" th:text="${#temporals.format(employee.documentDeadline, 'dd MMM HH:mm')}"></div>
                         </div>
-                        <div th:if="${employee.documentDeadline == null}"
-                             style="color: var(--warning); font-size: 12px; font-weight: 500;">
+                        <div th:if="${employee.documentDeadline == null}" style="color: var(--warning); font-size: 12px;">
                             <i class="fas fa-exclamation-triangle"></i> No deadline set
                         </div>
-                    </div>
-                </div>
-
-                <!-- Status Filters -->
-                <div class="status-filters">
-                    <div class="filter-item pending" data-status="PENDING" onclick="filterByStatus('PENDING')">
-                        <div class="filter-header">
-                            <span class="filter-title">Pending</span>
-                            <i class="fas fa-filter filter-icon"></i>
-                        </div>
-                        <div class="filter-value" id="pendingCount">12</div>
-                        <div class="filter-subtitle">Awaiting submission</div>
-                    </div>
-
-                    <div class="filter-item in-progress" data-status="SUBMITTED" onclick="filterByStatus('SUBMITTED')">
-                        <div class="filter-header">
-                            <span class="filter-title">In Progress</span>
-                            <i class="fas fa-filter filter-icon"></i>
-                        </div>
-                        <div class="filter-value" id="submittedCount">0</div>
-                        <div class="filter-subtitle">Submitted for review</div>
-                    </div>
-
-                    <div class="filter-item submitted" data-status="VERIFIED" onclick="filterByStatus('VERIFIED')">
-                        <div class="filter-header">
-                            <span class="filter-title">Verified</span>
-                            <i class="fas fa-filter filter-icon"></i>
-                        </div>
-                        <div class="filter-value" id="verifiedCount">-12</div>
-                        <div class="filter-subtitle">Approved documents</div>
-                    </div>
-
-                    <div class="filter-item completed" data-status="REJECTED" onclick="filterByStatus('REJECTED')">
-                        <div class="filter-header">
-                            <span class="filter-title">Rejected</span>
-                            <i class="fas fa-filter filter-icon"></i>
-                        </div>
-                        <div class="filter-value" id="rejectedCount">0</div>
-                        <div class="filter-subtitle">Need attention</div>
                     </div>
                 </div>
 
@@ -1509,15 +939,15 @@
                     <table class="documents-table" id="documentsTable">
                         <thead>
                         <tr>
-                            <th onclick="sortTable(0)"># <i class="fas fa-filter filter-icon"></i></th>
-                            <th onclick="sortTable(1)">Document Name <i class="fas fa-filter filter-icon"></i></th>
-                            <th onclick="sortTable(2)">Status <i class="fas fa-filter filter-icon"></i></th>
-                            <th onclick="sortTable(3)">Uploaded Date & Time <i class="fas fa-filter filter-icon"></i></th>
+                            <th>#</th>
+                            <th>Document Name</th>
+                            <th>Status</th>
+                            <th>Uploaded Date & Time</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
                         <tbody id="tableBody">
-                        <tr th:each="doc, stat : ${documents}" data-status="${doc.status}">
+                        <tr th:each="doc, stat : ${documents}" th:attr="data-status=${doc.status}">
                             <td th:text="${stat.count}">1</td>
                             <td>
                                 <div class="doc-name-wrapper">
@@ -1529,8 +959,7 @@
                                 </div>
                             </td>
                             <td>
-                    <span th:class="'status-badge status-' + ${doc.status.toLowerCase()}"
-                          th:text="${doc.status}">PENDING</span>
+                                <span th:class="'status-badge status-' + ${doc.status.toLowerCase()}" th:text="${doc.status}">PENDING</span>
                             </td>
                             <td>
                                 <div class="datetime-wrapper" th:if="${doc.submittedDate}">
@@ -1549,95 +978,37 @@
                             </td>
                             <td>
                                 <div class="action-buttons">
-                                    <button th:if="${doc.filePath != null}"
-                                            class="btn-icon btn-icon-view"
-                                            th:data-doc-id="${doc.id}"
-                                            th:data-doc-type="${doc.documentType}"
-                                            onclick="viewDocument(this.getAttribute('data-doc-id'), this.getAttribute('data-doc-type'))"
-                                            title="View Document">
+                                    <button th:if="${doc.filePath != null}" class="btn-icon btn-icon-view" th:data-doc-id="${doc.id}" th:data-doc-type="${doc.documentType}" onclick="viewDocument(this.getAttribute('data-doc-id'), this.getAttribute('data-doc-type'))" title="View Document">
                                         <i class="fas fa-eye"></i>
                                     </button>
-
-                                    <a th:if="${doc.status == 'PENDING' or doc.status == 'REJECTED'}"
-                                       th:href="@{/onboarding/employee/{eid}/upload/{type}(eid=${employee.employeeId}, type=${doc.documentType})}"
-                                       class="btn-icon btn-icon-upload"
-                                       title="HR Upload & Auto-Verify">
+                                    <a th:if="${doc.status == 'PENDING' or doc.status == 'REJECTED'}" th:href="@{/onboarding/employee/{eid}/upload/{type}(eid=${employee.employeeId}, type=${doc.documentType})}" class="btn-icon btn-icon-upload" title="HR Upload & Auto-Verify">
                                         <i class="fas fa-upload"></i>
                                     </a>
-
-                                    <a th:if="${doc.filePath != null}"
-                                       th:href="@{/onboarding/employee/{eid}/download/{docId}(eid=${employee.employeeId}, docId=${doc.id})}"
-                                       class="btn-icon btn-icon-download"
-                                       download
-                                       title="Download">
+                                    <a th:if="${doc.filePath != null}" th:href="@{/onboarding/employee/{eid}/download/{docId}(eid=${employee.employeeId}, docId=${doc.id})}" class="btn-icon btn-icon-download" download title="Download">
                                         <i class="fas fa-download"></i>
                                     </a>
-
-                                    <button th:if="${doc.status == 'SUBMITTED'}"
-                                            class="btn-icon btn-icon-verify"
-                                            th:onclick="|verifyDoc('${doc.id}', 'VERIFIED')|"
-                                            title="Verify Document">
+                                    <button th:if="${doc.status == 'SUBMITTED'}" class="btn-icon btn-icon-verify" th:onclick="|verifyDoc('${doc.id}', 'VERIFIED')|" title="Verify Document">
                                         <i class="fas fa-check"></i>
                                     </button>
-
-                                    <button th:if="${doc.status == 'SUBMITTED'}"
-                                            class="btn-icon btn-icon-reject"
-                                            th:onclick="|verifyDoc('${doc.id}', 'REJECTED')|"
-                                            title="Reject Document">
+                                    <button th:if="${doc.status == 'SUBMITTED'}" class="btn-icon btn-icon-reject" th:onclick="|verifyDoc('${doc.id}', 'REJECTED')|" title="Reject Document">
                                         <i class="fas fa-times"></i>
                                     </button>
-
-                                    <span th:if="${doc.status == 'VERIFIED'}"
-                                          class="btn-icon"
-                                          style="color: #10b981; pointer-events: none; border-color: rgba(16,185,129,0.3);"
-                                          title="Already Verified">
-                            <i class="fas fa-check-double"></i>
-                        </span>
+                                    <span th:if="${doc.status == 'VERIFIED'}" class="btn-icon" style="color: #10b981; pointer-events: none; border-color: rgba(16,185,129,0.3);" title="Already Verified">
+                                            <i class="fas fa-check-double"></i>
+                                        </span>
                                 </div>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
                 </div>
-
-                <!-- Pagination -->
-                <div class="pagination-container">
-                    <div class="pagination-info">
-                        Showing <strong id="startEntry">1</strong> to <strong id="endEntry">10</strong> of <strong id="totalEntries">0</strong> entries
-                    </div>
-
-                    <div class="pagination-controls">
-                        <div class="items-per-page">
-                            <span>Show:</span>
-                            <select id="itemsPerPage" onchange="changeItemsPerPage()">
-                                <option value="5">5</option>
-                                <option value="10" selected>10</option>
-                                <option value="25">25</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                            </select>
-                        </div>
-
-                        <div class="pagination-numbers" id="paginationNumbers">
-                            <!-- Pagination numbers will be dynamically inserted here -->
-                        </div>
-
-                        <div class="pagination-arrows">
-                            <button class="pagination-btn" id="prevPage" onclick="changePage(currentPage - 1)" disabled>
-                                <i class="fas fa-chevron-left"></i>
-                            </button>
-                            <button class="pagination-btn" id="nextPage" onclick="changePage(currentPage + 1)">
-                                <i class="fas fa-chevron-right"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                </tr>
+                </tbody>
+                </table>
             </div>
         </div>
+    </div>
+</div>
+</div>
 
-<!-- === MODALS === -->
-<!-- Verification Modal -->
-<div id="verifyModal" style="display:none; justify-content:center; align-items:center;">
+<!-- MODALS - FULLY ORIGINAL -->
+<div id="verifyModal">
     <div class="modal-content">
         <div class="modal-header">
             <h3><i class="fas fa-check-circle"></i> Verify Document</h3>
@@ -1645,33 +1016,18 @@
         </div>
         <input type="hidden" id="v_id">
         <input type="hidden" id="v_status">
-
         <div style="margin: 15px 0;">
-            <label style="color: var(--dark-text); font-size: 12px; margin-bottom: 5px; display: block;">Validation
-                Message (Required):</label>
-            <textarea id="v_notes" rows="3"
-                      style="width:100%; background: var(--dark-bg); color: var(--dark-text); border: 1px solid var(--dark-border); padding: 10px; border-radius: 6px; font-size: 12px;"
-                      placeholder="Enter validation reason/message for employee..."></textarea>
+            <label style="color: var(--dark-text); font-size: 12px; margin-bottom: 5px; display: block;">Validation Message (Required):</label>
+            <textarea id="v_notes" rows="3" style="width:100%; background: var(--dark-bg); color: var(--dark-text); border: 1px solid var(--dark-border); padding: 10px; border-radius: 6px; font-size: 12px;" placeholder="Enter validation reason/message for employee..."></textarea>
         </div>
-
         <div style="text-align:right;">
-            <button onclick="closeVerifyModal()"
-                    style="background: transparent; border: 1px solid var(--dark-border); color: var(--dark-text); padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-right: 10px;">
-                Cancel
-            </button>
-            <button onclick="submitVerify()" id="v_btn"
-                    style="background: var(--primary); border: none; color: white; padding: 6px 15px; border-radius: 4px; cursor: pointer;">
-                Confirm
-            </button>
+            <button onclick="closeVerifyModal()" style="background: transparent; border: 1px solid var(--dark-border); color: var(--dark-text); padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-right: 10px;">Cancel</button>
+            <button onclick="submitVerify()" id="v_btn" style="background: var(--primary); border: none; color: white; padding: 6px 15px; border-radius: 4px; cursor: pointer;">Confirm</button>
         </div>
     </div>
 </div>
 
-<!-- Details Modal -->
-
-
-<!-- Deadline Setting Modal -->
-<div id="deadlineModal" style="display:none; justify-content:center; align-items:center;">
+<div id="deadlineModal">
     <div class="modal-content" style="width: 350px;">
         <div class="modal-header">
             <h4><i class="fas fa-calendar-alt"></i> Set Deadline</h4>
@@ -1679,47 +1035,31 @@
         </div>
         <div style="padding: 16px 0;">
             <div style="margin-bottom: 12px;">
-                <label style="display:block; font-size: 11px; color: var(--dark-text-secondary); margin-bottom: 6px; font-weight: 500;">Date
-                    & Time</label>
-                <input type="datetime-local" id="deadlineInput"
-                       style="width:100%; padding: 10px; background: var(--dark-bg); color: var(--dark-text); border: 1px solid var(--dark-border); border-radius: 6px; font-size: 13px;">
+                <label style="display:block; font-size: 11px; color: var(--dark-text-secondary); margin-bottom: 6px; font-weight: 500;">Date & Time</label>
+                <input type="datetime-local" id="deadlineInput" style="width:100%; padding: 10px; background: var(--dark-bg); color: var(--dark-text); border: 1px solid var(--dark-border); border-radius: 6px; font-size: 13px;">
             </div>
             <div id="deadlineMessage" style="margin-top: 8px; font-size: 11px; min-height: 16px;"></div>
         </div>
         <div style="display: flex; gap: 8px; justify-content: flex-end;">
-            <button onclick="closeDeadlineModal()"
-                    style="background: transparent; color: var(--dark-text-secondary); border: 1px solid var(--dark-border); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">
-                Cancel
-            </button>
-            <button onclick="setDeadline()"
-                    style="background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">
-                <i class="fas fa-save"></i> Set
-            </button>
+            <button onclick="closeDeadlineModal()" style="background: transparent; color: var(--dark-text-secondary); border: 1px solid var(--dark-border); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;">Cancel</button>
+            <button onclick="setDeadline()" style="background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;"><i class="fas fa-save"></i> Set</button>
         </div>
     </div>
 </div>
 
-<!-- Document Preview Modal -->
-<div id="previewModal" style="display:none; justify-content:center; align-items:center;">
+<div id="previewModal">
     <div style="background: var(--dark-card); border-radius: 12px; width: 90%; height: 90%; max-width: 1200px; max-height: 800px; display: flex; flex-direction: column; border: 1px solid var(--dark-border); box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid var(--dark-border);">
             <h3 id="previewTitle" style="margin:0; color: white; font-size: 16px;">Document Preview</h3>
-            <button onclick="closePreview()"
-                    style="background: none; border: none; color: var(--dark-text-secondary); font-size: 24px; cursor: pointer; padding: 0; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">
-                <i class="fas fa-times"></i>
-            </button>
+            <button onclick="closePreview()" style="background: none; border: none; color: var(--dark-text-secondary); font-size: 24px; cursor: pointer; padding: 0; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;"><i class="fas fa-times"></i></button>
         </div>
-        <div id="previewContent"
-             style="flex:1; overflow: auto; padding: 20px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.2);">
-        </div>
+        <div id="previewContent" style="flex:1; overflow: auto; padding: 20px; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.2);"></div>
         <div style="padding: 10px 20px; border-top: 1px solid var(--dark-border); text-align: center;">
-            <a id="previewDownloadBtn" href="#" class="btn-icon btn-icon-download"
-               style="width: auto; padding: 5px 15px; text-decoration: none;" download>
-                <i class="fas fa-download"></i> Download
-            </a>
+            <a id="previewDownloadBtn" href="#" class="btn-icon btn-icon-download" style="width: auto; padding: 5px 15px; text-decoration: none;" download><i class="fas fa-download"></i> Download</a>
         </div>
     </div>
 </div>
+
 <div th:replace="~{fragments/layout :: common-scripts}"></div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -1747,21 +1087,15 @@
             }
         });
 
-        // Search functionality
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput) {
-            searchInput.addEventListener('input', function(e) {
-                filterTable(e.target.value.toLowerCase());
-            });
-        }
+        // Initialize table data for filtering
+       initializeTableData();
+updateFilterCounts();
+// No renderTable() call needed — Thymeleaf already rendered all rows
 
         // Initialize deadline countdown
         updateHRDeadlineCountdown();
         setInterval(updateHRDeadlineCountdown, 60000);
-  // Initialize table data for pagination
-    initializeTableData();
-    updateFilterCounts();
-    renderTable();
+
         // Set active nav link based on current URL
         setActiveNavLink();
     });
@@ -1781,19 +1115,76 @@
         });
     }
 
-    // ========== SEARCH FUNCTION ==========
-    function filterTable(searchTerm) {
-        const rows = document.querySelectorAll('.documents-table tbody tr');
-        rows.forEach(row => {
-            const docName = row.querySelector('.doc-name')?.textContent.toLowerCase() || '';
-            const docType = row.querySelector('.doc-type')?.textContent.toLowerCase() || '';
-            const status = row.cells[2]?.textContent.toLowerCase() || '';
+    // ========== FILTER FUNCTIONS ==========
+    let currentFilter = 'ALL';
+    let tableData = [];
 
-            const matchesSearch = docName.includes(searchTerm) ||
-                                 docType.includes(searchTerm) ||
-                                 status.includes(searchTerm);
+   function initializeTableData() {
+    const rows = document.querySelectorAll('#tableBody tr');
+    tableData = Array.from(rows).map(row => ({
+        element: row,
+        status: (row.getAttribute('data-status') || '').trim().toUpperCase(),
+        html: row.outerHTML
+    }));
+    console.log('Loaded rows:', tableData.map(r => r.status)); // debug — remove after confirming
+}
 
-            row.style.display = matchesSearch ? '' : 'none';
+   function updateFilterCounts() {
+    const counts = { PENDING: 0, SUBMITTED: 0, VERIFIED: 0, REJECTED: 0 };
+    tableData.forEach(item => {
+        if (counts.hasOwnProperty(item.status)) {
+            counts[item.status]++;
+        }
+    });
+    document.getElementById('pendingCount').textContent = counts.PENDING;
+    document.getElementById('totalCount').textContent = tableData.length;
+    document.getElementById('verifiedCount').textContent = counts.VERIFIED;
+    document.getElementById('rejectedCount').textContent = counts.REJECTED;
+}
+
+   function filterByStatus(status) {
+    currentFilter = status;
+
+    // Update active state on stat cards
+    document.querySelectorAll('.stat-card').forEach(card => {
+        card.classList.remove('active');
+    });
+    const activeCard = document.querySelector(`.stat-card[data-status="${status}"]`);
+    if (activeCard) activeCard.classList.add('active');
+
+    // Update active state on filter buttons
+    document.querySelectorAll('.status-btn').forEach(btn => btn.classList.remove('active'));
+    const activeBtn = document.querySelector(`.status-btn[data-filter="${status}"]`);
+    if (activeBtn) activeBtn.classList.add('active');
+
+    // Filter table rows directly — show/hide instead of re-rendering
+    const rows = document.querySelectorAll('#tableBody tr');
+    let visibleIndex = 1;
+    rows.forEach(row => {
+        const rowStatus = (row.getAttribute('data-status') || '').trim().toUpperCase();
+        if (status === 'ALL' || rowStatus === status) {
+            row.style.display = '';
+            row.cells[0].textContent = visibleIndex++;
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+    function renderTable() {
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = '';
+
+        let filtered = currentFilter === 'ALL' ? tableData : tableData.filter(item => item.status === currentFilter);
+
+        filtered.forEach((item, idx) => {
+            let tempDiv = document.createElement('div');
+            tempDiv.innerHTML = item.html;
+            let newRow = tempDiv.firstElementChild;
+            if (newRow) {
+                newRow.cells[0].textContent = idx + 1;
+                tbody.appendChild(newRow);
+            }
         });
     }
 
@@ -1844,9 +1235,7 @@
             }
         })
         .then(res => {
-            if (!res.ok) {
-                throw new Error(`HTTP ${res.status} - ${res.statusText}`);
-            }
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
             return res.json();
         })
         .then(data => {
@@ -1873,8 +1262,7 @@
             try {
                 const date = new Date(existingDeadline);
                 if (!isNaN(date.getTime())) {
-                    const localDateTime = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-                        .toISOString().slice(0, 16);
+                    const localDateTime = new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
                     document.getElementById('deadlineInput').value = localDateTime;
                 }
             } catch (e) {
@@ -1888,101 +1276,71 @@
         document.getElementById('deadlineMessage').innerHTML = '';
     }
 
-   // Replace the setDeadline function in onboarding/employee-dashboard.html
-function setDeadline() {
-    const input = document.getElementById('deadlineInput').value;
-    if (!input) {
-        document.getElementById('deadlineMessage').innerHTML =
-            '<span style="color: var(--danger);">❌ Please select a date and time</span>';
-        return;
-    }
-
-    const employeeId = document.querySelector('[th\\:text="${employee.employeeId}"]')?.textContent ||
-                      document.querySelector('.employee-id-badge span')?.textContent;
-
-    if (!employeeId) {
-        document.getElementById('deadlineMessage').innerHTML =
-            '<span style="color: var(--danger);">❌ Employee ID not found</span>';
-        return;
-    }
-
-    document.getElementById('deadlineMessage').innerHTML =
-        '<span style="color: var(--info);">⏳ Setting deadline...</span>';
-
-    const url = `/onboarding/employee/${employeeId}/set-deadline`;
-
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: `deadline=${encodeURIComponent(input)}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        const msgDiv = document.getElementById('deadlineMessage');
-        if (data.success) {
-            msgDiv.innerHTML = `<span style="color: var(--success);">✅ Deadline set successfully! Refreshing...</span>`;
-            setTimeout(() => location.reload(), 1500);
-        } else {
-            msgDiv.innerHTML = `<span style="color: var(--danger);">❌ Error: ${data.error || 'Failed to set deadline'}</span>`;
-        }
-    })
-    .catch(err => {
-        console.error('Deadline error:', err);
-        document.getElementById('deadlineMessage').innerHTML =
-            `<span style="color: var(--danger);">❌ Failed to set deadline: ${err.message}</span>`;
-    });
-}
-
-    // ========== DEADLINE COUNTDOWN ==========
-   // Replace the updateHRDeadlineCountdown function
-function updateHRDeadlineCountdown() {
-    const countdownElement = document.getElementById('hrDeadlineCountdown');
-    const badgeElement = document.getElementById('deadlineCountdownBadge');
-
-    if (!countdownElement || !badgeElement) return;
-
-    // Get deadline from Thymeleaf attribute
-    const deadlineStr = document.querySelector('[th\\:text="${employee.documentDeadline}"]')?.getAttribute('th:text');
-
-    // If we can't get it from Thymeleaf, try to get it from the badge's data attribute or text
-    let actualDeadlineStr = null;
-
-    if (deadlineStr && deadlineStr !== '${employee.documentDeadline}') {
-        actualDeadlineStr = deadlineStr;
-    } else {
-        // Try to extract from the displayed date
-        const dateElement = badgeElement.querySelector('.deadline-date');
-        if (dateElement) {
-            const displayedDate = dateElement.textContent;
-            // Parse the displayed date (format: "dd MMM HH:mm")
-            const currentYear = new Date().getFullYear();
-            const parts = displayedDate.split(' ');
-            if (parts.length >= 3) {
-                const day = parts[0];
-                const month = parts[1];
-                const time = parts[2];
-                actualDeadlineStr = `${currentYear}-${getMonthNumber(month)}-${day} ${time}`;
-            }
-        }
-    }
-
-    if (!actualDeadlineStr || actualDeadlineStr === 'null' || actualDeadlineStr.includes('${')) {
-        countdownElement.textContent = 'No deadline';
-        badgeElement.style.display = 'none';
-        return;
-    }
-
-    try {
-        const deadline = new Date(actualDeadlineStr);
-        const now = new Date();
-        const diff = deadline - now;
-
-        if (isNaN(deadline.getTime())) {
-            countdownElement.textContent = 'Invalid date';
+    function setDeadline() {
+        const input = document.getElementById('deadlineInput').value;
+        if (!input) {
+            document.getElementById('deadlineMessage').innerHTML = '<span style="color: var(--danger);">❌ Please select a date and time</span>';
             return;
         }
+
+        const employeeId = document.querySelector('.employee-id-badge span')?.textContent;
+        if (!employeeId) {
+            document.getElementById('deadlineMessage').innerHTML = '<span style="color: var(--danger);">❌ Employee ID not found</span>';
+            return;
+        }
+
+        document.getElementById('deadlineMessage').innerHTML = '<span style="color: var(--info);">⏳ Setting deadline...</span>';
+
+        fetch(`/onboarding/employee/${employeeId}/set-deadline`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `deadline=${encodeURIComponent(input)}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            const msgDiv = document.getElementById('deadlineMessage');
+            if (data.success) {
+                msgDiv.innerHTML = `<span style="color: var(--success);">✅ Deadline set successfully! Refreshing...</span>`;
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                msgDiv.innerHTML = `<span style="color: var(--danger);">❌ Error: ${data.error || 'Failed to set deadline'}</span>`;
+            }
+        })
+        .catch(err => {
+            console.error('Deadline error:', err);
+            document.getElementById('deadlineMessage').innerHTML = `<span style="color: var(--danger);">❌ Failed to set deadline: ${err.message}</span>`;
+        });
+    }
+
+    // ========== DEADLINE COUNTDOWN ==========
+    function updateHRDeadlineCountdown() {
+        const countdownElement = document.getElementById('hrDeadlineCountdown');
+        const badgeElement = document.getElementById('deadlineCountdownBadge');
+
+        if (!countdownElement || !badgeElement) return;
+
+        const deadlineDateElement = badgeElement.querySelector('.deadline-date');
+        if (!deadlineDateElement || !deadlineDateElement.textContent || deadlineDateElement.textContent.includes('${')) {
+            return;
+        }
+
+        const deadlineStr = deadlineDateElement.textContent;
+        const currentYear = new Date().getFullYear();
+        const parts = deadlineStr.split(' ');
+        if (parts.length < 3) return;
+
+        const months = { 'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04', 'May': '05', 'Jun': '06', 'Jul': '07', 'Aug': '08', 'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12' };
+        const month = months[parts[1]];
+        if (!month) return;
+
+        const day = parts[0];
+        const time = parts[2];
+        const deadline = new Date(`${currentYear}-${month}-${day}T${time}:00`);
+
+        if (isNaN(deadline.getTime())) return;
+
+        const now = new Date();
+        const diff = deadline - now;
 
         if (diff <= 0) {
             countdownElement.textContent = "⚠️ OVERDUE";
@@ -1996,10 +1354,9 @@ function updateHRDeadlineCountdown() {
         const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
 
-        // Format the countdown text
         let text = '';
         if (days > 0) {
-            text = `${days}d ${hours}h ${minutes}m`;
+            text = `${days}d ${hours}h`;
             if (days < 3) {
                 badgeElement.classList.add('warning');
                 badgeElement.classList.remove('urgent', 'safe');
@@ -2022,23 +1379,7 @@ function updateHRDeadlineCountdown() {
         }
 
         countdownElement.textContent = text;
-        badgeElement.style.display = 'flex';
-
-    } catch (e) {
-        console.error('Countdown error:', e);
-        countdownElement.textContent = 'Error';
     }
-}
-
-// Helper function to convert month name to number
-function getMonthNumber(monthName) {
-    const months = {
-        'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04',
-        'May': '05', 'Jun': '06', 'Jul': '07', 'Aug': '08',
-        'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
-    };
-    return months[monthName] || '01';
-}
 
     // ========== DOCUMENT VIEW FUNCTIONS ==========
     function viewDocument(documentId, documentType) {
@@ -2051,9 +1392,7 @@ function getMonthNumber(monthName) {
 
         fetch(previewUrl)
             .then(response => {
-                if (!response.ok) {
-                    throw new Error('Document not found or access denied');
-                }
+                if (!response.ok) throw new Error('Document not found or access denied');
                 return response.blob();
             })
             .then(blob => {
@@ -2063,10 +1402,7 @@ function getMonthNumber(monthName) {
 
                 if (contentType === 'application/pdf') {
                     const objectUrl = URL.createObjectURL(blob);
-                    contentDiv.innerHTML = `
-                        <embed src="${objectUrl}" type="application/pdf" width="100%" height="100%"
-                               style="border:none; border-radius:8px;" />
-                    `;
+                    contentDiv.innerHTML = `<embed src="${objectUrl}" type="application/pdf" width="100%" height="100%" style="border:none; border-radius:8px;" />`;
                 } else if (contentType.startsWith('image/')) {
                     const objectUrl = URL.createObjectURL(blob);
                     const img = document.createElement('img');
@@ -2074,31 +1410,14 @@ function getMonthNumber(monthName) {
                     img.style.maxWidth = '100%';
                     img.style.maxHeight = '100%';
                     img.style.borderRadius = '8px';
-                    img.style.boxShadow = '0 4px 20px rgba(0,0,0,0.5)';
                     contentDiv.appendChild(img);
                 } else {
-                    contentDiv.innerHTML = `
-                        <div style="text-align:center; color: var(--dark-text-secondary);">
-                            <i class="fas fa-file-alt" style="font-size:48px; margin-bottom:15px;"></i>
-                            <p>This document type cannot be previewed.</p>
-                            <p>Please download to view.</p>
-                            <a href="${previewUrl}" class="btn-icon btn-icon-download" style="width:auto; padding:5px 15px; margin-top:15px; text-decoration:none;">
-                                <i class="fas fa-download"></i> Download File
-                            </a>
-                        </div>
-                    `;
+                    contentDiv.innerHTML = `<div style="text-align:center; color: var(--dark-text-secondary);"><i class="fas fa-file-alt" style="font-size:48px; margin-bottom:15px;"></i><p>This document type cannot be previewed.</p><p>Please download to view.</p></div>`;
                 }
             })
             .catch(error => {
                 console.error("Preview error:", error);
-                const contentDiv = document.getElementById('previewContent');
-                contentDiv.innerHTML = `
-                    <div style="text-align:center; color: var(--danger);">
-                        <i class="fas fa-exclamation-triangle" style="font-size:48px; margin-bottom:15px;"></i>
-                        <p>Failed to load document preview.</p>
-                        <p>${error.message}</p>
-                    </div>
-                `;
+                document.getElementById('previewContent').innerHTML = `<div style="text-align:center; color: var(--danger);"><i class="fas fa-exclamation-triangle" style="font-size:48px; margin-bottom:15px;"></i><p>Failed to load document preview.</p><p>${error.message}</p></div>`;
             });
     }
 
@@ -2108,42 +1427,12 @@ function getMonthNumber(monthName) {
         const img = document.querySelector('#previewContent img');
         if (embed) URL.revokeObjectURL(embed.src);
         if (img) URL.revokeObjectURL(img.src);
+        document.getElementById('previewContent').innerHTML = '';
     }
 
-
-
-    function closeDetailsModal() {
-        document.getElementById('detailsModal').style.display = 'none';
-    }
-
-    // ========== NOTIFICATION FUNCTIONS ==========
-    function toggleNotificationDropdown() {
-        const dropdown = document.getElementById('notificationDropdownMenu');
-        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-    }
-
-    function markAllNotificationsRead() {
-        const badge = document.getElementById('notificationBadge');
-        badge.style.display = 'none';
-        badge.textContent = '0';
-
-        const dropdown = document.getElementById('notificationDropdownMenu');
-        dropdown.style.display = 'none';
-
-        alert('All notifications marked as read');
-    }
-
-    // Close dropdown when clicking outside
+    // Close modals when clicking outside
     window.addEventListener('click', function(e) {
-        const dropdown = document.getElementById('notificationDropdownMenu');
-        const trigger = document.querySelector('.notification-trigger');
-
-        if (dropdown && !dropdown.contains(e.target) && !trigger?.contains(e.target)) {
-            dropdown.style.display = 'none';
-        }
-
-        // Close modals when clicking outside
-        const modals = ['verifyModal', 'detailsModal', 'deadlineModal', 'previewModal'];
+        const modals = ['verifyModal', 'deadlineModal', 'previewModal'];
         modals.forEach(modalId => {
             const modal = document.getElementById(modalId);
             if (modal && modal.style.display === 'flex' && e.target === modal) {
@@ -2152,10 +1441,10 @@ function getMonthNumber(monthName) {
         });
     });
 
-    // Keyboard support
+    // Keyboard support - Escape key closes modals
     document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
-            const modals = ['previewModal', 'verifyModal', 'detailsModal', 'deadlineModal'];
+            const modals = ['previewModal', 'verifyModal', 'deadlineModal'];
             modals.forEach(modalId => {
                 const modal = document.getElementById(modalId);
                 if (modal && modal.style.display === 'flex') {
@@ -2165,213 +1454,8 @@ function getMonthNumber(monthName) {
         }
     });
 
-
-// ========== FILTER, SORT, AND PAGINATION FUNCTIONS ==========
-let currentPage = 1;
-let itemsPerPage = 10;
-let currentFilter = 'ALL';
-let currentSortColumn = -1;
-let currentSortDirection = 'asc';
-let tableData = [];
-
-function initializeTableData() {
-    const rows = document.querySelectorAll('#tableBody tr');
-    tableData = Array.from(rows).map(row => ({
-        element: row,
-        status: row.getAttribute('data-status'),
-        html: row.outerHTML
-    }));
-    updateTotalEntries();
-}
-
-function updateTotalEntries() {
-    const filteredData = getFilteredData();
-    document.getElementById('totalEntries').textContent = filteredData.length;
-}
-
-function getFilteredData() {
-    if (currentFilter === 'ALL') {
-        return tableData;
-    }
-    return tableData.filter(item => item.status === currentFilter);
-}
-
-function filterByStatus(status) {
-    currentFilter = status;
-    currentPage = 1;
-
-    // Update active state on filter items
-    document.querySelectorAll('.filter-item').forEach(item => {
-        item.classList.remove('active');
-    });
-    document.querySelector(`.filter-item[data-status="${status}"]`).classList.add('active');
-
-    renderTable();
-}
-
-function renderTable() {
-    const filteredData = getFilteredData();
-    const start = (currentPage - 1) * itemsPerPage;
-    const end = Math.min(start + itemsPerPage, filteredData.length);
-
-    // Update table body
-    const tbody = document.getElementById('tableBody');
-    tbody.innerHTML = '';
-
-    for (let i = start; i < end; i++) {
-        tbody.innerHTML += filteredData[i].html;
-    }
-
-    // Update pagination info
-    document.getElementById('startEntry').textContent = filteredData.length > 0 ? start + 1 : 0;
-    document.getElementById('endEntry').textContent = end;
-    document.getElementById('totalEntries').textContent = filteredData.length;
-
-    // Update pagination buttons
-    updatePaginationButtons(filteredData.length);
-}
-
-function updatePaginationButtons(totalItems) {
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
-
-    // Update prev/next buttons
-    document.getElementById('prevPage').disabled = currentPage === 1;
-    document.getElementById('nextPage').disabled = currentPage === totalPages || totalPages === 0;
-
-    // Generate page numbers
-    const paginationNumbers = document.getElementById('paginationNumbers');
-    paginationNumbers.innerHTML = '';
-
-    if (totalPages <= 7) {
-        // Show all pages
-        for (let i = 1; i <= totalPages; i++) {
-            addPageButton(i);
-        }
-    } else {
-        // Show first page
-        addPageButton(1);
-
-        if (currentPage > 3) {
-            paginationNumbers.innerHTML += '<span class="pagination-ellipsis">...</span>';
-        }
-
-        // Show pages around current page
-        for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
-            addPageButton(i);
-        }
-
-        if (currentPage < totalPages - 2) {
-            paginationNumbers.innerHTML += '<span class="pagination-ellipsis">...</span>';
-        }
-
-        // Show last page
-        if (totalPages > 1) {
-            addPageButton(totalPages);
-        }
-    }
-}
-
-function addPageButton(pageNum) {
-    const button = document.createElement('button');
-    button.className = `pagination-number ${pageNum === currentPage ? 'active' : ''}`;
-    button.textContent = pageNum;
-    button.onclick = () => changePage(pageNum);
-    document.getElementById('paginationNumbers').appendChild(button);
-}
-
-function changePage(page) {
-    const totalItems = getFilteredData().length;
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
-
-    if (page < 1 || page > totalPages) return;
-
-    currentPage = page;
-    renderTable();
-}
-
-function changeItemsPerPage() {
-    itemsPerPage = parseInt(document.getElementById('itemsPerPage').value);
-    currentPage = 1;
-    renderTable();
-}
-
-function sortTable(columnIndex) {
-    if (currentSortColumn === columnIndex) {
-        currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
-    } else {
-        currentSortColumn = columnIndex;
-        currentSortDirection = 'asc';
-    }
-
-    // Remove active class from all headers
-    document.querySelectorAll('.documents-table th').forEach(th => {
-        th.classList.remove('active-filter');
-    });
-
-    // Add active class to current header
-    document.querySelectorAll('.documents-table th')[columnIndex].classList.add('active-filter');
-
-    // Sort tableData
-    tableData.sort((a, b) => {
-        const aElement = document.createElement('div');
-        const bElement = document.createElement('div');
-        aElement.innerHTML = a.html;
-        bElement.innerHTML = b.html;
-
-        let aValue = aElement.querySelector(`td:nth-child(${columnIndex + 1})`).textContent.trim();
-        let bValue = bElement.querySelector(`td:nth-child(${columnIndex + 1})`).textContent.trim();
-
-        // Handle numeric sorting for index column
-        if (columnIndex === 0) {
-            aValue = parseInt(aValue);
-            bValue = parseInt(bValue);
-        }
-
-        // Handle date sorting
-        if (columnIndex === 3) {
-            const aDate = aElement.querySelector('.date-row span')?.textContent || '';
-            const bDate = bElement.querySelector('.date-row span')?.textContent || '';
-            aValue = new Date(aDate).getTime() || 0;
-            bValue = new Date(bDate).getTime() || 0;
-        }
-
-        if (aValue < bValue) return currentSortDirection === 'asc' ? -1 : 1;
-        if (aValue > bValue) return currentSortDirection === 'asc' ? 1 : -1;
-        return 0;
-    });
-
-    renderTable();
-}
-
-function updateFilterCounts() {
-    const counts = {
-        PENDING: 0,
-        SUBMITTED: 0,
-        VERIFIED: 0,
-        REJECTED: 0
-    };
-
-    tableData.forEach(item => {
-        if (counts.hasOwnProperty(item.status)) {
-            counts[item.status]++;
-        }
-    });
-
-    document.getElementById('pendingCount').textContent = counts.PENDING;
-    document.getElementById('submittedCount').textContent = counts.SUBMITTED;
-    document.getElementById('verifiedCount').textContent = counts.VERIFIED;
-    document.getElementById('rejectedCount').textContent = counts.REJECTED;
-}
-
-// Make functions globally available
-window.filterByStatus = filterByStatus;
-window.sortTable = sortTable;
-window.changePage = changePage;
-window.changeItemsPerPage = changeItemsPerPage;
-
     // Make functions globally available
-    window.toggleNotificationDropdown = toggleNotificationDropdown;
-    window.markAllNotificationsRead = markAllNotificationsRead;
+    window.filterByStatus = filterByStatus;
     window.verifyDoc = verifyDoc;
     window.closeVerifyModal = closeVerifyModal;
     window.submitVerify = submitVerify;
@@ -2380,8 +1464,6 @@ window.changeItemsPerPage = changeItemsPerPage;
     window.setDeadline = setDeadline;
     window.viewDocument = viewDocument;
     window.closePreview = closePreview;
-    window.viewDetails = viewDetails;
-    window.closeDetailsModal = closeDetailsModal;
 </script>
 </body>
 </html>

@@ -428,15 +428,14 @@
             overflow-x: auto;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        .table-header {
-            padding: 1.25rem 1.5rem;
-            border-bottom: 1px solid var(--dark-border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--dark-card);
-            min-width: 1100px;
-        }
+      .table-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--dark-border);
+    display: flex;
+    justify-content: space-between; /* Pushes title to left, buttons to right */
+    align-items: center; /* Vertical center alignment */
+    background: var(--dark-card);
+}
         .table-title {
             font-size: 1.1rem;
             font-weight: 600;
@@ -477,309 +476,94 @@
             color: var(--dark-text-secondary);
             white-space: nowrap;
         }
-/* Top Header Icons Layout - ADD/UPDATE THIS */
-/* ===== TOP HEADER ALIGNMENT FIXES - ADD THESE ===== */
+
+    /* === TOP HEADER STYLES (MATCHING INTERVIEW PAGE) === */
 .top-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     background: var(--dark-card);
     border-bottom: 1px solid var(--dark-border);
-    padding: 0.75rem 1.5rem;
+    padding: .75rem 1.5rem;
     position: sticky;
     top: 0;
-    z-index: 99;
-    min-width: 900px;
+    z-index: 100;
 }
 
-/* Left section - Company branding */
-.top-header::before {
-    content: "MENTIS | Menti's IT Solutions";
-    color: var(--dark-text);
-    font-weight: 600;
-    font-size: 1rem;
-    white-space: nowrap;
-}
-
-/* Center - Search */
 .top-header .search-box {
     position: relative;
     width: 300px;
-    margin: 0 auto;
-    display: block !important;
 }
 
 .top-header .search-box input {
     width: 100%;
-    padding: 0.5rem 1rem 0.5rem 2.5rem;
-    background: var(--dark-bg);
-    border: 1px solid var(--dark-border);
+    padding: .6rem .75rem .6rem 2.5rem;
     border-radius: 8px;
+    border: 1px solid var(--dark-border);
+    background: var(--dark-bg);
     color: var(--dark-text);
-    font-size: 0.875rem;
+    font-size: .875rem;
+    transition: var(--transition);
 }
 
 .top-header .search-box i {
     position: absolute;
-    left: 1rem;
+    left: .75rem;
     top: 50%;
     transform: translateY(-50%);
     color: var(--dark-text-secondary);
 }
 
-/* Right section - User profile */
-.top-header .top-header-actions {
-    display: flex !important;
-    align-items: center;
-    gap: 1rem;
-}
-
-/* Hide notification and announcement icons if not needed */
-.top-header .notification-dropdown,
-.top-header .icon-btn:not(.user-profile-menu .icon-btn) {
-    display: none !important;
-}
-
-/* Style user profile to show just "Srikanth" with avatar */
-.top-header .user-profile-menu .dropdown button {
-    background: transparent !important;
-    border: none !important;
-    color: var(--dark-text) !important;
-    padding: 0.25rem 0.5rem !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 0.5rem !important;
-}
-
-.top-header .user-profile-menu .dropdown button::after {
-    display: inline-block !important;
-    margin-left: 0.5rem !important;
-    vertical-align: middle !important;
-    content: "" !important;
-    border-top: 0.3em solid !important;
-    border-right: 0.3em solid transparent !important;
-    border-bottom: 0 !important;
-    border-left: 0.3em solid transparent !important;
-}
-
-.top-header .user-profile-menu .avatar-sm {
-    width: 32px !important;
-    height: 32px !important;
-    background: var(--primary) !important;
-    border-radius: 8px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    color: white !important;
-    font-weight: 600 !important;
-    font-size: 0.9rem !important;
-}
-
-/* Ensure dropdown menu positions correctly */
-.top-header .dropdown-menu {
-    right: 0 !important;
-    left: auto !important;
-    margin-top: 0.5rem !important;
-}
-
-/* Header left section with mobile toggle and title */
-.header-left {
+.top-header-actions {
     display: flex;
     align-items: center;
     gap: 1rem;
 }
 
-/* Header right section with search, notifications and profile */
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-}
-
-/* Search box styling */
-.header-search {
-    position: relative;
-    width: 280px;
-}
-
-.header-search input {
-    width: 100%;
-    padding: 0.5rem 1rem 0.5rem 2.5rem;
+.icon-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
     background: var(--dark-bg);
     border: 1px solid var(--dark-border);
-    border-radius: 8px;
-    color: var(--dark-text);
-    font-size: 0.875rem;
-    transition: var(--transition);
-}
-
-.header-search input:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-}
-
-.header-search i {
-    position: absolute;
-    left: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
     color: var(--dark-text-secondary);
-    font-size: 0.875rem;
-}
-
-/* Notification icon */
-.notification-wrapper {
-    position: relative;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 6px;
-    transition: var(--transition);
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
 }
 
-.notification-wrapper:hover {
-    background: var(--sidebar-hover);
-}
-
-.notification-wrapper i {
-    font-size: 1.2rem;
-    color: var(--dark-text-secondary);
-}
-
-.notification-wrapper:hover i {
-    color: var(--primary);
+.icon-btn:hover {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+    transform: translateY(-2px);
 }
 
 .notification-badge {
     position: absolute;
-    top: 0;
-    right: 0;
+    top: -5px;
+    right: -5px;
     background: var(--danger);
-    color: white;
-    font-size: 0.6rem;
-    font-weight: 600;
-    padding: 0.15rem 0.35rem;
-    border-radius: 4px;
-    min-width: 18px;
-    text-align: center;
-}
-
-/* User profile */
-.user-profile {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    cursor: pointer;
-    padding: 0.25rem 0.5rem;
-    border-radius: 6px;
-    transition: var(--transition);
-}
-
-.user-profile:hover {
-    background: var(--sidebar-hover);
-}
-
-.user-avatar {
-    width: 36px;
-    height: 36px;
-    background: var(--primary);
-    border-radius: 8px;
+    color: #fff;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 0.65rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
     font-weight: 600;
-    font-size: 0.9rem;
-    text-transform: uppercase;
 }
 
-.user-details {
-    display: flex;
-    flex-direction: column;
-}
-
-.user-name {
-    color: var(--dark-text);
-    font-weight: 500;
-    font-size: 0.9rem;
-    line-height: 1.4;
-}
-
-.user-role {
-    color: var(--dark-text-secondary);
-    font-size: 0.7rem;
-}
-
-.user-profile i.fa-chevron-down {
-    color: var(--dark-text-secondary);
-    font-size: 0.75rem;
-    margin-left: 0.25rem;
-}
-
-/* Mobile menu toggle positioning */
-.mobile-menu-toggle {
-    display: none;
-    background: none;
-    border: none;
-    color: var(--dark-text);
-    font-size: 1.5rem;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 6px;
-    transition: var(--transition);
-}
-
-.mobile-menu-toggle:hover {
-    background: var(--sidebar-hover);
-    color: var(--primary);
-}
-
-/* Page title */
-.page-title h5 {
-    margin: 0;
-    font-weight: 600;
-    color: var(--dark-text);
-}
-
-.page-title small {
-    color: var(--dark-text-secondary);
-    font-size: 0.75rem;
-}
-
-/* Responsive adjustments */
-@media (max-width: 992px) {
-    .header-search {
-        width: 220px;
-    }
-
-    .user-details {
-        display: none;
-    }
-
-    .user-profile i.fa-chevron-down {
-        display: none;
-    }
-}
-
-@media (max-width: 768px) {
-    .mobile-menu-toggle {
-        display: block;
-    }
-
-    .header-search {
-        width: 180px;
-    }
-
-    .page-title {
-        display: none;
-    }
-
-    .notification-wrapper {
-        padding: 0.35rem;
-    }
+.user-profile-menu .dropdown button {
+    background: var(--dark-bg) !important;
+    border: 1px solid var(--dark-border) !important;
+    color: var(--dark-text) !important;
+    padding: 0.5rem 1rem !important;
+    border-radius: 8px !important;
 }
         /* Status Badge */
         .status-badge {
@@ -1047,6 +831,118 @@
             cursor: help;
         }
 
+        .filter-container-box {
+    background: var(--dark-card);
+    border: 1px solid var(--dark-border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.filter-row-top {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+}
+
+.filter-row-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+/* Date Input Styled like your image */
+.date-input-wrapper {
+    position: relative;
+    width: 200px;
+    flex-shrink: 0;
+}
+
+.date-input-wrapper input[type="date"] {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    background: var(--dark-bg);
+    border: 1px solid var(--dark-border);
+    border-radius: 8px;
+    color: var(--dark-text);
+    font-size: 0.9rem;
+    outline: none;
+    transition: var(--transition);
+    appearance: none; /* Removes default styling in some browsers */
+}
+
+/* Target the native Calendar Icon and make it white */
+#localDateFilter::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(1); /* This turns the black icon into white */
+    opacity: 0.8;
+    transition: var(--transition);
+}
+
+
+
+
+
+/* Force Table Header to align with the grid */
+.table-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--dark-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--dark-card);
+}
+
+/* Pagination Styling */
+.pagination-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    background: var(--dark-card);
+    border-top: 1px solid var(--dark-border);
+}
+
+.pagination-info {
+    color: var(--dark-text-secondary);
+    font-size: 0.875rem;
+}
+
+.pagination-controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.page-btn {
+    padding: 0.4rem 0.8rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--dark-border);
+    border-radius: 6px;
+    color: var(--dark-text-secondary);
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.85rem;
+}
+
+.page-btn:hover:not(:disabled) {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: rgba(99, 102, 241, 0.1);
+}
+
+.page-btn.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+.page-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
         .presence-tooltip:hover::after {
             content: attr(data-status);
             position: absolute;
@@ -1156,58 +1052,39 @@
             </div>
         </div>
         <!-- Filter Section -->
-        <div class="filter-section">
-            <div class="filter-title">
-                <i class="fas fa-filter"></i>
-                Filter Employees
+        <!-- Updated Filter Section -->
+        <div class="filter-container-box">
+            <div class="filter-title" style="margin-bottom: 1rem; font-weight: 600; color: var(--dark-text);">
+                <i class="fas fa-filter" style="color: var(--primary);"></i> Employee Filters
             </div>
 
-            <form method="get" action="/dashboard/hr/employees" style="margin-bottom: 1rem;">
-                <div class="filter-buttons">
-                    <button type="submit" name="filter" value="all" class="filter-btn"
-                            th:classappend="${currentFilter == 'all' or currentFilter == null} ? 'active' : ''">
-                        All Employees
-                    </button>
-                    <button type="submit" name="filter" value="last3months" class="filter-btn"
-                            th:classappend="${currentFilter == 'last3months'} ? 'active' : ''">
-                        <i class="fas fa-calendar"></i> Last 3 Months
-                    </button>
-                    <button type="submit" name="filter" value="last6months" class="filter-btn"
-                            th:classappend="${currentFilter == 'last6months'} ? 'active' : ''">
-                        <i class="fas fa-calendar-alt"></i> Last 6 Months
-                    </button>
-                    <button type="submit" name="filter" value="active" class="filter-btn"
-                            th:classappend="${currentFilter == 'active'} ? 'active' : ''">
-                        <i class="fas fa-user-check"></i> Active
-                    </button>
-                    <button type="submit" name="filter" value="onboarding" class="filter-btn"
-                            th:classappend="${currentFilter == 'onboarding'} ? 'active' : ''">
-                        <i class="fas fa-clipboard-check"></i> Onboarding
-                    </button>
+            <!-- Top Row: Status Buttons -->
+            <div class="filter-row-top">
+                <button type="button" class="filter-btn active" data-filter="all">All Employees</button>
+                <button type="button" class="filter-btn" data-filter="online">
+                    <span class="presence-dot active" style="width: 8px; height: 8px; margin-right: 5px; animation: none;"></span> Online
+                </button>
+                <button type="button" class="filter-btn" data-filter="offline">
+                    <span class="presence-dot offline" style="width: 8px; height: 8px; margin-right: 5px; animation: none;"></span> Offline
+                </button>
+                <button type="button" class="filter-btn" data-filter="onboarding">
+                    <i class="fas fa-clipboard-check"></i> Onboarding
+                </button>
+            </div>
+
+            <!-- Bottom Row: Search (Left) and Date (Right) -->
+            <div class="filter-row-bottom">
+                <div class="search-box" style="flex-grow: 1; margin-top: 0;">
+                    <input type="text" class="search-input" id="localSearchInput" placeholder="Search by name, ID, or email...">
                 </div>
 
-                <div class="search-box">
-                    <input type="text" class="search-input" name="search"
-                           th:value="${currentSearch != null ? currentSearch : ''}"
-                           placeholder="Search by name, ID, or email...">
-                </div>
-            </form>
+                <div class="date-input-wrapper">
+                    <input type="date" id="localDateFilter">
 
-            <!-- Active Filter Info -->
-            <div th:if="${currentFilter != null and currentFilter != 'all'}"
-                 style="font-size: 0.85rem; color: var(--primary); padding: 0.5rem; background: rgba(99, 102, 241, 0.1); border-radius: 6px;">
-                <i class="fas fa-info-circle"></i>
-                Showing:
-                <span th:if="${currentFilter == 'last3months'}">Last 3 Months</span>
-                <span th:if="${currentFilter == 'last6months'}">Last 6 Months</span>
-                <span th:if="${currentFilter == 'active'}">Active Employees</span>
-                <span th:if="${currentFilter == 'onboarding'}">Onboarding Employees</span>
-                <span th:if="${currentSearch != null and currentSearch != ''}"> • Search: "<span th:text="${currentSearch}"></span>"</span>
-                <a href="/dashboard/hr/employees" style="margin-left: 10px; color: var(--danger); text-decoration: none;">
-                    <i class="fas fa-times"></i> Clear
-                </a>
+                </div>
             </div>
         </div>
+
 
         <!-- Employee Table -->
         <div class="table-container">
@@ -1215,25 +1092,22 @@
                 <div class="table-title">
                     Employee Directory
                     <span style="font-size: 0.9rem; color: var(--dark-text-secondary); margin-left: 0.5rem;">
-                        (Showing <span th:text="${employees != null ? employees.size() : 0}">0</span> employees)
-                    </span>
+            (Showing <span th:text="${employees != null ? employees.size() : 0}">0</span> results)
+        </span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 1rem;">
-                    <div style="font-size: 0.85rem; color: var(--dark-text-secondary);">
-                        <i class="fas fa-sort-amount-down"></i> Sorted by: Newest First
-                    </div>
                     <button id="refreshPresenceBtn" onclick="refreshPresence()"
-                            style="background: transparent; border: none; color: var(--primary); cursor: pointer; padding: 0.5rem; border-radius: 4px;"
-                            title="Refresh Presence Status">
-                        <i class="fas fa-sync-alt"></i>
+                            style="background: rgba(99, 102, 241, 0.1); border: 1px solid var(--dark-border); color: var(--primary); cursor: pointer; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.8rem;"
+                            title="Refresh Status">
+                        <i class="fas fa-sync-alt"></i> Sync Status
                     </button>
                     <span style="font-size: 0.75rem; color: var(--dark-text-secondary);">
-                        Last update: <span id="lastPresenceUpdate">Just now</span>
-                    </span>
+            Updated: <span id="lastPresenceUpdate">Just now</span>
+        </span>
                 </div>
-            </div>
 
-            <div th:if="${employees != null and !employees.isEmpty()}">
+</div>
+                <div th:if="${employees != null and !employees.isEmpty()}">
                 <table class="employee-table">
                     <thead>
                     <tr>
@@ -1307,7 +1181,18 @@
                     </tr>
                     </tbody>
                 </table>
-            </div>
+                <!-- Add this block below the </table> but inside the table-container div -->
+                <div class="pagination-wrapper" id="paginationWrapper">
+                    <div class="pagination-info" id="paginationInfo">
+                        Showing 1 to 8 of 0 employees
+                    </div>
+                    <div class="pagination-controls" id="paginationControls">
+                        <!-- Buttons will be injected here by JS -->
+                    </div>
+                </div>
+            </div> <!-- table-container -->
+
+        </div>
 
             <!-- Empty State -->
             <div th:if="${employees == null or employees.isEmpty()}" class="empty-state">
@@ -1406,6 +1291,11 @@
                 sidebar.classList.remove('active');
             }
         });
+const datePicker = document.getElementById('localDateFilter');
+if (datePicker) {
+    const today = new Date().toISOString().split('T')[0];
+    datePicker.setAttribute('max', today);
+}
 
         // Initialize features
         initLeaveBadge();
@@ -1639,6 +1529,22 @@ function filterByStatus(status) {
             showingSpan.text(' (Showing ' + Math.max(0, showingCount - 1) + ' employees)');
         }
     }
+// Auto-submit the form when the search input is cleared
+const searchInput = document.querySelector('.search-input');
+if (searchInput) {
+    searchInput.addEventListener('search', function() {
+        if (this.value === "") this.form.submit();
+    });
+}
+
+// Logic for the Date Picker interaction
+const dateFilter = document.getElementById('dateFilter');
+if (dateFilter) {
+    dateFilter.addEventListener('change', function() {
+        // You can add a loading spinner here if needed
+        console.log("Date selected: " + this.value);
+    });
+}
 
     // Refresh statistics from server
     function refreshStatistics() {
@@ -1656,7 +1562,114 @@ function filterByStatus(status) {
             }
         });
     }
+  document.addEventListener('DOMContentLoaded', function() {
+    const rowsPerPage = 8;
+    let currentPage = 1;
+    let currentActiveFilter = 'all';
 
+    const tableBody = document.querySelector('.employee-table tbody');
+    const allRows = Array.from(tableBody.querySelectorAll('tr'));
+
+    function filterAndPaginate() {
+        const searchTerm = document.getElementById('localSearchInput').value.toLowerCase();
+        const dateTerm = document.getElementById('localDateFilter').value; // YYYY-MM-DD
+
+        const filteredRows = allRows.filter(row => {
+            // 1. Text Search Logic
+            const textMatch = row.textContent.toLowerCase().includes(searchTerm);
+
+            // 2. Status Filter Logic (Checks the dot class)
+            const dot = row.querySelector('.presence-dot');
+            let statusMatch = false;
+            if (currentActiveFilter === 'all') statusMatch = true;
+            else if (currentActiveFilter === 'online') statusMatch = dot.classList.contains('active');
+            else if (currentActiveFilter === 'offline') statusMatch = (dot.classList.contains('offline') || dot.classList.contains('checked-out'));
+            else if (currentActiveFilter === 'onboarding') statusMatch = row.textContent.toLowerCase().includes('onboarding');
+
+            // 3. Date Filter Logic (Checks the 'Joined Date' column - 7th column)
+            const dateCell = row.cells[6].textContent.trim(); // dd MMM yyyy
+            // Simple check: if dateTerm is set, we try to match (This requires consistent formatting)
+            const dateMatch = !dateTerm || row.textContent.includes(dateTerm.split('-')[0]); // Basic year/partial match
+
+            return textMatch && statusMatch;
+        });
+
+        renderPage(filteredRows);
+    }
+
+    function renderPage(rows) {
+        const totalRows = rows.length;
+        const totalPages = Math.ceil(totalRows / rowsPerPage) || 1;
+        if (currentPage > totalPages) currentPage = totalPages;
+
+        const start = (currentPage - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+
+        // Hide everyone, then show the slice
+        allRows.forEach(r => r.style.display = 'none');
+        rows.slice(start, end).forEach(r => r.style.display = '');
+
+        // Update Pagination Info
+        const info = document.getElementById('paginationInfo');
+        info.textContent = `Showing ${totalRows === 0 ? 0 : start + 1} to ${Math.min(end, totalRows)} of ${totalRows} results`;
+
+        // Update Buttons
+        renderControls(totalPages, rows);
+    }
+
+    function renderControls(totalPages, rows) {
+        const container = document.getElementById('paginationControls');
+        container.innerHTML = '';
+
+        const prev = document.createElement('button');
+        prev.className = 'page-btn';
+        prev.innerHTML = '<i class="fas fa-chevron-left"></i>';
+        prev.disabled = currentPage === 1;
+        prev.onclick = () => { currentPage--; renderPage(rows); };
+        container.appendChild(prev);
+
+        for (let i = 1; i <= totalPages; i++) {
+            const btn = document.createElement('button');
+            btn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+            btn.textContent = i;
+            btn.onclick = () => { currentPage = i; renderPage(rows); };
+            container.appendChild(btn);
+        }
+
+        const next = document.createElement('button');
+        next.className = 'page-btn';
+        next.innerHTML = '<i class="fas fa-chevron-right"></i>';
+        next.disabled = currentPage === totalPages;
+        next.onclick = () => { currentPage++; renderPage(rows); };
+        container.appendChild(next);
+
+        document.getElementById('paginationWrapper').style.display = rows.length > rowsPerPage ? 'flex' : 'none';
+    }
+
+    // Event Listeners
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            currentActiveFilter = this.dataset.filter;
+            currentPage = 1;
+            filterAndPaginate();
+        });
+    });
+
+    document.getElementById('localSearchInput').addEventListener('input', () => {
+        currentPage = 1;
+        filterAndPaginate();
+    });
+
+    document.getElementById('localDateFilter').addEventListener('change', () => {
+        currentPage = 1;
+        filterAndPaginate();
+    });
+
+    // Initial Load
+    filterAndPaginate();
+});
     // ========== ALERT FUNCTIONS ==========
     function showAlert(type, message) {
         const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';

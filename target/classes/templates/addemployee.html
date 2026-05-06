@@ -2416,8 +2416,17 @@
     tomorrow.setDate(tomorrow.getDate() + 1);
     document.getElementById('startDate').valueAsDate = tomorrow;
 
-    const today = new Date();
-    document.getElementById('dateOfBirth').max = today.toISOString().split('T')[0];
+   const today = new Date();
+
+// Max date: exactly 18 years ago (user must be at least 18)
+const maxDOB = new Date(today);
+maxDOB.setFullYear(maxDOB.getFullYear() - 18);
+document.getElementById('dateOfBirth').max = maxDOB.toISOString().split('T')[0];
+
+// Min date: 100 years ago (reasonable upper age limit)
+const minDOB = new Date(today);
+minDOB.setFullYear(minDOB.getFullYear() - 100);
+document.getElementById('dateOfBirth').min = minDOB.toISOString().split('T')[0];
 
     loadDepartments(); // Dynamically load departments
     initDepartmentListeners();
@@ -2910,6 +2919,23 @@ function handlePrefillData() {
                 return false;
             }
         }
+// 18+ validation for date of birth
+if (field.id === 'dateOfBirth' && field.value) {
+    const dob = new Date(field.value);
+    const today = new Date();
+    const minAge = new Date(today);
+    minAge.setFullYear(minAge.getFullYear() - 18);
+
+    if (dob > minAge) {
+        field.classList.add('is-invalid');
+        const error = document.createElement('div');
+        error.className = 'error-message';
+        error.textContent = 'Employee must be at least 18 years old';
+        field.parentNode.appendChild(error);
+        return false;
+    }
+}
+
 
         return true;
     }
