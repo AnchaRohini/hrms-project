@@ -1,15 +1,9 @@
 package com.mentis.hrms.dto;
 
 import com.mentis.hrms.model.Announcement;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class AnnouncementDTO {
 
     private Long id;
@@ -28,11 +22,68 @@ public class AnnouncementDTO {
     private LocalDateTime expiresAt;
     private Boolean isPinned;
 
+    // ===== CONSTRUCTORS =====
+    public AnnouncementDTO() {}
+
+    public AnnouncementDTO(Long id, String title, String description, String type,
+                           String announcementType, String createdBy, LocalDateTime createdAt,
+                           LocalDateTime expiryDate, Boolean isActive, String category,
+                           String priority, String targetAudience, String createdByName,
+                           LocalDateTime expiresAt, Boolean isPinned) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.type = type;
+        this.announcementType = announcementType;
+        this.createdBy = createdBy;
+        this.createdAt = createdAt;
+        this.expiryDate = expiryDate;
+        this.isActive = isActive;
+        this.category = category;
+        this.priority = priority;
+        this.targetAudience = targetAudience;
+        this.createdByName = createdByName;
+        this.expiresAt = expiresAt;
+        this.isPinned = isPinned;
+    }
+
+    // ===== GETTERS =====
+    public Long getId() { return id; }
+    public String getTitle() { return title; }
+    public String getDescription() { return description; }
+    public String getType() { return type; }
+    public String getAnnouncementType() { return announcementType; }
+    public String getCreatedBy() { return createdBy; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public LocalDateTime getExpiryDate() { return expiryDate; }
+    public Boolean getIsActive() { return isActive; }
+    public String getCategory() { return category; }
+    public String getPriority() { return priority; }
+    public String getTargetAudience() { return targetAudience; }
+    public String getCreatedByName() { return createdByName; }
+    public LocalDateTime getExpiresAt() { return expiresAt; }
+    public Boolean getIsPinned() { return isPinned; }
+
+    // ===== SETTERS =====
+    public void setId(Long id) { this.id = id; }
+    public void setTitle(String title) { this.title = title; }
+    public void setDescription(String description) { this.description = description; }
+    public void setType(String type) { this.type = type; }
+    public void setAnnouncementType(String announcementType) { this.announcementType = announcementType; }
+    public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setExpiryDate(LocalDateTime expiryDate) { this.expiryDate = expiryDate; }
+    public void setIsActive(Boolean isActive) { this.isActive = isActive; }
+    public void setCategory(String category) { this.category = category; }
+    public void setPriority(String priority) { this.priority = priority; }
+    public void setTargetAudience(String targetAudience) { this.targetAudience = targetAudience; }
+    public void setCreatedByName(String createdByName) { this.createdByName = createdByName; }
+    public void setExpiresAt(LocalDateTime expiresAt) { this.expiresAt = expiresAt; }
+    public void setIsPinned(Boolean isPinned) { this.isPinned = isPinned; }
+
     // ===== MAPPER: Entity → DTO =====
     public static AnnouncementDTO fromEntity(Announcement announcement) {
-        if (announcement == null) {
-            return null;
-        }
+        if (announcement == null) return null;
 
         AnnouncementDTO dto = new AnnouncementDTO();
         dto.setId(announcement.getId());
@@ -50,7 +101,6 @@ public class AnnouncementDTO {
         dto.setCreatedByName(announcement.getCreatedByName());
         dto.setExpiresAt(announcement.getExpiresAt());
         dto.setIsPinned(announcement.getIsPinned() != null ? announcement.getIsPinned() : false);
-
         return dto;
     }
 
@@ -87,32 +137,29 @@ public class AnnouncementDTO {
         announcement.setCreatedByName(this.createdByName);
         announcement.setExpiresAt(this.expiresAt);
         announcement.setIsPinned(this.isPinned != null ? this.isPinned : false);
-
         return announcement;
     }
 
-    // ===== HELPER METHODS (For backward compatibility) =====
-    public String getContent() {
-        return this.description;
-    }
-
-    public void setContent(String content) {
-        this.description = content;
-    }
+    // ===== HELPER METHODS =====
+    public String getContent() { return this.description; }
+    public void setContent(String content) { this.description = content; }
 
     public String getStatus() {
-        return this.isActive ? "ACTIVE" : "INACTIVE";
+        return (this.isActive != null && this.isActive) ? "ACTIVE" : "INACTIVE";
     }
 
     public String getFormattedDate() {
         if (this.createdAt == null) return "Not set";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        return this.createdAt.format(formatter);
+        return this.createdAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
     public String getFormattedExpiryDate() {
         if (this.expiresAt == null) return "No expiry";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        return this.expiresAt.format(formatter);
+        return this.expiresAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+    }
+
+    @Override
+    public String toString() {
+        return "AnnouncementDTO{id=" + id + ", title='" + title + "', type='" + type + "', isActive=" + isActive + "}";
     }
 }

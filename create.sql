@@ -11002,3 +11002,105 @@
        add constraint FK30a9ynu6nrlu4kx335fxv6nq8 
        foreign key (employee_id) 
        references employees;
+
+    alter table attendance 
+       modify column employee_id varchar(255) not null;
+
+    alter table attendance 
+       modify column total_working_hours varchar(255);
+
+    alter table designations 
+       modify column description varchar(255);
+
+    alter table employees 
+       modify column date_of_birth date;
+
+    alter table employees 
+       modify column start_date date;
+
+    alter table holidays 
+       modify column created_by varchar(255);
+
+    alter table holidays 
+       modify column holiday_type varchar(255) not null;
+
+    alter table jobs 
+       modify column application_instructions varchar(255);
+
+    alter table jobs 
+       modify column description varchar(2000);
+
+    alter table jobs 
+       modify column requirements varchar(2000);
+
+    alter table leave_balance 
+       modify column remaining_days float(53);
+
+    alter table leave_balance 
+       modify column used_days float(53) not null;
+
+    alter table leave_requests 
+       modify column approved_by varchar(255);
+
+    alter table leave_requests 
+       modify column employee_id varchar(255) not null;
+
+    alter table leave_requests 
+       modify column total_days float(53);
+
+    alter table locations 
+       modify column address varchar(500);
+
+    alter table locations 
+       modify column city varchar(255);
+
+    alter table locations 
+       modify column country varchar(255);
+
+    alter table locations 
+       modify column location_type varchar(255);
+
+    alter table locations 
+       modify column phone varchar(255);
+
+    alter table locations 
+       modify column state varchar(255);
+
+    alter table locations 
+       modify column zip_code varchar(255);
+
+    alter table notifications 
+       modify column recipient_id varchar(255) not null;
+
+    alter table notifications 
+       modify column recipient_type varchar(255) not null;
+
+    alter table notifications 
+       modify column reference_id varchar(255);
+
+    alter table notifications 
+       modify column reference_type varchar(255);
+
+    alter table notifications 
+       modify column sender varchar(255);
+
+    alter table notifications 
+       modify column title varchar(255) not null;
+
+    alter table notifications 
+       modify column type varchar(255) not null;
+
+    alter table offer_letters 
+       modify column employee_id varchar(255);
+
+    alter table role_permissions 
+       modify column access_level varchar(255);
+
+    alter table role_permissions 
+       modify column feature_name varchar(255);
+
+    alter table role_permissions 
+       modify column module_name varchar(255);
+
+    alter table role_permissions 
+       modify column role_name varchar(255);
