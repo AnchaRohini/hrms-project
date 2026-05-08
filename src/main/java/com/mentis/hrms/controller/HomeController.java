@@ -24,7 +24,7 @@ public class HomeController {
 
     @GetMapping("/")
     public String showRoot() {
-        return "redirect:/candidate/login";
+        return "redirect:/home";
     }
 
     @GetMapping("/home")

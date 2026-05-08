@@ -6151,3 +6151,484 @@ org.springframework.web.servlet.resource.NoResourceFoundException: No static res
 2026-05-08 16:07:23 - o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
 2026-05-08 16:07:23 - com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
 2026-05-08 16:07:23 - com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-05-08 16:46:25 - c.mentis.hrms.HrmsProjectApplication - Starting HrmsProjectApplication using Java 25.0.2 with PID 4592 (C:\gitproject\target\classes started by admiin in C:\gitproject)
+2026-05-08 16:46:25 - c.mentis.hrms.HrmsProjectApplication - Running with Spring Boot v3.5.0, Spring v6.2.7
+2026-05-08 16:46:25 - c.mentis.hrms.HrmsProjectApplication - No active profile set, falling back to 1 default profile: "default"
+2026-05-08 16:46:25 - o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-08 16:46:26 - o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 86 ms. Found 16 JPA repository interfaces.
+2026-05-08 16:46:26 - o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-05-08 16:46:26 - o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-05-08 16:46:26 - o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.41]
+2026-05-08 16:46:26 - o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-05-08 16:46:26 - o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1425 ms
+2026-05-08 16:46:26 - com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-05-08 16:46:29 - com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@6870cfac
+2026-05-08 16:46:29 - com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-05-08 16:46:29 - o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-05-08 16:46:29 - org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.15.Final
+2026-05-08 16:46:29 - o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-05-08 16:46:29 - o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-08 16:46:30 - org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-08 16:46:30 - o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.22
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-05-08 16:46:31 - o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-08 16:46:31 - org.hibernate.SQL - 
+    alter table employees 
+       modify column role enum ('EMPLOYEE','HR','HR_MANAGER','SUPER_ADMIN') not null
+2026-05-08 16:46:37 - o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-08 16:46:41 - c.m.h.c.AnnouncementSchemaInitializer - Announcement schema verified successfully
+2026-05-08 16:46:41 - o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-05-08 16:46:43 - o.s.m.s.b.SimpleBrokerMessageHandler - Starting...
+2026-05-08 16:46:43 - o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@2c0e260]]
+2026-05-08 16:46:43 - o.s.m.s.b.SimpleBrokerMessageHandler - Started.
+2026-05-08 16:46:43 - o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-05-08 16:46:43 - c.mentis.hrms.HrmsProjectApplication - Started HrmsProjectApplication in 18.675 seconds (process running for 19.117)
+2026-05-08 16:46:43 - c.m.hrms.service.AnnouncementService - === DEACTIVATING EXPIRED ANNOUNCEMENTS ===
+2026-05-08 16:46:43 - org.hibernate.SQL - 
+    select
+        a1_0.id,
+        a1_0.announcement_type,
+        a1_0.category,
+        a1_0.created_at,
+        a1_0.created_by,
+        a1_0.created_by_name,
+        a1_0.description,
+        a1_0.expires_at,
+        a1_0.expiry_date,
+        a1_0.is_active,
+        a1_0.is_pinned,
+        a1_0.priority,
+        a1_0.target_audience,
+        a1_0.title,
+        a1_0.type 
+    from
+        announcements a1_0 
+    where
+        a1_0.type=? 
+        and a1_0.expires_at<? 
+        and a1_0.is_active=1
+2026-05-08 16:46:43 - c.m.hrms.service.AnnouncementService - ✅ Deactivated 0 expired announcements
+2026-05-08 16:46:44 - org.hibernate.SQL - 
+    select
+        count(*) 
+    from
+        departments d1_0
+2026-05-08 16:46:45 - org.hibernate.SQL - 
+    select
+        count(*) 
+    from
+        jobs j1_0
+2026-05-08 16:46:46 - org.hibernate.SQL - 
+    select
+        count(*) 
+    from
+        document_checklists dc1_0
+2026-05-08 16:46:46 - c.m.h.s.DocumentChecklistSeeder - 📄 Document checklist already exists with 20 items
+2026-05-08 16:46:51 - o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-05-08 16:46:51 - o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-05-08 16:46:51 - o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2026-05-08 16:47:25 - org.hibernate.SQL - 
+    select
+        j1_0.id,
+        j1_0.active,
+        j1_0.application_deadline,
+        j1_0.application_instructions,
+        j1_0.department,
+        j1_0.description,
+        j1_0.experience_level,
+        j1_0.location_id,
+        j1_0.job_type,
+        j1_0.location,
+        j1_0.posted_date,
+        j1_0.requirements,
+        j1_0.salary_range,
+        j1_0.title 
+    from
+        jobs j1_0 
+    where
+        j1_0.active
+2026-05-08 16:47:25 - org.hibernate.SQL - 
+    select
+        r1_0.job_id,
+        r1_0.responsibility 
+    from
+        job_responsibilities r1_0 
+    where
+        r1_0.job_id=?
+2026-05-08 16:47:25 - org.hibernate.SQL - 
+    select
+        rl1_0.job_id,
+        rl1_0.requirement 
+    from
+        job_requirements rl1_0 
+    where
+        rl1_0.job_id=?
+2026-05-08 16:47:25 - org.hibernate.SQL - 
+    select
+        r1_0.job_id,
+        r1_0.responsibility 
+    from
+        job_responsibilities r1_0 
+    where
+        r1_0.job_id=?
+2026-05-08 16:47:26 - org.hibernate.SQL - 
+    select
+        rl1_0.job_id,
+        rl1_0.requirement 
+    from
+        job_requirements rl1_0 
+    where
+        rl1_0.job_id=?
+2026-05-08 16:47:26 - org.hibernate.SQL - 
+    select
+        r1_0.job_id,
+        r1_0.responsibility 
+    from
+        job_responsibilities r1_0 
+    where
+        r1_0.job_id=?
+2026-05-08 16:47:26 - org.hibernate.SQL - 
+    select
+        rl1_0.job_id,
+        rl1_0.requirement 
+    from
+        job_requirements rl1_0 
+    where
+        rl1_0.job_id=?
+2026-05-08 16:47:26 - c.m.hrms.controller.HomeController - Loaded 3 active jobs for home page
+2026-05-08 16:47:27 - c.m.h.e.GlobalExceptionHandler - General exception at /favicon.ico: No static resource favicon.ico.
+org.springframework.web.servlet.resource.NoResourceFoundException: No static resource favicon.ico.
+	at org.springframework.web.servlet.resource.ResourceHttpRequestHandler.handleRequest(ResourceHttpRequestHandler.java:585)
+	at org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter.handle(HttpRequestHandlerAdapter.java:52)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:903)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:564)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.servlet.resource.ResourceUrlEncodingFilter.doFilter(ResourceUrlEncodingFilter.java:66)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:116)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:398)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1740)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1189)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:658)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+2026-05-08 16:47:43 - o.s.w.s.c.WebSocketMessageBrokerStats - WebSocketSession[0 current WS(0)-HttpStream(0)-HttpPoll(0), 0 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(0)-CONNECTED(0)-DISCONNECT(0)], stompBrokerRelay[null], inboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], outboundChannel[pool size = 0, active threads = 0, queued tasks = 0, completed tasks = 0], sockJsScheduler[pool size = 7, active threads = 1, queued tasks = 5, completed tasks = 1]
+2026-05-08 16:50:00 - org.hibernate.SQL - 
+    select
+        e1_0.id,
+        e1_0.active,
+        e1_0.address,
+        e1_0.address_type,
+        e1_0.city,
+        e1_0.country,
+        e1_0.created_date,
+        e1_0.credentials_created,
+        e1_0.currency,
+        e1_0.date_of_birth,
+        e1_0.deadline_final_sent,
+        e1_0.deadline_warning_sent,
+        e1_0.department,
+        e1_0.designation,
+        e1_0.document_deadline,
+        e1_0.email,
+        e1_0.emergency_contact,
+        e1_0.employee_id,
+        e1_0.employee_name,
+        e1_0.employment_type,
+        e1_0.first_name,
+        e1_0.gender,
+        e1_0.is_active,
+        e1_0.last_name,
+        e1_0.last_presence_update,
+        e1_0.linkedin,
+        e1_0.manager,
+        e1_0.onboarding_completed_date,
+        e1_0.onboarding_start_date,
+        e1_0.onboarding_status,
+        e1_0.password,
+        e1_0.pay_frequency,
+        e1_0.permanent_address,
+        e1_0.permanent_city,
+        e1_0.permanent_country,
+        e1_0.permanent_state,
+        e1_0.permanent_zip_code,
+        e1_0.personal_email,
+        e1_0.phone,
+        e1_0.presence_status,
+        e1_0.profile_color,
+        e1_0.profile_picture,
+        e1_0.reset_token,
+        e1_0.residential_address,
+        e1_0.residential_city,
+        e1_0.residential_country,
+        e1_0.residential_state,
+        e1_0.residential_zip_code,
+        e1_0.role,
+        e1_0.salary,
+        e1_0.start_date,
+        e1_0.state,
+        e1_0.status,
+        e1_0.submitted_documents,
+        e1_0.token_expiry,
+        e1_0.total_documents,
+        e1_0.updated_date,
+        e1_0.verified_documents,
+        e1_0.work_location,
+        e1_0.work_type,
+        e1_0.zip_code 
+    from
+        employees e1_0 
+    where
+        e1_0.document_deadline is not null 
+        and e1_0.onboarding_status in (?, ?, ?, ?)
+2026-05-08 16:50:49 - o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-05-08 16:50:49 - o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-05-08 16:50:49 - o.s.m.s.b.SimpleBrokerMessageHandler - Stopping...
+2026-05-08 16:50:49 - o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@2c0e260]]
+2026-05-08 16:50:49 - o.s.m.s.b.SimpleBrokerMessageHandler - Stopped.
+2026-05-08 16:50:49 - o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-05-08 16:50:49 - com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-05-08 16:50:49 - com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-05-08 16:51:16 - c.mentis.hrms.HrmsProjectApplication - Starting HrmsProjectApplication using Java 25.0.2 with PID 24700 (C:\gitproject\target\classes started by admiin in C:\gitproject)
+2026-05-08 16:51:16 - c.mentis.hrms.HrmsProjectApplication - Running with Spring Boot v3.5.0, Spring v6.2.7
+2026-05-08 16:51:16 - c.mentis.hrms.HrmsProjectApplication - No active profile set, falling back to 1 default profile: "default"
+2026-05-08 16:51:17 - o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-08 16:51:17 - o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 82 ms. Found 16 JPA repository interfaces.
+2026-05-08 16:51:18 - o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-05-08 16:51:18 - o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-05-08 16:51:18 - o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.41]
+2026-05-08 16:51:18 - o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-05-08 16:51:18 - o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1479 ms
+2026-05-08 16:51:18 - com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-05-08 16:51:20 - com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@6629643d
+2026-05-08 16:51:20 - com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-05-08 16:51:21 - o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-05-08 16:51:21 - org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.15.Final
+2026-05-08 16:51:21 - o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-05-08 16:51:21 - o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-08 16:51:21 - org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-08 16:51:21 - o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.22
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-05-08 16:51:22 - o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-08 16:51:23 - org.hibernate.SQL - 
+    alter table employees 
+       modify column role enum ('EMPLOYEE','HR','HR_MANAGER','SUPER_ADMIN') not null
+2026-05-08 16:51:29 - o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-08 16:51:33 - c.m.h.c.AnnouncementSchemaInitializer - Announcement schema verified successfully
+2026-05-08 16:51:34 - o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-05-08 16:51:39 - o.s.m.s.b.SimpleBrokerMessageHandler - Starting...
+2026-05-08 16:51:39 - o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@732ed73]]
+2026-05-08 16:51:39 - o.s.m.s.b.SimpleBrokerMessageHandler - Started.
+2026-05-08 16:51:39 - o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-05-08 16:51:39 - c.mentis.hrms.HrmsProjectApplication - Started HrmsProjectApplication in 23.392 seconds (process running for 23.804)
+2026-05-08 16:51:40 - c.m.hrms.service.AnnouncementService - === DEACTIVATING EXPIRED ANNOUNCEMENTS ===
+2026-05-08 16:51:40 - org.hibernate.SQL - 
+    select
+        a1_0.id,
+        a1_0.announcement_type,
+        a1_0.category,
+        a1_0.created_at,
+        a1_0.created_by,
+        a1_0.created_by_name,
+        a1_0.description,
+        a1_0.expires_at,
+        a1_0.expiry_date,
+        a1_0.is_active,
+        a1_0.is_pinned,
+        a1_0.priority,
+        a1_0.target_audience,
+        a1_0.title,
+        a1_0.type 
+    from
+        announcements a1_0 
+    where
+        a1_0.type=? 
+        and a1_0.expires_at<? 
+        and a1_0.is_active=1
+2026-05-08 16:51:40 - org.hibernate.SQL - 
+    select
+        count(*) 
+    from
+        document_checklists dc1_0
+2026-05-08 16:51:40 - c.m.h.s.DocumentChecklistSeeder - 📄 Document checklist already exists with 20 items
+2026-05-08 16:51:40 - c.m.hrms.service.AnnouncementService - ✅ Deactivated 0 expired announcements
+2026-05-08 16:51:41 - org.hibernate.SQL - 
+    select
+        count(*) 
+    from
+        departments d1_0
+2026-05-08 16:51:42 - org.hibernate.SQL - 
+    select
+        count(*) 
+    from
+        jobs j1_0
+2026-05-08 16:51:51 - o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-05-08 16:51:51 - o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-05-08 16:51:51 - o.s.web.servlet.DispatcherServlet - Completed initialization in 0 ms
+2026-05-08 16:51:52 - org.hibernate.SQL - 
+    select
+        j1_0.id,
+        j1_0.active,
+        j1_0.application_deadline,
+        j1_0.application_instructions,
+        j1_0.department,
+        j1_0.description,
+        j1_0.experience_level,
+        j1_0.location_id,
+        j1_0.job_type,
+        j1_0.location,
+        j1_0.posted_date,
+        j1_0.requirements,
+        j1_0.salary_range,
+        j1_0.title 
+    from
+        jobs j1_0 
+    where
+        j1_0.active
+2026-05-08 16:51:52 - org.hibernate.SQL - 
+    select
+        r1_0.job_id,
+        r1_0.responsibility 
+    from
+        job_responsibilities r1_0 
+    where
+        r1_0.job_id=?
+2026-05-08 16:51:52 - org.hibernate.SQL - 
+    select
+        rl1_0.job_id,
+        rl1_0.requirement 
+    from
+        job_requirements rl1_0 
+    where
+        rl1_0.job_id=?
+2026-05-08 16:51:52 - org.hibernate.SQL - 
+    select
+        r1_0.job_id,
+        r1_0.responsibility 
+    from
+        job_responsibilities r1_0 
+    where
+        r1_0.job_id=?
+2026-05-08 16:51:53 - org.hibernate.SQL - 
+    select
+        rl1_0.job_id,
+        rl1_0.requirement 
+    from
+        job_requirements rl1_0 
+    where
+        rl1_0.job_id=?
+2026-05-08 16:51:53 - org.hibernate.SQL - 
+    select
+        r1_0.job_id,
+        r1_0.responsibility 
+    from
+        job_responsibilities r1_0 
+    where
+        r1_0.job_id=?
+2026-05-08 16:51:53 - org.hibernate.SQL - 
+    select
+        rl1_0.job_id,
+        rl1_0.requirement 
+    from
+        job_requirements rl1_0 
+    where
+        rl1_0.job_id=?
+2026-05-08 16:51:53 - c.m.hrms.controller.HomeController - Loaded 3 active jobs for home page
+2026-05-08 16:51:55 - c.m.h.e.GlobalExceptionHandler - General exception at /favicon.ico: No static resource favicon.ico.
+org.springframework.web.servlet.resource.NoResourceFoundException: No static resource favicon.ico.
+	at org.springframework.web.servlet.resource.ResourceHttpRequestHandler.handleRequest(ResourceHttpRequestHandler.java:585)
+	at org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter.handle(HttpRequestHandlerAdapter.java:52)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:903)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:564)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.servlet.resource.ResourceUrlEncodingFilter.doFilter(ResourceUrlEncodingFilter.java:66)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:116)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:398)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1740)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1189)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:658)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+2026-05-08 16:52:09 - o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-05-08 16:52:09 - o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-05-08 16:52:09 - o.s.m.s.b.SimpleBrokerMessageHandler - Stopping...
+2026-05-08 16:52:09 - o.s.m.s.b.SimpleBrokerMessageHandler - BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@732ed73]]
+2026-05-08 16:52:09 - o.s.m.s.b.SimpleBrokerMessageHandler - Stopped.
+2026-05-08 16:52:09 - o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-05-08 16:52:09 - com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-05-08 16:52:09 - com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
