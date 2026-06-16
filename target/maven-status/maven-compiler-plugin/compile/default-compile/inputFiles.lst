@@ -1,5 +1,6 @@
 C:\gitproject\src\main\java\com\mentis\hrms\config\AnnouncementSchemaInitializer.java
 C:\gitproject\src\main\java\com\mentis\hrms\config\DataInitializer.java
+C:\gitproject\src\main\java\com\mentis\hrms\config\OpenRouterConfig.java
 C:\gitproject\src\main\java\com\mentis\hrms\config\WebMvcConfig.java
 C:\gitproject\src\main\java\com\mentis\hrms\config\WebSocketConfig.java
 C:\gitproject\src\main\java\com\mentis\hrms\controller\AdminAttendanceController.java
@@ -10,6 +11,7 @@ C:\gitproject\src\main\java\com\mentis\hrms\controller\AttendanceController.java
 C:\gitproject\src\main\java\com\mentis\hrms\controller\AttendanceWebSocketController.java
 C:\gitproject\src\main\java\com\mentis\hrms\controller\CandidateAuthController.java
 C:\gitproject\src\main\java\com\mentis\hrms\controller\CandidateOnboardingController.java
+C:\gitproject\src\main\java\com\mentis\hrms\controller\ChatController.java
 C:\gitproject\src\main\java\com\mentis\hrms\controller\DashboardController.java
 C:\gitproject\src\main\java\com\mentis\hrms\controller\DepartmentController.java
 C:\gitproject\src\main\java\com\mentis\hrms\controller\DocumentDownloadController.java
@@ -31,15 +33,21 @@ C:\gitproject\src\main\java\com\mentis\hrms\controller\PermissionController.java
 C:\gitproject\src\main\java\com\mentis\hrms\controller\PresenceController.java
 C:\gitproject\src\main\java\com\mentis\hrms\controller\TestController.java
 C:\gitproject\src\main\java\com\mentis\hrms\dto\AnnouncementDTO.java
+C:\gitproject\src\main\java\com\mentis\hrms\dto\ChatRequestDto.java
+C:\gitproject\src\main\java\com\mentis\hrms\dto\ChatResponseDto.java
 C:\gitproject\src\main\java\com\mentis\hrms\dto\EmployeeFormDTO.java
 C:\gitproject\src\main\java\com\mentis\hrms\dto\HiredCandidateViewModel.java
 C:\gitproject\src\main\java\com\mentis\hrms\dto\HolidayDTO.java
+C:\gitproject\src\main\java\com\mentis\hrms\dto\JobDescriptionRequest.java
+C:\gitproject\src\main\java\com\mentis\hrms\dto\JobDescriptionResponse.java
 C:\gitproject\src\main\java\com\mentis\hrms\dto\OfferRequest.java
 C:\gitproject\src\main\java\com\mentis\hrms\exception\GlobalExceptionHandler.java
 C:\gitproject\src\main\java\com\mentis\hrms\HrmsProjectApplication.java
 C:\gitproject\src\main\java\com\mentis\hrms\interceptor\RoleInterceptor.java
 C:\gitproject\src\main\java\com\mentis\hrms\model\Announcement.java
 C:\gitproject\src\main\java\com\mentis\hrms\model\Attendance.java
+C:\gitproject\src\main\java\com\mentis\hrms\model\ChatMessage.java
+C:\gitproject\src\main\java\com\mentis\hrms\model\ChatSession.java
 C:\gitproject\src\main\java\com\mentis\hrms\model\Department.java
 C:\gitproject\src\main\java\com\mentis\hrms\model\Designation.java
 C:\gitproject\src\main\java\com\mentis\hrms\model\DocumentChecklist.java
@@ -57,6 +65,8 @@ C:\gitproject\src\main\java\com\mentis\hrms\model\OnboardingDocument.java
 C:\gitproject\src\main\java\com\mentis\hrms\model\RolePermission.java
 C:\gitproject\src\main\java\com\mentis\hrms\repository\AnnouncementRepository.java
 C:\gitproject\src\main\java\com\mentis\hrms\repository\AttendanceRepository.java
+C:\gitproject\src\main\java\com\mentis\hrms\repository\ChatMessageRepository.java
+C:\gitproject\src\main\java\com\mentis\hrms\repository\ChatSessionRepository.java
 C:\gitproject\src\main\java\com\mentis\hrms\repository\DepartmentRepository.java
 C:\gitproject\src\main\java\com\mentis\hrms\repository\DesignationRepository.java
 C:\gitproject\src\main\java\com\mentis\hrms\repository\DocumentChecklistRepository.java
@@ -76,6 +86,7 @@ C:\gitproject\src\main\java\com\mentis\hrms\scheduler\DeadlineCheckScheduler.jav
 C:\gitproject\src\main\java\com\mentis\hrms\seeders\DocumentChecklistSeeder.java
 C:\gitproject\src\main\java\com\mentis\hrms\service\AnnouncementService.java
 C:\gitproject\src\main\java\com\mentis\hrms\service\AttendanceService.java
+C:\gitproject\src\main\java\com\mentis\hrms\service\ChatService.java
 C:\gitproject\src\main\java\com\mentis\hrms\service\DashboardService.java
 C:\gitproject\src\main\java\com\mentis\hrms\service\DashboardServiceImpl.java
 C:\gitproject\src\main\java\com\mentis\hrms\service\DeadlineMonitorService.java
@@ -93,6 +104,7 @@ C:\gitproject\src\main\java\com\mentis\hrms\service\LocationService.java
 C:\gitproject\src\main\java\com\mentis\hrms\service\NotificationCleanupService.java
 C:\gitproject\src\main\java\com\mentis\hrms\service\NotificationService.java
 C:\gitproject\src\main\java\com\mentis\hrms\service\OfferService.java
+C:\gitproject\src\main\java\com\mentis\hrms\service\OpenRouterService.java
 C:\gitproject\src\main\java\com\mentis\hrms\service\PdfGenerationService.java
 C:\gitproject\src\main\java\com\mentis\hrms\service\PermissionService.java
 C:\gitproject\src\main\java\com\mentis\hrms\service\ProfilePictureService.java
